@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /docs/
+Allow: /
+
+Sitemap: https://matchpointwaw.netlify.app/sitemap.xml

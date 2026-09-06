@@ -1,0 +1,4 @@
+# Zabezpieczenie: nawet gdyby katalog docs/ przypadkiem trafil na serwer
+# (np. przez przeciagniecie calego folderu do Netlify Drop),
+# nie bedzie dostepny publicznie.
+/docs/*    /    404
