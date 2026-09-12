@@ -316,3 +316,102 @@ footer .fbot{
   html{ scroll-behavior:auto; }
   *{ transition:none !important; }
 }
+
+/* ============================================================
+   MOTYW STRONY WYDARZENIA (body.ev)
+   Lzejszy i przeswitujacy — kort widac przez tresc, karty sa
+   szklane. Ma sie od razu czuc, ze to inna strona niz landing.
+   ============================================================ */
+
+body.ev{ background:linear-gradient(180deg,#f5f3ec 0%,#ebe8dd 100%); }
+
+/* stala geometria kortu w tle, widoczna przez cala strone */
+.courtbg{
+  position:fixed; inset:0; z-index:-1;
+  opacity:.16; pointer-events:none;
+}
+.courtbg svg{ width:100%; height:100%; display:block; }
+
+/* hero: mniej przygaszenia, wiecej kortu */
+body.ev .hero::after{
+  background:linear-gradient(180deg,rgba(20,26,16,.34) 0%,rgba(20,26,16,.08) 40%,rgba(20,26,16,.48) 100%);
+}
+
+/* sekcje przepuszczaja tlo */
+body.ev section{ background:transparent; }
+body.ev .alt{ background:rgba(233,229,219,.52); }
+body.ev .dark{ background:rgba(125,143,104,.88); backdrop-filter:blur(8px); }
+body.ev .deep{ background:rgba(85,99,74,.90); backdrop-filter:blur(8px); }
+
+/* szklane karty */
+body.ev .board{ background:rgba(206,200,189,.55); border-color:rgba(206,200,189,.65); }
+body.ev .board div{ background:rgba(250,249,244,.70); backdrop-filter:blur(10px); }
+body.ev .faq details{ border-color:rgba(107,120,92,.35); }
+body.ev .steps li{ border-color:rgba(107,120,92,.35); }
+body.ev .rule{ background:rgba(107,120,92,.35); }
+
+.glass{
+  background:rgba(250,249,244,.70);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.55);
+  padding:28px 26px;
+}
+
+/* przycisk obrysowany — na jasnym tle */
+.cta-line{
+  background:transparent; color:var(--ink);
+  border:2px solid var(--ink);
+}
+.cta-line:hover{ background:var(--ink); color:var(--paper); }
+
+/* --- lista dojazdu --- */
+.transit{ margin:28px 0 0; display:grid; gap:2px; }
+.transit div{
+  display:grid; grid-template-columns:5.5rem 1fr; gap:18px; align-items:baseline;
+  padding:13px 0; border-top:1px solid rgba(107,120,92,.3);
+}
+.transit div:last-child{ border-bottom:1px solid rgba(107,120,92,.3); }
+.transit b{
+  font-size:1.02rem; font-weight:600; letter-spacing:.04em;
+}
+.transit span{ font-weight:300; color:var(--ink-soft); font-size:.95rem; }
+
+/* --- lista "w cenie" / "co zabrac" --- */
+.ticks{ list-style:none; margin:24px 0 0; padding:0; display:grid; gap:12px; }
+.ticks li{ display:grid; grid-template-columns:1.3rem 1fr; gap:12px; font-weight:300; }
+.ticks li b{ font-weight:600; }
+.ticks .m{ color:var(--warm); }
+
+/* ============================================================
+   STRONA DOKUMENTOW (regulamin)
+   ============================================================ */
+body.doc{ background:var(--paper); }
+.doc-head{ background:var(--court-deep); color:var(--line); padding:40px 0 48px; }
+.doc-head .back{ margin-bottom:26px; }
+.doc-head h1{
+  font-size:clamp(1.6rem,4vw,2.8rem); text-transform:uppercase; font-weight:500;
+}
+.doc-body{ padding:clamp(48px,7vw,88px) 0; }
+.doc-body .wrap{ max-width:820px; }
+.doc-body h2{
+  margin:56px 0 6px; font-size:clamp(1.15rem,2.2vw,1.5rem);
+  text-transform:uppercase; letter-spacing:.02em; font-weight:600;
+}
+.doc-body h2:first-of-type{ margin-top:0; }
+.doc-body h2::after{
+  content:''; display:block; width:64px; height:3px; background:var(--warm); margin:14px 0 0;
+}
+.doc-body ol{ margin:22px 0 0; padding-left:1.5rem; }
+.doc-body ol > li{ margin:0 0 16px; font-weight:300; line-height:1.65; }
+.doc-body ol ol{ margin:12px 0 0; list-style:lower-latin; }
+.doc-body ol ol > li{ margin:0 0 8px; font-size:.96rem; }
+.doc-body p{ font-weight:300; line-height:1.65; }
+.doc-body .note{
+  margin:22px 0 0; padding:20px 22px;
+  background:var(--paper-alt); border-left:3px solid var(--court-dark);
+  font-size:.95rem;
+}
+.doc-body .updated{
+  margin:56px 0 0; padding-top:22px; border-top:2px solid var(--concrete);
+  font-size:.88rem; color:var(--ink-soft);
+}
