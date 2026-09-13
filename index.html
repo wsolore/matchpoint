@@ -315,7 +315,7 @@
   render(e.paidWomen, e.paidMen);
 
   /* liczba oplaconych miejsc pochodzi z arkusza Google */
-  if (ep) {
+  if (ep && MATCHPOINT.useSheetCounter) {
     fetch(ep + '?t=' + Date.now())
       .then(r => r.json())
       .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })

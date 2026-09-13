@@ -501,7 +501,7 @@
 
   renderPools(e.paidWomen, e.paidMen);
 
-  if (ep) {
+  if (ep && MATCHPOINT.useSheetCounter) {
     fetch(ep + '?t=' + Date.now())
       .then(r => r.json())
       .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })

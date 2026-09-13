@@ -13,7 +13,12 @@ const MATCHPOINT = {
   /* adres skryptu Google Apps Script, ktory dopisuje zgloszenia
      do arkusza. Wyglada tak:
      https://script.google.com/macros/s/AKfy.../exec            */
-  sheetEndpoint: '',
+  sheetEndpoint: 'https://script.google.com/macros/s/AKfycbx1AuMosjrMVId3CYeVGgoqHjUUweDXH6kJcEFD4ROF7QRdWQFzQpXFTLIfLUhumnOpZQ/exec',
+
+  /* Czy licznik ma czytac liczbe oplaconych z arkusza.
+     false = liczby ponizej (paidWomen / paidMen) sa zrodlem prawdy.
+     Wlaczyc dopiero, gdy uklad blokow w arkuszu jest potwierdzony.  */
+  useSheetCounter: false,
 
   /* --- najblizsze wydarzenie, w sprzedazy --- */
   next: {
