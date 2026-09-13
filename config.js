@@ -1,14 +1,22 @@
 /* ============================================================
    MATCH POINT — jedyny plik do edycji
    ------------------------------------------------------------
-   PO KAZDYM ZAPISIE zmien takenWomen / takenMen w "next".
-   Liczniki i paski postepu przelicza sie same na obu stronach.
+   1) PO KAZDEJ WPLACIE zmien takenWomen / takenMen.
+   2) sheetEndpoint wklejasz raz, po wdrozeniu skryptu Google
+      (instrukcja: docs/apps-script.md). Dopoki jest puste,
+      formularz na stronie pokazuje przycisk do Google Forms.
    ============================================================ */
 
 const MATCHPOINT = {
 
+  /* adres skryptu Google Apps Script, ktory dopisuje zgloszenia
+     do arkusza. Wyglada tak:
+     https://script.google.com/macros/s/AKfy.../exec            */
+  sheetEndpoint: '',
+
   /* --- najblizsze wydarzenie, w sprzedazy --- */
   next: {
+    id:      'TSD-2009',
     name:    'Tennis Speed Dating',
     date:    '20.09.2026',
     weekday: 'Niedziela',

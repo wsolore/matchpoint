@@ -510,3 +510,354 @@ body.doc{ background:var(--paper); }
   .ball{ animation:none; }
   .racket{ display:none; }
 }
+
+/* ============================================================
+   MOBILE — pelny przeglad
+   Reguly na koncu pliku, wiec nadpisuja wczesniejsze.
+   ============================================================ */
+
+/* akapity i odstepy w tresci: zeby tekst nie byl jednym blokiem */
+p{ margin:0 0 1em; }
+p:last-child{ margin-bottom:0; }
+.sub{ line-height:1.7; }
+.col p, .steps p, .faq p{ line-height:1.7; }
+
+@media (max-width:900px){
+  .cols{ gap:30px; margin-top:44px; }
+  .board div{ padding:22px 18px; }
+}
+
+@media (max-width:640px){
+
+  /* pasek sticky zostal usuniety z HTML, wiec zerujemy zapas na dole */
+  .sticky{ display:none; }
+  body{ padding-bottom:0; }
+
+  .wrap{ padding:0 20px; }
+  section{ padding:56px 0; }
+
+  /* --- HERO --- */
+  .hero{ min-height:auto; padding:20px 0 44px; }
+  .hero-mid{ padding-top:34px; max-width:none; }
+
+  .hero-top{ gap:12px; }
+  .hero-top .right{ flex-direction:column; align-items:flex-end; gap:4px; }
+  .wordmark, .back{ font-size:.78rem; letter-spacing:.14em; }
+  .ig{ font-size:.72rem; letter-spacing:.06em; }
+  .hero-top .eyebrow{ font-size:.62rem; letter-spacing:.14em; }
+
+  h1{
+    font-size:1.85rem; line-height:1.18; letter-spacing:0;
+    text-wrap:pretty;
+  }
+
+  /* lockup: mniejszy trekking, zeby dlugie slowo nie wychodzilo za ekran */
+  .lockup{ margin-top:26px; }
+  .lockup .n{
+    font-size:clamp(2rem,12.5vw,3.4rem);
+    letter-spacing:.06em; line-height:1;
+  }
+  .lockup .s{ font-size:clamp(1.9rem,11vw,3rem); margin-top:-.04em; margin-left:.03em; }
+
+  .lead{ margin-top:20px; font-size:1rem; line-height:1.65; max-width:none; }
+
+  /* --- dane wydarzenia w hero: siatka 2 kolumny --- */
+  .hero-bottom{ flex-direction:column; align-items:stretch; gap:26px; margin-top:36px; }
+  .meta{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px 18px;
+  }
+  .meta li{ min-width:0; padding:0; }
+  .meta .k{ font-size:.62rem; letter-spacing:.14em; }
+  .meta .v{ font-size:1.15rem; }
+
+  /* --- przyciski na cala szerokosc --- */
+  .cta{
+    width:100%; justify-content:center;
+    padding:16px 22px; font-size:.76rem; letter-spacing:.12em;
+  }
+  .cta-note{ text-align:center; }
+
+  /* --- naglowki sekcji --- */
+  .h2{ font-size:1.45rem; line-height:1.2; }
+  .h2 .script{ font-size:2.1rem; line-height:1.05; margin-top:.1em; }
+  .eyebrow{ font-size:.64rem; letter-spacing:.16em; }
+  .sub{ margin-top:16px; font-size:1rem; max-width:none; }
+
+  /* --- kolumny jedna pod druga --- */
+  .cols{ gap:28px; margin-top:36px; grid-template-columns:1fr; }
+  .pair{ grid-template-columns:1fr; gap:20px; margin-top:32px; }
+  .glass{ padding:22px 20px; }
+
+  /* --- kroki --- */
+  .steps{ margin-top:36px; }
+  .steps li{ grid-template-columns:1fr; gap:6px; padding:20px 0; }
+  .steps li::before{ font-size:1.15rem; opacity:.75; }
+  .steps h3{ font-size:1rem; }
+
+  /* --- tabela szczegolow --- */
+  .board{ grid-template-columns:1fr 1fr; margin-top:36px; }
+  .board div{ padding:18px 14px; }
+  .board .k{ font-size:.6rem; letter-spacing:.12em; }
+  .board .v{ font-size:1.2rem; margin-top:6px; }
+  .board .v small{ display:block; margin-top:3px; font-size:.78rem; }
+
+  /* --- terminarz --- */
+  .fixtures{ margin-top:36px; }
+  .fixture{ grid-template-columns:1fr; gap:10px; padding:22px 0; }
+  .fixture:hover{ padding-left:0; background:none; }
+  .fixture .when{ font-size:1.15rem; }
+  .fixture .what{ font-size:1.02rem; }
+  .fixture .where{ font-size:.86rem; line-height:1.55; }
+  .fixture .go{ justify-content:space-between; }
+
+  /* --- pule miejsc --- */
+  .pools{ grid-template-columns:1fr; gap:14px; margin-top:32px; }
+  .pool{ padding:20px 18px; }
+  .pool .n{ font-size:2.2rem; }
+
+  /* --- dojazd --- */
+  .transit{ margin-top:22px; }
+  .transit div{ grid-template-columns:4.2rem 1fr; gap:12px; padding:11px 0; }
+  .transit b{ font-size:.95rem; }
+  .transit span{ font-size:.88rem; line-height:1.5; }
+
+  /* --- FAQ --- */
+  .faq{ margin-top:32px; }
+  .faq summary{ padding:18px 0; font-size:.96rem; gap:14px; }
+  .faq p{ margin-bottom:18px; font-size:.95rem; max-width:none; }
+
+  /* --- banner archiwalny --- */
+  .notice{ padding:14px 0; font-size:.85rem; }
+  .notice .wrap{ flex-direction:column; align-items:flex-start; gap:6px; }
+
+  /* --- stopka --- */
+  footer{ padding:48px 0 36px; }
+  footer .fgrid{ grid-template-columns:1fr; gap:26px; }
+  footer .fbot{ flex-direction:column; gap:8px; margin-top:36px; }
+
+  /* --- regulamin --- */
+  .doc-head{ padding:28px 0 34px; }
+  .doc-head h1{ font-size:1.5rem; }
+  .doc-body{ padding:44px 0; }
+  .doc-body h2{ margin-top:42px; font-size:1.1rem; }
+  .doc-body ol{ padding-left:1.15rem; }
+  .doc-body ol > li{ font-size:.95rem; line-height:1.7; }
+
+  /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
+  .ball{ width:46px; left:82%; top:13%; }
+  .racket{ display:none; }
+}
+
+@media (max-width:380px){
+  .wrap{ padding:0 16px; }
+  .meta{ grid-template-columns:1fr; gap:12px; }
+  .board{ grid-template-columns:1fr; }
+  .lockup .n{ letter-spacing:.03em; }
+}
+
+/* ============================================================
+   FORMULARZ ZAPISU na stronie
+   ============================================================ */
+
+.form{ margin:40px 0 0; max-width:640px; }
+.form-row{ margin:0 0 22px; }
+.form-grid{ display:grid; gap:22px; grid-template-columns:1fr 1fr; margin:0 0 22px; }
+
+.form label.lab{
+  display:block; margin:0 0 8px;
+  font-size:.68rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(245,243,236,.78);
+}
+.form .hint{
+  display:block; margin:6px 0 0;
+  font-size:.78rem; font-weight:300; color:rgba(245,243,236,.6);
+}
+
+.form input[type=text],
+.form input[type=email],
+.form input[type=tel],
+.form input[type=number],
+.form select{
+  width:100%; padding:14px 16px;
+  font-family:var(--f-sans); font-size:1rem; font-weight:400; color:var(--line);
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(245,243,236,.3);
+  border-radius:2px;
+  -webkit-appearance:none; appearance:none;
+}
+.form select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23f5f3ec' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 16px center; background-size:12px;
+  padding-right:44px;
+}
+.form input:focus,.form select:focus{
+  outline:2px solid var(--lime); outline-offset:1px; background:rgba(255,255,255,.14);
+}
+.form input::placeholder{ color:rgba(245,243,236,.45); }
+
+/* wybor plci jako dwa przyciski */
+.choice{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.choice label{
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  padding:14px 12px; cursor:pointer;
+  font-size:.9rem; font-weight:500;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(245,243,236,.3);
+  transition:background .15s ease, border-color .15s ease;
+}
+.choice input{ position:absolute; opacity:0; width:0; height:0; }
+.choice label:hover{ background:rgba(255,255,255,.13); }
+.choice input:checked + span{ font-weight:700; }
+.choice label:has(input:checked){
+  background:var(--warm); border-color:var(--warm); color:#fff;
+}
+.choice label:has(input:focus-visible){ outline:2px solid var(--lime); outline-offset:2px; }
+
+/* zgody */
+.consent{ display:grid; grid-template-columns:auto 1fr; gap:12px; margin:0 0 16px; cursor:pointer; }
+.consent input{
+  width:22px; height:22px; margin:2px 0 0; flex:none;
+  accent-color:var(--warm); cursor:pointer;
+}
+.consent span{ font-size:.88rem; font-weight:300; line-height:1.55; color:rgba(245,243,236,.86); }
+.consent a{ color:var(--lime); text-decoration:underline; text-underline-offset:3px; }
+
+.hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+.form .err{
+  display:none; margin:8px 0 0;
+  font-size:.82rem; font-weight:500; color:#f5c4ae;
+}
+.form [aria-invalid="true"]{ border-color:#f0a98b; }
+.form-msg{
+  display:none; margin:24px 0 0; padding:20px 22px;
+  border-left:3px solid var(--lime);
+  background:rgba(255,255,255,.08);
+  font-size:.95rem; font-weight:300; line-height:1.7;
+}
+.form-msg.show{ display:block; }
+.form-msg.bad{ border-color:#f0a98b; }
+.form-msg b{ font-weight:600; }
+.form-msg .blik{
+  display:block; margin:10px 0 0;
+  font-size:1.5rem; font-weight:500; letter-spacing:.04em; color:var(--lime);
+}
+.form button[type=submit]{ width:auto; }
+.form button[disabled]{ opacity:.55; cursor:progress; }
+
+@media (max-width:640px){
+  .form{ margin-top:32px; }
+  .form-grid{ grid-template-columns:1fr; gap:18px; margin-bottom:18px; }
+  .form-row{ margin-bottom:18px; }
+  .form input[type=text],.form input[type=email],.form input[type=tel],
+  .form input[type=number],.form select{ font-size:1rem; padding:13px 14px; }
+  .form button[type=submit]{ width:100%; }
+  .choice label{ padding:15px 10px; }
+}
+
+/* ============================================================
+   WEJSCIOWKA po wyslaniu zgloszenia
+   ============================================================ */
+
+.ticket{
+  display:none;
+  margin:40px 0 0; max-width:560px;
+  background:var(--line); color:var(--ink);
+  border-radius:3px; overflow:hidden;
+  box-shadow:0 24px 60px rgba(20,26,16,.3);
+}
+.ticket.show{ display:block; animation:tin .45s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes tin{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+.ticket-top{
+  background:var(--court-deep); color:var(--line);
+  padding:20px 26px;
+  display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between;
+}
+.ticket-top .t{ font-size:.68rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; }
+.ticket-badge{
+  padding:5px 12px; border-radius:2px;
+  background:var(--warm); color:#fff;
+  font-size:.64rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+}
+.ticket-badge.paid{ background:#5f7a44; }
+
+.ticket-body{ padding:28px 26px; }
+.ticket-code{
+  font-size:clamp(1.7rem,6vw,2.5rem); font-weight:600; letter-spacing:.1em;
+  line-height:1; margin:0 0 4px;
+}
+.ticket-name{ font-size:1.02rem; font-weight:500; margin:0 0 22px; }
+
+.ticket-facts{ display:grid; gap:14px 20px; grid-template-columns:1fr 1fr; margin:0 0 24px; }
+.ticket-facts .k{
+  display:block; font-size:.6rem; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-soft);
+}
+.ticket-facts .v{ font-size:1rem; font-weight:400; }
+
+.ticket-pay{
+  border-top:2px dashed var(--concrete);
+  margin:0 -26px; padding:22px 26px 0;
+}
+.ticket-pay p{ margin:0 0 8px; font-size:.9rem; font-weight:300; line-height:1.6; color:var(--ink-soft); }
+.ticket-pay .num{
+  display:block; margin:4px 0 10px;
+  font-size:1.6rem; font-weight:600; letter-spacing:.05em; color:var(--warm-dark);
+}
+.ticket-pay .title-hint{
+  padding:12px 14px; background:var(--paper-alt);
+  font-size:.86rem; font-weight:400;
+}
+.ticket-actions{ display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 0; }
+.ticket-actions button{
+  padding:12px 18px; cursor:pointer;
+  font-family:var(--f-sans); font-size:.72rem; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+  background:transparent; color:var(--ink); border:2px solid var(--ink); border-radius:2px;
+}
+.ticket-actions button:hover{ background:var(--ink); color:var(--line); }
+
+@media (max-width:640px){
+  .ticket-body{ padding:22px 20px; }
+  .ticket-top{ padding:16px 20px; }
+  .ticket-pay{ margin:0 -20px; padding:20px 20px 0; }
+  .ticket-facts{ grid-template-columns:1fr; gap:12px; }
+  .ticket-actions button{ width:100%; }
+}
+
+@media print{
+  body *{ visibility:hidden !important; }
+  .ticket, .ticket *{ visibility:visible !important; }
+  .ticket{
+    position:absolute; left:0; top:0; width:100%;
+    box-shadow:none; display:block !important;
+  }
+  .ticket-actions{ display:none !important; }
+  .courtbg,.hero{ display:none !important; }
+}
+
+/* ============================================================
+   KOD QR
+   ============================================================ */
+
+.qr-sec{ background:var(--paper-alt); }
+.qr{ display:grid; gap:34px; grid-template-columns:auto 1fr; align-items:center; margin:36px 0 0; }
+.qr-box{
+  width:190px; padding:16px;
+  background:#fff; border:1px solid var(--concrete);
+}
+.qr-box img{ width:100%; height:auto; display:block; }
+.qr-txt h3{ font-size:1.05rem; font-weight:600; margin:0 0 10px; }
+.qr-txt p{ margin:0 0 8px; font-weight:300; color:var(--ink-soft); }
+.qr-txt .url{
+  display:inline-block; margin-top:10px;
+  font-size:.9rem; font-weight:600; letter-spacing:.04em;
+  text-decoration:none; border-bottom:2px solid var(--warm); padding-bottom:2px;
+}
+
+@media (max-width:640px){
+  .qr{ grid-template-columns:1fr; gap:22px; justify-items:center; text-align:center; margin-top:28px; }
+  .qr-box{ width:170px; }
+  .qr-txt p{ max-width:none; }
+}

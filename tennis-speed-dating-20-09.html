@@ -264,12 +264,120 @@
       </div>
     </div>
 
-    <p style="margin:40px 0 0">
-      <a class="cta" href="#" data-form-link>Zapisz się <span class="arw" aria-hidden="true">→</span></a>
+    <form class="form" id="signup" novalidate>
+      <div class="form-row">
+        <span class="lab">Zapisuję się jako</span>
+        <div class="choice">
+          <label><input type="radio" name="gender" value="Kobieta" required><span>Kobieta</span></label>
+          <label><input type="radio" name="gender" value="Mężczyzna" required><span>Mężczyzna</span></label>
+        </div>
+        <span class="err" data-err="gender">Wybierz jedną z opcji.</span>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label class="lab" for="firstName">Imię</label>
+          <input type="text" id="firstName" name="firstName" autocomplete="given-name" required>
+          <span class="err" data-err="firstName">Podaj imię.</span>
+        </div>
+        <div>
+          <label class="lab" for="lastName">Dwie pierwsze litery nazwiska</label>
+          <input type="text" id="lastName" name="lastName" maxlength="2" required>
+          <span class="hint">Pełnego nazwiska nie zbieramy.</span>
+          <span class="err" data-err="lastName">Podaj dwie litery.</span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label class="lab" for="age">Wiek</label>
+          <input type="number" id="age" name="age" min="18" max="99" inputmode="numeric" required>
+          <span class="hint">To wydarzenie jest dla osób 25 do 40 lat.</span>
+          <span class="err" data-err="age">Podaj wiek (18+).</span>
+        </div>
+        <div>
+          <label class="lab" for="phone">Numer telefonu</label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" required>
+          <span class="err" data-err="phone">Podaj numer telefonu.</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="lab" for="email">Adres e-mail</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+        <span class="hint">Tu wyślemy potwierdzenie.</span>
+        <span class="err" data-err="email">Podaj poprawny adres e-mail.</span>
+      </div>
+
+      <div class="form-row">
+        <label class="lab" for="level">Poziom tenisa (skala NTRP)</label>
+        <select id="level" name="level" required>
+          <option value="">Wybierz poziom</option>
+          <option value="Początkujący+ (2.5-3.5)">Początkujący+ (2.5 do 3.5)</option>
+          <option value="Średnio zaawansowany (4-4.5)">Średnio zaawansowany (4 do 4.5)</option>
+          <option value="Zaawansowany (5-7)">Zaawansowany (5 do 7)</option>
+        </select>
+        <span class="err" data-err="level">Wybierz poziom.</span>
+      </div>
+
+      <div class="hp" aria-hidden="true">
+        <label for="website">Nie wypełniaj</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" name="terms" required>
+        <span>Mam ukończone 18 lat i akceptuję <a href="regulamin.html">regulamin</a> oraz <a href="regulamin.html#dane">informację o przetwarzaniu danych</a>.</span>
+      </label>
+      <span class="err" data-err="terms" style="margin-bottom:16px">Bez tego nie możemy przyjąć zgłoszenia.</span>
+
+      <label class="consent">
+        <input type="checkbox" name="marketing">
+        <span>Chcę dostawać maile o kolejnych wydarzeniach Match Point. (opcjonalnie)</span>
+      </label>
+
+      <p style="margin:28px 0 0">
+        <button class="cta" type="submit">Zapisz się <span class="arw" aria-hidden="true">&#8594;</span></button>
+      </p>
+
+      <div class="form-msg bad" id="formErr"></div>
+    </form>
+
+    <p class="cta-note" id="formFallback" style="display:none">
+      Zapisy prowadzimy przez formularz Google.
+      <a href="#" data-form-link style="color:#e6ef86">Otwórz formularz</a>
     </p>
-    <p class="cta-note">
-      Zapisując się, akceptujesz <a href="regulamin.html" style="color:#e6ef86">regulamin</a>.
-    </p>
+
+    <!-- WEJSCIOWKA, pojawia sie po wyslaniu zgloszenia -->
+    <div class="ticket" id="ticket">
+      <div class="ticket-top">
+        <span class="t">Match Point &middot; wejściówka</span>
+        <span class="ticket-badge" id="tStatus">Do opłacenia</span>
+      </div>
+      <div class="ticket-body">
+        <p class="ticket-code" id="tCode">MP-0000</p>
+        <p class="ticket-name" id="tName"></p>
+
+        <div class="ticket-facts">
+          <div><span class="k">Wydarzenie</span><span class="v">Tennis Speed Dating</span></div>
+          <div><span class="k">Termin</span><span class="v">20.09.2026, 17:00&ndash;19:00</span></div>
+          <div><span class="k">Miejsce</span><span class="v">Wolica SGGW, Nowoursynowska 92</span></div>
+          <div><span class="k">Kwota</span><span class="v" id="tPrice"></span></div>
+        </div>
+
+        <div class="ticket-pay">
+          <p><b>Opłać miejsce BLIK-iem na numer:</b></p>
+          <span class="num" id="tBlik">731 210 703</span>
+          <p class="title-hint">W tytule wpisz: <b id="tTitle"></b></p>
+          <p style="margin-top:12px">Po zaksięgowaniu wpłaty wyślemy potwierdzenie na podany adres e-mail. Do tego momentu miejsce jest dostępne dla innych osób.</p>
+          <div class="ticket-actions">
+            <button type="button" id="tCopy">Skopiuj tytuł przelewu</button>
+            <button type="button" id="tPrint">Zapisz jako PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -345,39 +453,169 @@
 <script src="config.js"></script>
 <script>
 (function(){
-  const e = MATCHPOINT.next;
+  const e  = MATCHPOINT.next;
+  const ep = (MATCHPOINT.sheetEndpoint || '').trim();
 
+  /* ---------- liczniki zapisanych ----------
+     Zrodlo prawdy to arkusz Google. Wartosci z config.js sluza
+     tylko jako awaryjne, gdy odpytanie arkusza sie nie uda.      */
+  function renderPools(w, m){
+    const pools = {
+      women: { taken: w, limit: e.limitWomen },
+      men:   { taken: m, limit: e.limitMen }
+    };
+    Object.entries(pools).forEach(([key, p]) => {
+      const el = document.querySelector('[data-pool="' + key + '"]');
+      if (!el) return;
+      const taken = Math.min(p.taken, p.limit);
+      const free  = Math.max(0, p.limit - taken);
+      el.dataset.full = String(free === 0);
+      el.querySelector('[data-taken]').textContent = taken;
+      el.querySelector('.lim').textContent = ' / ' + p.limit;
+      el.querySelector('[data-bar]').style.width = Math.min(100, (taken / p.limit) * 100) + '%';
+      el.querySelector('[data-st]').textContent = free === 0
+        ? 'skład zamknięty'
+        : 'zapisanych, zostały ' + (free === 1 ? '1 miejsce' : free + ' miejsca');
+    });
+
+    const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
+    const total = e.limitWomen + e.limitMen;
+    const summary = document.querySelector('[data-spots-summary]');
+    if (summary) summary.textContent = taken >= total
+      ? 'Skład zamknięty, napisz do nas na listę rezerwową'
+      : 'Zapisanych ' + taken + ' z ' + total;
+  }
+
+  renderPools(e.takenWomen, e.takenMen);
+
+  if (ep) {
+    fetch(ep + '?t=' + Date.now())
+      .then(r => r.json())
+      .then(d => { if (d && d.ok) renderPools(d.women, d.men); })
+      .catch(() => {});
+  }
+
+  document.querySelectorAll('[data-blik]').forEach(n => n.textContent = e.blik);
   document.querySelectorAll('[data-form-link]').forEach(a => {
     a.href = e.formUrl; a.target = '_blank'; a.rel = 'noopener';
   });
-  document.querySelectorAll('[data-blik]').forEach(n => n.textContent = e.blik);
 
-  const pools = {
-    women: { taken: e.takenWomen, limit: e.limitWomen },
-    men:   { taken: e.takenMen,   limit: e.limitMen }
+  /* ---------- formularz ---------- */
+  const form = document.getElementById('signup');
+  if (!form) return;
+
+  /* dopoki nie ma wdrozonego skryptu arkusza, pokazujemy formularz Google */
+  if (!ep) {
+    form.style.display = 'none';
+    const fb = document.getElementById('formFallback');
+    if (fb) fb.style.display = 'block';
+    return;
+  }
+
+  const errBox = document.getElementById('formErr');
+  const showErr = (name, on) => {
+    const el = form.querySelector('[data-err="' + name + '"]');
+    if (el) el.style.display = on ? 'block' : 'none';
+    const field = form.querySelector('[name="' + name + '"]');
+    if (field && field.type !== 'radio' && field.type !== 'checkbox') {
+      field.setAttribute('aria-invalid', on ? 'true' : 'false');
+    }
   };
 
-  Object.entries(pools).forEach(([key, p]) => {
-    const el = document.querySelector(`[data-pool="${key}"]`);
-    if (!el) return;
-    const free = Math.max(0, p.limit - p.taken);
-    el.dataset.full = String(free === 0);
-    el.querySelector('[data-taken]').textContent = p.taken;
-    el.querySelector('.lim').textContent = ' / ' + p.limit;
-    el.querySelector('[data-bar]').style.width = Math.min(100, (p.taken / p.limit) * 100) + '%';
-    el.querySelector('[data-st]').textContent = free === 0
-      ? 'skład zamknięty'
-      : `zapisanych, zostały ${free === 1 ? '1 miejsce' : free + ' miejsca'}`;
-  });
+  const code = () => {
+    const chars = 'ACDEFGHJKLMNPQRTUVWXY34679';
+    let r = '';
+    for (let i = 0; i < 4; i++) r += chars[Math.floor(Math.random() * chars.length)];
+    return 'MP-' + e.date.slice(0, 5).replace('.', '') + '-' + r;
+  };
 
-  const taken = pools.women.taken + pools.men.taken;
-  const total = pools.women.limit + pools.men.limit;
-  const summary = document.querySelector('[data-spots-summary]');
-  if (summary) {
-    summary.textContent = taken >= total
-      ? 'Skład zamknięty, napisz do nas na listę rezerwową'
-      : `Zapisanych ${taken} z ${total}`;
-  }
+  form.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const f = new FormData(form);
+    const v = k => (f.get(k) || '').toString().trim();
+
+    /* pulapka na boty */
+    if (v('website')) return;
+
+    const checks = {
+      gender:    !!v('gender'),
+      firstName: v('firstName').length >= 2,
+      lastName:  v('lastName').length >= 1,
+      age:       Number(v('age')) >= 18 && Number(v('age')) <= 99,
+      phone:     v('phone').replace(/[^0-9]/g, '').length >= 9,
+      email:     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email')),
+      level:     !!v('level'),
+      terms:     !!f.get('terms')
+    };
+    let ok = true;
+    Object.entries(checks).forEach(([k, good]) => { showErr(k, !good); if (!good) ok = false; });
+    if (!ok) {
+      const bad = form.querySelector('[aria-invalid="true"], .err[style*="block"]');
+      if (bad) bad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Zapisuję...';
+    errBox.classList.remove('show');
+
+    const ticketCode = code();
+    const price = v('gender') === 'Kobieta' ? e.priceW : e.priceM;
+    const title = ticketCode + ' ' + v('firstName') + ' ' + v('lastName');
+
+    const payload = {
+      ticket:    ticketCode,
+      event:     e.name + ' ' + e.date,
+      gender:    v('gender'),
+      firstName: v('firstName'),
+      lastName:  v('lastName').toUpperCase(),
+      age:       v('age'),
+      email:     v('email'),
+      phone:     v('phone'),
+      level:     v('level'),
+      price:     price,
+      terms:     !!f.get('terms'),
+      marketing: !!f.get('marketing')
+    };
+
+    try {
+      await fetch(ep, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Zapisz się <span class="arw" aria-hidden="true">&#8594;</span>';
+      errBox.innerHTML = 'Nie udało się wysłać zgłoszenia. Napisz do nas na '
+        + '<a href="mailto:match.point.date@gmail.com" style="color:#e6ef86">match.point.date@gmail.com</a>, '
+        + 'zapiszemy Cię ręcznie.';
+      errBox.classList.add('show');
+      return;
+    }
+
+    /* wejsciowka */
+    document.getElementById('tCode').textContent  = ticketCode;
+    document.getElementById('tName').textContent  = v('firstName') + ' ' + v('lastName').toUpperCase();
+    document.getElementById('tPrice').textContent = price + ' zł';
+    document.getElementById('tBlik').textContent  = e.blik;
+    document.getElementById('tTitle').textContent = title;
+
+    form.style.display = 'none';
+    const t = document.getElementById('ticket');
+    t.classList.add('show');
+    t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    document.getElementById('tCopy').addEventListener('click', function(){
+      navigator.clipboard.writeText(title).then(() => {
+        this.textContent = 'Skopiowane';
+        setTimeout(() => { this.textContent = 'Skopiuj tytuł przelewu'; }, 2000);
+      });
+    });
+    document.getElementById('tPrint').addEventListener('click', () => window.print());
+  });
 })();
 </script>
 </body>
