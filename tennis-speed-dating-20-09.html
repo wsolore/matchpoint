@@ -567,9 +567,11 @@
       marketing: !!f.get('marketing')
     };
 
+    let zapisane = false;
+
     try {
-      /* 1) Netlify Forms: dziala od razu, bez zadnej konfiguracji.
-            Zgloszenia widac w panelu Netlify, w zakladce Forms.      */
+      /* 1) Netlify Forms. Wymaga wlaczonego "Form detection" w panelu
+            Netlify; jesli jest wylaczone, POST wraca z 404.           */
       const netlifyBody = new URLSearchParams({
         'form-name':  'zapisy',
         ticket:       ticketCode,
@@ -586,28 +588,36 @@
         marketing:    payload.marketing ? 'TAK' : 'NIE'
       });
 
-      await fetch('/', {
+      const r = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: netlifyBody.toString()
       });
+      if (r.ok) zapisane = true;
+    } catch (err) { /* brak sieci, obslugujemy nizej */ }
 
-      /* 2) arkusz Google, jesli endpoint jest wpisany w config.js */
-      if (ep) {
+    /* 2) arkusz Google, jesli endpoint jest wpisany w config.js */
+    if (ep) {
+      try {
         fetch(ep, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         }).catch(() => {});
-      }
-    } catch (err) {
+        zapisane = true;
+      } catch (err) { /* jak wyzej */ }
+    }
+
+    /* Zadne zrodlo nie przyjelo zgloszenia: nie udajemy, ze sie udalo. */
+    if (!zapisane) {
       btn.disabled = false;
       btn.innerHTML = 'Zapisz się <span class="arw" aria-hidden="true">&#8594;</span>';
-      errBox.innerHTML = 'Nie udało się wysłać zgłoszenia. Napisz do nas na '
-        + '<a href="mailto:match.point.date@gmail.com" style="color:#e6ef86">match.point.date@gmail.com</a>, '
-        + 'zapiszemy Cię ręcznie.';
+      errBox.innerHTML = 'Nie udało się zapisać zgłoszenia. Wyślij nam te dane na '
+        + '<a href="mailto:match.point.date@gmail.com?subject=Zapis%20na%20Tennis%20Speed%20Dating%2020.09" style="color:#e6ef86">match.point.date@gmail.com</a>'
+        + ', zapiszemy Cię ręcznie i potwierdzimy miejsce.';
       errBox.classList.add('show');
+      errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
