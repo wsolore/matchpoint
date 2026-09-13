@@ -13,12 +13,12 @@ const MATCHPOINT = {
   /* adres skryptu Google Apps Script, ktory dopisuje zgloszenia
      do arkusza. Wyglada tak:
      https://script.google.com/macros/s/AKfy.../exec            */
-  sheetEndpoint: 'https://script.google.com/macros/s/AKfycbyT2v1DPJm1UdT1bM7mqDPzndkpYTtkMacI8QbUEsEXTmGTIhGjzLMuFRlrf05vOyzSWQ/exec',
+  sheetEndpoint: 'https://script.google.com/macros/s/AKfycbxHiSMEiB8geAq8-VjcQl7IBm7bf51cIs0aPKPMzSSBKMot_BZZ7wFtDK5AXcAxIul4UQ/exec',
 
   /* Czy licznik ma czytac liczbe oplaconych z arkusza.
      false = liczby ponizej (paidWomen / paidMen) sa zrodlem prawdy.
      Wlaczyc dopiero, gdy uklad blokow w arkuszu jest potwierdzony.  */
-  useSheetCounter: false,
+  useSheetCounter: true,
 
   /* --- najblizsze wydarzenie, w sprzedazy --- */
   next: {
@@ -43,7 +43,7 @@ const MATCHPOINT = {
 
     /* ↓↓↓ TYLKO TE DWIE LICZBY ZMIENIASZ NA BIEZACO ↓↓↓
        Liczba osob z "TAK" w kolumnie "Oplacone" w arkuszu.         */
-    paidWomen: 2,
+    paidWomen: 3,
     paidMen:   0
   },
 
