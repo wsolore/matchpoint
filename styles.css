@@ -838,26 +838,10 @@ p:last-child{ margin-bottom:0; }
 }
 
 /* ============================================================
-   KOD QR
+   KOD QR w stopce
    ============================================================ */
 
-.qr-sec{ background:var(--paper-alt); }
-.qr{ display:grid; gap:34px; grid-template-columns:auto 1fr; align-items:center; margin:36px 0 0; }
-.qr-box{
-  width:190px; padding:16px;
-  background:#fff; border:1px solid var(--concrete);
-}
-.qr-box img{ width:100%; height:auto; display:block; }
-.qr-txt h3{ font-size:1.05rem; font-weight:600; margin:0 0 10px; }
-.qr-txt p{ margin:0 0 8px; font-weight:300; color:var(--ink-soft); }
-.qr-txt .url{
-  display:inline-block; margin-top:10px;
-  font-size:.9rem; font-weight:600; letter-spacing:.04em;
-  text-decoration:none; border-bottom:2px solid var(--warm); padding-bottom:2px;
-}
-
-@media (max-width:640px){
-  .qr{ grid-template-columns:1fr; gap:22px; justify-items:center; text-align:center; margin-top:28px; }
-  .qr-box{ width:170px; }
-  .qr-txt p{ max-width:none; }
+.qr-mini img{
+  width:96px; height:96px;
+  padding:7px; background:#fff; border-radius:2px;
 }

@@ -34,8 +34,8 @@ const MATCHPOINT = {
     limitMen:   6,
 
     /* ↓↓↓ TYLKO TE DWIE LICZBY ZMIENIASZ NA BIEZACO ↓↓↓ */
-    takenWomen: 0,
-    takenMen:   0
+    takenWomen: 5,
+    takenMen:   2
   },
 
   /* --- archiwum --- */

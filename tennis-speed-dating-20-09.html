@@ -557,7 +557,7 @@
       event:     e.name + ' ' + e.date,
       gender:    v('gender'),
       firstName: v('firstName'),
-      lastName:  v('lastName').toUpperCase(),
+      lastName:  v('lastName').charAt(0).toUpperCase() + v('lastName').slice(1).toLowerCase(),
       age:       v('age'),
       email:     v('email'),
       phone:     v('phone'),
@@ -623,7 +623,7 @@
 
     /* wejsciowka */
     document.getElementById('tCode').textContent  = ticketCode;
-    document.getElementById('tName').textContent  = v('firstName') + ' ' + v('lastName').toUpperCase();
+    document.getElementById('tName').textContent  = v('firstName') + ' ' + payload.lastName;
     document.getElementById('tPrice').textContent = price + ' zł';
     document.getElementById('tBlik').textContent  = e.blik;
     document.getElementById('tTitle').textContent = title;
