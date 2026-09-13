@@ -316,7 +316,7 @@
 
   /* liczba oplaconych miejsc pochodzi z arkusza Google */
   if (ep && MATCHPOINT.useSheetCounter) {
-    fetch(ep + '?t=' + Date.now())
+    fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
       .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })
       .catch(() => {});

@@ -13,7 +13,7 @@ const MATCHPOINT = {
   /* adres skryptu Google Apps Script, ktory dopisuje zgloszenia
      do arkusza. Wyglada tak:
      https://script.google.com/macros/s/AKfy.../exec            */
-  sheetEndpoint: 'https://script.google.com/macros/s/AKfycbx1AuMosjrMVId3CYeVGgoqHjUUweDXH6kJcEFD4ROF7QRdWQFzQpXFTLIfLUhumnOpZQ/exec',
+  sheetEndpoint: 'https://script.google.com/macros/s/AKfycbyT2v1DPJm1UdT1bM7mqDPzndkpYTtkMacI8QbUEsEXTmGTIhGjzLMuFRlrf05vOyzSWQ/exec',
 
   /* Czy licznik ma czytac liczbe oplaconych z arkusza.
      false = liczby ponizej (paidWomen / paidMen) sa zrodlem prawdy.
@@ -33,6 +33,8 @@ const MATCHPOINT = {
     priceW:  90,
     priceM:  100,
     page:    'tennis-speed-dating-20-09.html',
+    /* nazwa ZAKLADKI w arkuszu. Kazde wydarzenie ma swoja.   */
+    sheetTab: '20.09',
     formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfqkm4kn6giUD2qxViy0b4kboN1vJ-utRemI2BE3KOZ9FuCQA/viewform',
     blik:    '731 210 703',
 

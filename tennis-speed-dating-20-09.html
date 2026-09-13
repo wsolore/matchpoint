@@ -502,7 +502,7 @@
   renderPools(e.paidWomen, e.paidMen);
 
   if (ep && MATCHPOINT.useSheetCounter) {
-    fetch(ep + '?t=' + Date.now())
+    fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
       .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
       .catch(() => {});
@@ -580,7 +580,8 @@
       level:     v('level'),
       price:     price,
       terms:     !!f.get('terms'),
-      marketing: !!f.get('marketing')
+      marketing: !!f.get('marketing'),
+      tab:       e.sheetTab
     };
 
     /* tytul przelewu: imie i poczatek nazwiska. Musi byc PO payload. */
