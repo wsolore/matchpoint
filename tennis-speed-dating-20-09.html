@@ -264,7 +264,8 @@
       </div>
     </div>
 
-    <form class="form" id="signup" novalidate>
+    <form class="form" id="signup" name="zapisy" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
+      <input type="hidden" name="form-name" value="zapisy">
       <div class="form-row">
         <span class="lab">Zapisuję się jako</span>
         <div class="choice">
@@ -342,11 +343,6 @@
 
       <div class="form-msg bad" id="formErr"></div>
     </form>
-
-    <p class="cta-note" id="formFallback" style="display:none">
-      Zapisy prowadzimy przez formularz Google.
-      <a href="#" data-form-link style="color:#e6ef86">Otwórz formularz</a>
-    </p>
 
     <!-- WEJSCIOWKA, pojawia sie po wyslaniu zgloszenia -->
     <div class="ticket" id="ticket">
@@ -504,14 +500,6 @@
   const form = document.getElementById('signup');
   if (!form) return;
 
-  /* dopoki nie ma wdrozonego skryptu arkusza, pokazujemy formularz Google */
-  if (!ep) {
-    form.style.display = 'none';
-    const fb = document.getElementById('formFallback');
-    if (fb) fb.style.display = 'block';
-    return;
-  }
-
   const errBox = document.getElementById('formErr');
   const showErr = (name, on) => {
     const el = form.querySelector('[data-err="' + name + '"]');
@@ -580,12 +568,39 @@
     };
 
     try {
-      await fetch(ep, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+      /* 1) Netlify Forms: dziala od razu, bez zadnej konfiguracji.
+            Zgloszenia widac w panelu Netlify, w zakladce Forms.      */
+      const netlifyBody = new URLSearchParams({
+        'form-name':  'zapisy',
+        ticket:       ticketCode,
+        event:        payload.event,
+        gender:       payload.gender,
+        firstName:    payload.firstName,
+        lastName:     payload.lastName,
+        age:          payload.age,
+        email:        payload.email,
+        phone:        payload.phone,
+        level:        payload.level,
+        price:        String(payload.price),
+        terms:        payload.terms ? 'TAK' : 'NIE',
+        marketing:    payload.marketing ? 'TAK' : 'NIE'
       });
+
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: netlifyBody.toString()
+      });
+
+      /* 2) arkusz Google, jesli endpoint jest wpisany w config.js */
+      if (ep) {
+        fetch(ep, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      }
     } catch (err) {
       btn.disabled = false;
       btn.innerHTML = 'Zapisz się <span class="arw" aria-hidden="true">&#8594;</span>';
