@@ -346,12 +346,7 @@
 
     <!-- WEJSCIOWKA, pojawia sie po wyslaniu zgloszenia -->
     <div class="ticket" id="ticket">
-      <div class="ticket-top">
-        <span class="t">Match Point &middot; wejściówka</span>
-        <span class="ticket-badge" id="tStatus">Do opłacenia</span>
-      </div>
       <div class="ticket-body">
-        <p class="ticket-code" id="tCode">MP-0000</p>
         <p class="ticket-name" id="tName"></p>
 
         <div class="ticket-facts">
@@ -365,15 +360,27 @@
           <p><b>Opłać miejsce BLIK-iem na numer:</b></p>
           <span class="num" id="tBlik">731 210 703</span>
           <p class="title-hint">W tytule wpisz: <b id="tTitle"></b></p>
-          <p style="margin-top:12px">Potwierdzenie zgłoszenia wysyłamy na Twój e-mail od razu. Miejsce jest zarezerwowane dopiero po zaksięgowaniu wpłaty, więc opłać je jak najszybciej.</p>
+
           <div class="ticket-actions">
-            <button type="button" id="tCopyNum">Skopiuj numer BLIK</button>
-            <button type="button" id="tCopy">Skopiuj tytuł przelewu</button>
-            <button type="button" id="tPrint">Zapisz jako PDF</button>
+            <button type="button" class="btn-paid" id="tPaid">Zapłacono</button>
           </div>
+          <div class="paid-msg" id="tPaidMsg"></div>
         </div>
       </div>
     </div>
+
+    <!-- ukryty formularz, zeby Netlify zarejestrowal zgloszenia wplat -->
+    <form name="wplaty" method="POST" data-netlify="true" hidden>
+      <input type="hidden" name="form-name" value="wplaty">
+      <input type="text" name="ticket">
+      <input type="text" name="event">
+      <input type="text" name="firstName">
+      <input type="text" name="lastName">
+      <input type="text" name="gender">
+      <input type="email" name="email">
+      <input type="text" name="phone">
+      <input type="text" name="price">
+    </form>
 
   </div>
 </section>
@@ -551,7 +558,7 @@
 
     const ticketCode = code();
     const price = v('gender') === 'Kobieta' ? e.priceW : e.priceM;
-    const title = ticketCode + ' ' + v('firstName') + ' ' + v('lastName');
+    const title = v('firstName') + ' ' + payload.lastName;
 
     const payload = {
       ticket:    ticketCode,
@@ -623,7 +630,6 @@
     }
 
     /* wejsciowka */
-    document.getElementById('tCode').textContent  = ticketCode;
     document.getElementById('tName').textContent  = v('firstName') + ' ' + payload.lastName;
     document.getElementById('tPrice').textContent = price + ' zł';
     document.getElementById('tBlik').textContent  = e.blik;
@@ -634,19 +640,61 @@
     t.classList.add('show');
     t.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    document.getElementById('tCopy').addEventListener('click', function(){
-      navigator.clipboard.writeText(title).then(() => {
-        this.textContent = 'Skopiowane';
-        setTimeout(() => { this.textContent = 'Skopiuj tytuł przelewu'; }, 2000);
+    /* Zaplacono: zgloszenie wplaty do potwierdzenia i mail do uczestnika */
+    const paidBtn = document.getElementById('tPaid');
+    const paidMsg = document.getElementById('tPaidMsg');
+
+    paidBtn.addEventListener('click', async () => {
+      paidBtn.disabled = true;
+      paidBtn.textContent = 'Zgłaszam...';
+
+      const body = new URLSearchParams({
+        'form-name': 'wplaty',
+        ticket:    ticketCode,
+        event:     payload.event,
+        firstName: payload.firstName,
+        lastName:  payload.lastName,
+        gender:    payload.gender,
+        email:     payload.email,
+        phone:     payload.phone,
+        price:     String(price)
       });
+
+      let wyslane = false;
+      try {
+        const r = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString()
+        });
+        if (r.ok) wyslane = true;
+      } catch (err) { /* obslugujemy nizej */ }
+
+      if (ep) {
+        fetch(ep, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(Object.assign({ action: 'paid' }, payload))
+        }).catch(() => {});
+        wyslane = true;
+      }
+
+      if (!wyslane) {
+        paidBtn.disabled = false;
+        paidBtn.textContent = 'Zapłacono';
+        paidMsg.className = 'paid-msg bad show';
+        paidMsg.innerHTML = 'Nie udało się zgłosić wpłaty. Napisz na '
+          + '<a href="mailto:match.point.date@gmail.com">match.point.date@gmail.com</a>.';
+        return;
+      }
+
+      paidBtn.remove();
+      paidMsg.className = 'paid-msg show';
+      paidMsg.innerHTML = '<b>Dzięki, zgłosiliśmy Twoją wpłatę.</b> '
+        + 'Potwierdzenie udziału wysyłamy na <b>' + payload.email + '</b> '
+        + 'po jej zaksięgowaniu.';
     });
-    document.getElementById('tCopyNum').addEventListener('click', function(){
-      navigator.clipboard.writeText(e.blik.replace(/\s/g, '')).then(() => {
-        this.textContent = 'Skopiowane';
-        setTimeout(() => { this.textContent = 'Skopiuj numer BLIK'; }, 2000);
-      });
-    });
-    document.getElementById('tPrint').addEventListener('click', () => window.print());
   });
 })();
 </script>
