@@ -559,7 +559,6 @@
 
     const ticketCode = code();
     const price = v('gender') === 'Kobieta' ? e.priceW : e.priceM;
-    const title = v('firstName') + ' ' + payload.lastName;
 
     const payload = {
       ticket:    ticketCode,
@@ -575,6 +574,9 @@
       terms:     !!f.get('terms'),
       marketing: !!f.get('marketing')
     };
+
+    /* tytul przelewu: imie i poczatek nazwiska. Musi byc PO payload. */
+    const title = payload.firstName + ' ' + payload.lastName;
 
     let zapisane = false;
 
