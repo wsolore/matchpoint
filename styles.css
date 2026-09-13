@@ -415,3 +415,98 @@ body.doc{ background:var(--paper); }
   margin:56px 0 0; padding-top:22px; border-top:2px solid var(--concrete);
   font-size:.88rem; color:var(--ink-soft);
 }
+
+/* ============================================================
+   DODATKI: link do IG w naglowku, serduszka, stan "po wydarzeniu"
+   ============================================================ */
+
+/* link do Instagrama wysoko, w naglowku */
+.hero-top .right{ display:flex; align-items:center; gap:20px; }
+.ig{
+  font-size:.78rem; font-weight:600; letter-spacing:.1em;
+  text-decoration:none; white-space:nowrap;
+  border-bottom:1px solid rgba(245,243,236,.45);
+  padding-bottom:2px;
+}
+.ig:hover{ border-color:var(--line); }
+.doc-head .ig, .hero-top .ig{ color:rgba(245,243,236,.9); }
+
+/* serduszko zamiast gwiazdki */
+.glyph{ color:var(--warm); font-size:.95rem; line-height:1; }
+.dark .glyph,.deep .glyph{ color:#f0a98b; }
+.ticks .m{ color:var(--warm); }
+
+/* wydarzenie juz sie odbylo */
+.notice{
+  background:var(--court-deep); color:var(--line);
+  padding:18px 0;
+  font-size:.9rem; font-weight:400;
+}
+.notice .wrap{ display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; justify-content:space-between; }
+.notice b{ font-weight:600; }
+.notice a{ color:var(--lime); text-decoration:underline; text-underline-offset:3px; }
+
+.fixture--past{ opacity:.55; }
+.fixture--past .free{ color:var(--ink-soft); }
+
+/* kompaktowy blok informacyjny */
+.pair{ display:grid; gap:28px; margin:48px 0 0; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+.pair h3{ font-size:.98rem; font-weight:600; margin:0 0 14px; letter-spacing:.02em; }
+
+/* --- licznik zapisanych: liczba + pasek postepu --- */
+.pool .n{ display:block; margin:12px 0 0; font-size:clamp(2rem,5vw,3rem); font-weight:300; line-height:1; }
+.pool .n .lim{ font-size:.5em; font-weight:400; opacity:.6; }
+.pool .bar{ display:block; height:6px; margin:18px 0 10px; background:rgba(245,243,236,.2); }
+.pool .bar i{ display:block; height:100%; background:var(--lime); transition:width .4s ease; }
+.pool[data-full="true"] .bar i{ background:#f0a98b; }
+
+/* ============================================================
+   ANIMACJA: serwis i odbicie pilki + zamach rakieta
+   Odpala sie raz, przy wejsciu na strone.
+   Wylaczana automatycznie przy prefers-reduced-motion.
+   ============================================================ */
+
+@keyframes serve{
+  0%   { transform:translate(-50%,-50%) translate(34vw,-46vh) rotate(0deg)   scale(.78); opacity:0; }
+  8%   { opacity:1; }
+  52%  { transform:translate(-50%,-50%) translate(0,3.2vh)    rotate(420deg) scale(1); }
+  60%  { transform:translate(-50%,-50%) translate(0,4.4vh)    rotate(460deg) scaleX(1.16) scaleY(.84); }
+  74%  { transform:translate(-50%,-50%) translate(0,-3.4vh)   rotate(520deg) scale(1); }
+  88%  { transform:translate(-50%,-50%) translate(0,.9vh)     rotate(560deg) scaleX(1.05) scaleY(.96); }
+  100% { transform:translate(-50%,-50%) translate(0,0)        rotate(580deg) scale(1); }
+}
+
+@keyframes idle{
+  0%,100% { margin-top:0; }
+  50%     { margin-top:-7px; }
+}
+
+.ball{
+  animation:
+    serve 1.5s cubic-bezier(.34,.06,.28,1) both,
+    idle  4.2s ease-in-out 1.6s infinite;
+}
+
+/* rakieta: jeden zamach, potem znika i zostaje pilka */
+.racket{
+  position:absolute; z-index:-1;
+  left:85.8%; top:15.6%;
+  width:clamp(86px,13vw,190px);
+  transform-origin:75% 88%;
+  opacity:0;
+  pointer-events:none;
+  animation:swing 1.15s cubic-bezier(.3,.1,.25,1) both;
+}
+.racket svg{ width:100%; height:auto; display:block; }
+
+@keyframes swing{
+  0%   { opacity:0; transform:translate(14%,-58%) rotate(-74deg); }
+  18%  { opacity:.85; }
+  40%  { opacity:.85; transform:translate(-42%,-62%) rotate(16deg); }
+  100% { opacity:0;  transform:translate(-78%,-64%) rotate(46deg); }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ball{ animation:none; }
+  .racket{ display:none; }
+}
