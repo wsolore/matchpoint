@@ -365,8 +365,9 @@
           <p><b>Opłać miejsce BLIK-iem na numer:</b></p>
           <span class="num" id="tBlik">731 210 703</span>
           <p class="title-hint">W tytule wpisz: <b id="tTitle"></b></p>
-          <p style="margin-top:12px">Po zaksięgowaniu wpłaty wyślemy potwierdzenie na podany adres e-mail. Do tego momentu miejsce jest dostępne dla innych osób.</p>
+          <p style="margin-top:12px">Potwierdzenie zgłoszenia wysyłamy na Twój e-mail od razu. Miejsce jest zarezerwowane dopiero po zaksięgowaniu wpłaty, więc opłać je jak najszybciej.</p>
           <div class="ticket-actions">
+            <button type="button" id="tCopyNum">Skopiuj numer BLIK</button>
             <button type="button" id="tCopy">Skopiuj tytuł przelewu</button>
             <button type="button" id="tPrint">Zapisz jako PDF</button>
           </div>
@@ -637,6 +638,12 @@
       navigator.clipboard.writeText(title).then(() => {
         this.textContent = 'Skopiowane';
         setTimeout(() => { this.textContent = 'Skopiuj tytuł przelewu'; }, 2000);
+      });
+    });
+    document.getElementById('tCopyNum').addEventListener('click', function(){
+      navigator.clipboard.writeText(e.blik.replace(/\s/g, '')).then(() => {
+        this.textContent = 'Skopiowane';
+        setTimeout(() => { this.textContent = 'Skopiuj numer BLIK'; }, 2000);
       });
     });
     document.getElementById('tPrint').addEventListener('click', () => window.print());
