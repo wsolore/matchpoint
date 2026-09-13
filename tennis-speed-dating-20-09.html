@@ -246,21 +246,21 @@
 <section class="dark" id="zapisy">
   <div class="wrap">
     <span class="eyebrow" style="color:rgba(245,243,236,.78)">Zapisy</span>
-    <h2 class="h2" style="margin-top:14px">Kto już jest</h2>
-    <p class="sub">Miejsca liczymy osobno dla kobiet i mężczyzn, żeby na korcie było równo.</p>
+    <h2 class="h2" style="margin-top:14px">Wolne miejsca</h2>
+    <p class="sub">Liczymy je osobno dla kobiet i mężczyzn, żeby na korcie było równo. Miejsce jest zajęte dopiero po zaksięgowaniu wpłaty.</p>
 
     <div class="pools">
       <div class="pool" data-pool="women">
         <span class="k">Kobiety</span>
         <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
-        <span class="st" data-st>zapisanych</span>
+        <span class="st" data-st>opłaconych</span>
       </div>
       <div class="pool" data-pool="men">
         <span class="k">Mężczyźni</span>
         <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
-        <span class="st" data-st>zapisanych</span>
+        <span class="st" data-st>opłaconych</span>
       </div>
     </div>
 
@@ -460,9 +460,10 @@
   const e  = MATCHPOINT.next;
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
 
-  /* ---------- liczniki zapisanych ----------
-     Zrodlo prawdy to arkusz Google. Wartosci z config.js sluza
-     tylko jako awaryjne, gdy odpytanie arkusza sie nie uda.      */
+  /* ---------- licznik oplaconych miejsc ----------
+     Liczymy osoby z "TAK" w kolumnie "Oplacone", bo dopiero wplata
+     rezerwuje miejsce. Zrodlo prawdy to arkusz Google; wartosci
+     z config.js sluza jako awaryjne.                              */
   function renderPools(w, m){
     const pools = {
       women: { taken: w, limit: e.limitWomen },
@@ -479,7 +480,7 @@
       el.querySelector('[data-bar]').style.width = Math.min(100, (taken / p.limit) * 100) + '%';
       el.querySelector('[data-st]').textContent = free === 0
         ? 'skład zamknięty'
-        : 'zapisanych, zostały ' + (free === 1 ? '1 miejsce' : free + ' miejsca');
+        : 'opłaconych, zostały ' + (free === 1 ? '1 miejsce' : free + ' miejsca');
     });
 
     const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
@@ -487,15 +488,15 @@
     const summary = document.querySelector('[data-spots-summary]');
     if (summary) summary.textContent = taken >= total
       ? 'Skład zamknięty, napisz do nas na listę rezerwową'
-      : 'Zapisanych ' + taken + ' z ' + total;
+      : 'Opłaconych miejsc ' + taken + ' z ' + total;
   }
 
-  renderPools(e.takenWomen, e.takenMen);
+  renderPools(e.paidWomen, e.paidMen);
 
   if (ep) {
     fetch(ep + '?t=' + Date.now())
       .then(r => r.json())
-      .then(d => { if (d && d.ok) renderPools(d.women, d.men); })
+      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
       .catch(() => {});
   }
 

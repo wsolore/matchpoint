@@ -304,21 +304,21 @@
     const summary = document.querySelector('[data-spots-summary]');
     if (summary) summary.textContent = free === 0
       ? 'Skład zamknięty'
-      : 'Zapisanych ' + taken + ' z ' + total;
+      : 'Opłaconych miejsc ' + taken + ' z ' + total;
 
     const badge = document.querySelector('[data-fixture-free]');
     if (badge) badge.textContent = free === 0
       ? 'Skład zamknięty'
-      : taken + ' / ' + total + ' zapisanych';
+      : taken + ' / ' + total + ' miejsc zajętych';
   }
 
-  render(e.takenWomen, e.takenMen);
+  render(e.paidWomen, e.paidMen);
 
-  /* liczba zapisanych pochodzi z arkusza Google */
+  /* liczba oplaconych miejsc pochodzi z arkusza Google */
   if (ep) {
     fetch(ep + '?t=' + Date.now())
       .then(r => r.json())
-      .then(d => { if (d && d.ok) render(d.women, d.men); })
+      .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })
       .catch(() => {});
   }
 })();

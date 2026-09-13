@@ -1,7 +1,8 @@
 /* ============================================================
    MATCH POINT — jedyny plik do edycji
    ------------------------------------------------------------
-   1) PO KAZDEJ WPLACIE zmien takenWomen / takenMen.
+   1) PO KAZDEJ ZAKSIEGOWANEJ WPLACIE zmien paidWomen / paidMen.
+      Licznik na stronie pokazuje OPLACONE miejsca, nie zgloszenia.
    2) sheetEndpoint wklejasz raz, po wdrozeniu skryptu Google
       (instrukcja: docs/apps-script.md). Dopoki jest puste,
       formularz na stronie pokazuje przycisk do Google Forms.
@@ -33,9 +34,10 @@ const MATCHPOINT = {
     limitWomen: 6,
     limitMen:   6,
 
-    /* ↓↓↓ TYLKO TE DWIE LICZBY ZMIENIASZ NA BIEZACO ↓↓↓ */
-    takenWomen: 5,
-    takenMen:   2
+    /* ↓↓↓ TYLKO TE DWIE LICZBY ZMIENIASZ NA BIEZACO ↓↓↓
+       Liczba osob z "TAK" w kolumnie "Oplacone" w arkuszu.         */
+    paidWomen: 2,
+    paidMen:   0
   },
 
   /* --- archiwum --- */
