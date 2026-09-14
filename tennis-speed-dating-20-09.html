@@ -262,13 +262,11 @@
         <span class="k">Kobiety</span>
         <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
-        <span class="st" data-st>opłaconych</span>
       </div>
       <div class="pool" data-pool="men">
         <span class="k">Mężczyźni</span>
         <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
-        <span class="st" data-st>opłaconych</span>
       </div>
     </div>
 
@@ -472,10 +470,10 @@
      Liczymy osoby z "TAK" w kolumnie "Oplacone", bo dopiero wplata
      rezerwuje miejsce. Zrodlo prawdy to arkusz Google; wartosci
      z config.js sluza jako awaryjne.                              */
-  function renderPools(w, m, wPend, mPend){
+  function renderPools(w, m){
     const pools = {
-      women: { taken: w, limit: e.limitWomen, pend: wPend || 0 },
-      men:   { taken: m, limit: e.limitMen,   pend: mPend || 0 }
+      women: { taken: w, limit: e.limitWomen },
+      men:   { taken: m, limit: e.limitMen }
     };
     Object.entries(pools).forEach(([key, p]) => {
       const el = document.querySelector('[data-pool="' + key + '"]');
@@ -486,11 +484,6 @@
       el.querySelector('[data-taken]').textContent = taken;
       el.querySelector('.lim').textContent = ' / ' + p.limit;
       el.querySelector('[data-bar]').style.width = Math.min(100, (taken / p.limit) * 100) + '%';
-      let opis = free === 0
-        ? 'skład zamknięty'
-        : 'opłaconych, zostały ' + (free === 1 ? '1 miejsce' : free + ' miejsca');
-      if (p.pend > 0) opis += ', ' + p.pend + ' czeka na wpłatę';
-      el.querySelector('[data-st]').textContent = opis;
     });
 
     const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
@@ -506,8 +499,7 @@
   if (ep && MATCHPOINT.useSheetCounter) {
     fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
-      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid,
-          Math.max(0, d.women - d.womenPaid), Math.max(0, d.men - d.menPaid)); })
+      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
       .catch(() => {});
   }
 

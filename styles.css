@@ -456,7 +456,7 @@ body.doc{ background:var(--paper); }
 /* --- licznik zapisanych: liczba + pasek postepu --- */
 .pool .n{ display:block; margin:12px 0 0; font-size:clamp(2rem,5vw,3rem); font-weight:300; line-height:1; }
 .pool .n .lim{ font-size:.5em; font-weight:400; opacity:.6; }
-.pool .bar{ display:block; height:6px; margin:18px 0 10px; background:rgba(245,243,236,.2); }
+.pool .bar{ display:block; height:6px; margin:18px 0 0; background:rgba(245,243,236,.2); }
 .pool .bar i{ display:block; height:100%; background:var(--lime); transition:width .4s ease; }
 .pool[data-full="true"] .bar i{ background:#f0a98b; }
 
