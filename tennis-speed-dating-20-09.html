@@ -241,12 +241,12 @@
     <div class="pools">
       <div class="pool" data-pool="women">
         <span class="k">Kobiety</span>
-        <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
+        <span class="n"><b data-taken>–</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
       </div>
       <div class="pool" data-pool="men">
         <span class="k">Mężczyźni</span>
-        <span class="n"><b data-taken>0</b><span class="lim"> / 6</span></span>
+        <span class="n"><b data-taken>–</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
       </div>
     </div>
@@ -472,13 +472,29 @@
       : 'Wolnych miejsc ' + wolne;
   }
 
-  renderPools(e.paidWomen, e.paidMen);
+  /* Nie pokazujemy liczb z config.js od razu, bo po chwili zmienilyby
+     sie na dane z arkusza i licznik by mrugal. Czekamy na arkusz.
+     Liczby awaryjne wchodza tylko wtedy, gdy odpytanie sie nie uda
+     albo trwa dluzej niz cztery sekundy.                          */
+  let policzone = false;
+  function awaryjnie(){
+    if (policzone) return;
+    policzone = true;
+    renderPools(e.paidWomen, e.paidMen);
+  }
 
   if (ep && MATCHPOINT.useSheetCounter) {
+    const zegar = setTimeout(awaryjnie, 4000);
     fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
-      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
-      .catch(() => {});
+      .then(d => {
+        clearTimeout(zegar);
+        if (d && d.ok) { policzone = true; renderPools(d.womenPaid, d.menPaid); }
+        else awaryjnie();
+      })
+      .catch(() => { clearTimeout(zegar); awaryjnie(); });
+  } else {
+    awaryjnie();
   }
 
   document.querySelectorAll('[data-blik]').forEach(n => n.textContent = e.blik);

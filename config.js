@@ -31,7 +31,7 @@ const MATCHPOINT = {
     address: 'Nowoursynowska 92, Warszawa',
     age:     '25–40',
     /* dane wykorzystywane w mailu z potwierdzeniem */
-    surface:   'ziemny, mączka',
+    surface:   'ziemny (mączka)',
     shoes:     'obuwie na mączkę',
     transport: 'Metro Ursynów → Nowoursynowska 92 → kampus SGGW',
     priceW:  90,

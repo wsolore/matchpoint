@@ -293,14 +293,27 @@
       : 'Wolnych miejsc ' + free;
   }
 
-  render(e.paidWomen, e.paidMen);
+  /* Czekamy na arkusz, zeby licznik nie mrugal liczba z config.js.
+     Wartosci awaryjne tylko przy bledzie albo po czterech sekundach. */
+  let policzone = false;
+  function awaryjnie(){
+    if (policzone) return;
+    policzone = true;
+    render(e.paidWomen, e.paidMen);
+  }
 
-  /* liczba oplaconych miejsc pochodzi z arkusza Google */
   if (ep && MATCHPOINT.useSheetCounter) {
+    const zegar = setTimeout(awaryjnie, 4000);
     fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
-      .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })
-      .catch(() => {});
+      .then(d => {
+        clearTimeout(zegar);
+        if (d && d.ok) { policzone = true; render(d.womenPaid, d.menPaid); }
+        else awaryjnie();
+      })
+      .catch(() => { clearTimeout(zegar); awaryjnie(); });
+  } else {
+    awaryjnie();
   }
 })();
 </script>
