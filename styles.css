@@ -107,7 +107,7 @@ img{ max-width:100%; display:block; }
    wysokosc ekranu, wiec strzala wychodzila dwa razy szersza niz
    ekran. */
 .diag{
-  --skos:-16deg;
+  --skos:-19.2deg;
   position:absolute; z-index:-1;
   left:72%; top:64%;
   width:40vw;
@@ -116,13 +116,25 @@ img{ max-width:100%; display:block; }
 }
 /* overflow:visible jest tu warunkiem lotu: na starcie strzala stoi
    daleko poza wlasnym viewBoxem. Przycina ja dopiero .hero. */
-.diag svg{ width:100%; height:auto; display:block; overflow:visible; }
+.diag .strzala-svg{ width:100%; height:auto; display:block; overflow:visible; }
+
+/* Pilka stoi w punkcie przebicia. W viewBoxie strzaly jej srodek byl
+   w 640 140 przy 1000x280, a srednica miala 176 jednostek — stad
+   17,6% szerokosci pudelka, lewa krawedz w 55,2% szerokosci i gorna
+   w 18,571% wysokosci. Procenty, wiec trzyma sie przy kazdej dlugosci
+   strzaly. Jest po strzale w kolejnosci, wiec ja zaslania. */
+.diag .pilka-svg{
+  position:absolute;
+  left:55.2%; top:18.571%; width:17.6%; height:auto;
+  display:block;
+}
+
 /* non-scaling-stroke: grubosc linii jest w pikselach i nie zalezy od
    tego, jak bardzo grafika jest przeskalowana. Dzieki temu strzala ma
    wszedzie te sama wage optyczna i nie trzeba dobierac grubosci do
    kazdej dlugosci osobno. Szwy na pilce zostaja skalowane, bo maja byc
    stala czescia jej srednicy. */
-.diag .strzala path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
+.diag .strzala-svg path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
 
 /* Grot lezy wzdluz strzaly — obrot jest wpisany w SVG, nie w CSS, bo
    grot nie kontruje juz skosu. Serce stalo wczesniej pionowo, w zwyklym
@@ -157,37 +169,34 @@ img{ max-width:100%; display:block; }
    Stan bazowy, bez klasy i bez JavaScriptu, to pozycja koncowa. To
    jest warunek calego mechanizmu: jesli skrypt nie wykona sie, strzala
    ma stac na miejscu, a nie zostac poza ekranem. Nie przenos wiec
-   `animation` z powrotem na samo `.diag .strzala` bez zdjecia klasy
-   z regul `animation-name` nizej. */
-.diag .strzala{
+   animacji z powrotem na sama regule bez klasy. */
+.diag .strzala-svg{
   animation:.33s cubic-bezier(.3,.6,.5,1) .12s backwards;
   animation-name:none;
 }
-.mp-lot .diag .strzala{ animation-name:mpLot40; }
+.mp-lot .diag .strzala-svg{ animation-name:mpLotO; }
 
-/* Droga lotu, w jednostkach viewBoxa: tyle strzala cofa sie na starcie,
-   zeby stanac cala poza ekranem. Wartosc to w przyblizeniu
-   100000 / szerokosc znaku w vw — grot musi sie cofnac o szerokosc
-   ekranu, a jednostka viewBoxa jest tym mniejsza, im wezszy jest znak.
-   Przy jednej wartosci dla wszystkich strzala na telefonie spedzalaby
-   pol animacji poza ekranem, dlatego kazdy breakpoint ma wlasna.
+/* Klatki lotu (`mpLotO`) sa WSPOLNE dla obu znakow i siedza nizej,
+   w sekcji strony glownej. Droga jest tam podana w vw.
+   Wczesniej kazdy breakpoint mial wlasny zestaw klatek, bo przesuwana
+   byla grupa w SVG i droga liczyla sie w jednostkach viewBoxa — innych
+   przy kazdej dlugosci strzaly. Teraz przesuwany jest element <svg>,
+   wiec droga jest w pikselach ekranu i jedna wartosc wystarcza.
+   Wartosci w klatkach sa wypisane wprost, razem z klatka koncowa:
+   var() w keyframes i domyslna klatka to dwa miejsca, w ktorych
+   przegladarki historycznie sie roznily. */
 
-   Kazdy breakpoint ma wlasny ZESTAW KLATEK i przelacza sie na niego
-   przez `animation-name`. Wartosci sa wypisane wprost, razem z klatka
-   `to`, zamiast jednej klatki `translateX(var(--lot))` bez `to`.
-   Powod jest ostroznosciowy, nie sprawdzony na urzadzeniu: `var()`
-   w `@keyframes` i domyslna klatka koncowa to dwa miejsca, w ktorych
-   przegladarki historycznie sie roznily. Wersja wypisana wprost
-   nie zalezy od niczyjej interpretacji. */
-@keyframes mpLot40{ from{ transform:translateX(-2600px); } to{ transform:translateX(0); } }
-@keyframes mpLot72{ from{ transform:translateX(-1450px); } to{ transform:translateX(0); } }
-@keyframes mpLot66{ from{ transform:translateX(-1580px); } to{ transform:translateX(0); } }
-@keyframes mpLot86{ from{ transform:translateX(-1200px); } to{ transform:translateX(0); } }
-@keyframes mpLot78{ from{ transform:translateX(-1300px); } to{ transform:translateX(0); } }
+/* Pilka kreci sie od uderzenia strzaly i potem powtarza obrot co 6 s,
+   tak samo jak na stronie glownej. Obrot idzie wokol wlasnego srodka:
+   pilka jest osobnym elementem <svg>, wiec obrot idzie wokol srodka
+   jej wlasnego pudelka i nie trzeba nic ustawiac.
+   Opoznienie 0,33 s to chwila, w ktorej grot wchodzi w pilke. */
+.mp-lot .diag .pilka-svg{ animation:mpObrot 6s .33s infinite; }
 
 /* Przy ograniczonym ruchu zdejmujemy animacje niezaleznie od klasy. */
 @media (prefers-reduced-motion:reduce){
-  .diag .strzala, .mp-lot .diag .strzala{ animation:none; }
+  .diag .strzala-svg, .mp-lot .diag .strzala-svg,
+  .mp-lot .diag .pilka-svg{ animation:none; }
 }
 
 /* Strona archiwalna ma hero o polowe nizsze (.hero--short), wiec znak
@@ -205,12 +214,10 @@ img{ max-width:100%; display:block; }
    pionowa i strzala wychodzila dolem za ekran, przez stopke hero. */
 @media (max-width:1100px) and (orientation:portrait){
   .diag{ left:50%; top:72%; width:72vw; }
-  .mp-lot .diag .strzala{ animation-name:mpLot72; }
   /* Archiwum: hero ma tu 444 px, a pas miedzy lockupem a stopka niecale
      50 px, wiec znak nie ma jak wejsc w pas. Stoi po prawej, w wolnym
      polu obok lockupu — tak jak w ukladzie poziomym. */
   .hero--short .diag{ left:68%; top:46%; width:66vw; }
-  .mp-lot .hero--short .diag .strzala{ animation-name:mpLot66; }
 }
 /* Telefon w pionie. Pas wolny od tekstu ma na kazdej stronie podobna
    wysokosc (ok. 105 px), ale lezy na innej wysokosci, bo stopka hero
@@ -222,19 +229,17 @@ img{ max-width:100%; display:block; }
 @media (max-width:640px) and (orientation:portrait){
   /* Nadpisanie musi objac takze .hero--short, bo regula archiwum ma
      dwie klasy i inaczej wygralaby ta z tabletu. */
-  .diag, .hero--short .diag{ --skos:-11deg; left:50%; width:86vw; }
-  .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot86; }
+  .diag, .hero--short .diag{ --skos:-13.2deg; left:50%; width:86vw; }
   .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
   .hero--short .diag{ top:55%; }  /* archiwum */
-  .diag .strzala path{ stroke-width:4px; }
+  .diag .strzala-svg path{ stroke-width:4px; }
 }
 /* Niskie telefony (360x640 i podobne): hero jest krotsze, wiec pas
    miedzy lockupem a stopka ma niecale 70 px. Strzala musi byc
    krotsza i jeszcze plaszcza, inaczej lotki siadaja na napisie
    NAJBLIZSZE. */
 @media (max-width:640px) and (orientation:portrait) and (max-height:700px){
-  .diag, .hero--short .diag{ --skos:-8deg; width:78vw; }
-  .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot78; }
+  .diag, .hero--short .diag{ --skos:-9.6deg; width:78vw; }
   .diag{ top:42%; }
   .hero--short .diag{ top:49%; }
 }
@@ -282,7 +287,7 @@ img{ max-width:100%; display:block; }
    transform tego SVG — dwie rzeczy nie zmieszcza sie w jednej
    wlasciwosci. */
 .o-znak .strzala-lot{
-  --skos:-8deg;
+  --skos:-9.6deg;
   --dl:63vw;
   position:absolute;
   left:calc(-.64 * var(--dl)); top:calc(-.14 * var(--dl));
@@ -298,13 +303,14 @@ img{ max-width:100%; display:block; }
 /* --- os czasu strony glownej, wlaczana klasa mp-lot tak samo jak .diag ---
      0,00–0,85 s  pilka spada i odbija sie dwa razy
      0,90–1,23 s  strzala leci; grot wchodzi w pilke okolo 1,06 s
-     1,05–2,05 s  pilka kreci sie od uderzenia i wyhamowuje
+     1,05 s       pilka kreci sie od uderzenia i wyhamowuje, potem
+                  powtarza obrot co 6 s
    Obrot jest o pelne dwa obroty, wiec konczy sie tam, gdzie sie zaczal
    i nie trzeba wypelnienia `forwards` — po animacji nie zostaje zaden
    transform, ktory moglby trzymac warstwe kompozytowana. */
 .mp-lot .o-znak .pilka-skok{ animation:mpSpadek .85s backwards; }
 .mp-lot .o-znak .strzala-svg{ animation:mpLotO .33s cubic-bezier(.3,.6,.5,1) .9s backwards; }
-.mp-lot .o-znak .pilka-svg{ animation:mpObrot 1s cubic-bezier(.12,.78,.18,1) 1.05s; }
+.mp-lot .o-znak .pilka-svg{ animation:mpObrot 6s 1.05s infinite; }
 
 /* Spadek: w dol przyspiesza, w gore hamuje. Krzywe sa podane przy
    klatkach, bo kazdy odcinek ma inny charakter — z jedna krzywa na
@@ -317,12 +323,20 @@ img{ max-width:100%; display:block; }
   90%  { transform:translateY(-.34em);  animation-timing-function:ease-in; }
   100% { transform:translateY(0); }
 }
-@keyframes mpObrot{ from{ transform:rotate(0deg); } to{ transform:rotate(720deg); } }
+/* Obrot powtarza sie co 6 s: sam obrot zajmuje pierwsza sekunde cyklu,
+   reszta to bezruch. Dwa pelne obroty, wiec koniec wypada tam, gdzie
+   start i przejscie miedzy cyklami jest niewidoczne. Krzywa siedzi
+   przy klatce 0%, bo dotyczy tylko odcinka z ruchem. */
+@keyframes mpObrot{
+  0%   { transform:rotate(0deg);   animation-timing-function:cubic-bezier(.12,.78,.18,1); }
+  17%  { transform:rotate(720deg); }
+  100% { transform:rotate(720deg); }
+}
 /* Droga lotu w vw, nie w jednostkach viewBoxa: tu przesuwany jest
    element HTML, nie grupa w SVG, wiec przesuniecie liczy sie w pikselach
    ekranu. 95vw to z zapasem tyle, zeby grot stanal poza lewa krawedzia
    na kazdym breakpoincie — i jedna wartosc wystarcza dla wszystkich. */
-@keyframes mpLotO{ from{ transform:translateX(-95vw); } to{ transform:translateX(0); } }
+@keyframes mpLotO{ from{ transform:translateX(-105vw); } to{ transform:translateX(0); } }
 
 @media (prefers-reduced-motion:reduce){
   .mp-lot .o-znak .pilka-skok,
@@ -331,10 +345,10 @@ img{ max-width:100%; display:block; }
 }
 
 @media (max-width:1100px){
-  .o-znak .strzala-lot{ --dl:68vw; }
+  .o-znak .strzala-lot{ --dl:69vw; }
 }
 @media (max-width:640px){
-  .o-znak .strzala-lot{ --skos:-7deg; --dl:70vw; }
+  .o-znak .strzala-lot{ --skos:-8.4deg; --dl:70vw; }
   .o-znak .strzala-svg path{ stroke-width:4px; }
 }
 

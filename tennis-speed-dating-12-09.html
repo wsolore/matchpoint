@@ -60,35 +60,41 @@
        przelatuje. To ona daje wrazenie przebicia.
        Geometria, kat i os czasu siedza w styles.css, sekcja .diag. -->
   <div class="diag" aria-hidden="true">
-    <svg viewBox="0 0 1000 280" overflow="visible" role="presentation">
-      <defs>
-        <clipPath id="mpPilka"><circle cx="640" cy="140" r="88"/></clipPath>
-      </defs>
-
-      <g class="strzala">
-        <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M44 108 96 140 44 172"/>
-          <path d="M88 113 136 140 88 167"/>
-          <path d="M50 140H885"/>
-        </g>
-        <!-- Serce jest GROTEM, nie ozdoba na koncu: obrocone o -90 stopni,
-             wiec ostry czubek celuje w kierunku lotu, a wciecie miedzy
-             garbami nasadza sie na koniec drzewca. Czubek wypada dokladnie
-             na osi strzaly, w punkcie 960 140. Wciecie wypada na 883. Nie kontruje skosu — grot
-             ma lezec wzdluz strzaly, a nie stac pionowo. -->
-        <g class="grot" transform="translate(835 197) rotate(-90) scale(.95 1.25)">
-          <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"
-                fill="#f2a7ba"/>
-        </g>
+    <!-- Strzala i pilka sa w DWOCH osobnych SVG, a nie w jednym.
+         Powod jest czysto praktyczny: animacja transformu na grupie <g>
+         wewnatrz SVG potrafi sie w ogole nie malowac. Grupa ma wtedy
+         poprawny obrys, poprawny stroke i transform none, a na ekranie
+         jej nie ma. Animujemy wiec transform na samych elementach
+         <svg>, bo to dziala pewnie. Pilka jest po strzale, wiec
+         zaslania to, co za nia przelatuje — i to daje przebicie. -->
+    <svg class="strzala-svg" viewBox="0 0 1000 280" overflow="visible" role="presentation">
+      <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M44 108 96 140 44 172"/>
+        <path d="M88 113 136 140 88 167"/>
+        <path d="M50 140H885"/>
       </g>
+      <!-- Serce jest GROTEM, nie ozdoba na koncu: obrocone o -90 stopni,
+           wiec ostry czubek celuje w kierunku lotu, a wciecie miedzy
+           garbami nasadza sie na koniec drzewca. Czubek wypada dokladnie
+           na osi strzaly, w punkcie 960 140, wciecie na 883. Grot nie
+           kontruje skosu — ma lezec wzdluz strzaly, a nie stac pionowo. -->
+      <g class="grot" transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+        <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"
+              fill="#f2a7ba"/>
+      </g>
+    </svg>
 
-      <g class="pilka">
-        <circle cx="640" cy="140" r="88" fill="#c9dd85"/>
-        <g clip-path="url(#mpPilka)" fill="none" stroke="#f7f5ef"
-           stroke-width="12.4" stroke-linecap="butt">
-          <path d="M571 85Q640 147 709 85"/>
-          <path d="M571 195Q640 133 709 195"/>
-        </g>
+    <!-- Pilka stoi w punkcie przebicia, czyli tam, gdzie w viewBoxie
+         strzaly byl jej srodek: 640 140 przy 1000x280. Polozenie jest
+         w procentach pudelka .diag, wiec trzyma sie przy kazdej
+         dlugosci strzaly. -->
+    <svg class="pilka-svg" viewBox="0 0 176 176" role="presentation">
+      <defs><clipPath id="mpPilka"><circle cx="88" cy="88" r="88"/></clipPath></defs>
+      <circle cx="88" cy="88" r="88" fill="#c9dd85"/>
+      <g clip-path="url(#mpPilka)" fill="none" stroke="#f7f5ef"
+         stroke-width="12.4" stroke-linecap="butt">
+        <path d="M19 33Q88 95 157 33"/>
+        <path d="M19 143Q88 81 157 143"/>
       </g>
     </svg>
   </div>
