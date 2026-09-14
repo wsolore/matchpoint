@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 200" role="presentation">
+  <!-- Znak wg logo Match Point: pilka tenisowa z wycietymi szwami,
+       przebita strzala. Strzale rysujemy pierwsza, pilka ja zaslania
+       w srodku, wiec drzewce widac tylko po bokach.
+       Paleta: pilka w kolorze linii kortu, szwy w kolorze murawy. -->
+
+  <defs>
+    <clipPath id="ball">
+      <circle cx="170" cy="100" r="80"/>
+    </clipPath>
+  </defs>
+
+  <!-- strzala, obrocona o 30 stopni w gore -->
+  <g transform="rotate(-30 170 100)" fill="none" stroke="#f5f3ec"
+     stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 100H332"/>
+    <path d="M300 72 332 100 300 128"/>
+    <path d="M14 76 44 100 14 124" stroke-width="9"/>
+    <path d="M38 80 62 100 38 120" stroke-width="9"/>
+  </g>
+
+  <!-- pilka -->
+  <circle cx="170" cy="100" r="80" fill="#f5f3ec"/>
+
+  <!-- szwy, przyciete do okregu, zeby nie wychodzily za krawedz -->
+  <g clip-path="url(#ball)" fill="none" stroke="#7d8f68"
+     stroke-width="15" stroke-linecap="butt">
+    <path d="M94.8 72.8Q170 144 245.2 72.8"/>
+    <path d="M94.8 127.2Q170 56 245.2 127.2"/>
+  </g>
+</svg>

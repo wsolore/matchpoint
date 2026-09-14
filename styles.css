@@ -80,21 +80,15 @@ img{ max-width:100%; display:block; }
   background:linear-gradient(180deg, rgba(20,26,16,.44) 0%, rgba(20,26,16,.16) 38%, rgba(20,26,16,.58) 100%);
 }
 
-/* piłka — motyw z plakatu, wpisana w przecięcie linii kortu */
-.ball{
+/* znak marki: pilka przebita strzala, jeden plik SVG */
+.mark{
   position:absolute; z-index:-1;
-  left:85.8%; top:15.6%; transform:translate(-50%,-50%);
-  width:clamp(52px,8vw,116px); aspect-ratio:1;
-  border-radius:50%;
-  background:radial-gradient(circle at 34% 30%, #eef58f 0%, #d9e565 42%, #b9cb42 78%, #96a92f 100%);
-  box-shadow:16px 24px 32px rgba(20,26,16,.45);
+  left:81%; top:24%;
+  width:clamp(210px,33vw,430px);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
 }
-.ball::before{
-  content:''; position:absolute; inset:7%;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.6);
-  clip-path:polygon(0 0,40% 0,30% 100%,0 100%);
-}
+.mark img{ width:100%; height:auto; display:block; }
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .wordmark{
@@ -468,53 +462,31 @@ body.doc{ background:var(--paper); }
 .pool[data-full="true"] .bar i{ background:#f0a98b; }
 
 /* ============================================================
-   ANIMACJA: serwis i odbicie pilki + zamach rakieta
-   Odpala sie raz, przy wejsciu na strone.
-   Wylaczana automatycznie przy prefers-reduced-motion.
+   ANIMACJA znaku marki
+   Nadlatuje z gory po skosie, odbija sie i osiada.
    ============================================================ */
 
-@keyframes serve{
-  0%   { transform:translate(-50%,-50%) translate(34vw,-46vh) rotate(0deg)   scale(.78); opacity:0; }
-  8%   { opacity:1; }
-  52%  { transform:translate(-50%,-50%) translate(0,3.2vh)    rotate(420deg) scale(1); }
-  60%  { transform:translate(-50%,-50%) translate(0,4.4vh)    rotate(460deg) scaleX(1.16) scaleY(.84); }
-  74%  { transform:translate(-50%,-50%) translate(0,-3.4vh)   rotate(520deg) scale(1); }
-  88%  { transform:translate(-50%,-50%) translate(0,.9vh)     rotate(560deg) scaleX(1.05) scaleY(.96); }
-  100% { transform:translate(-50%,-50%) translate(0,0)        rotate(580deg) scale(1); }
-}
-
-@keyframes idle{
-  0%,100% { margin-top:0; }
-  50%     { margin-top:-7px; }
-}
-
-.ball{
+.mark{
   animation:
-    serve 1.5s cubic-bezier(.34,.06,.28,1) both,
-    idle  4.2s ease-in-out 1.6s infinite;
+    wlot 1.45s cubic-bezier(.3,.05,.25,1) both,
+    oddech 5s ease-in-out 1.6s infinite;
 }
 
-/* strzala Amora: nadlatuje po locie pilki i zostaje w niej wbita.
-   Przerwa w srodku grafiki wypada dokladnie na pilce, dzieki czemu
-   drzewce widac tylko po jej bokach i czyta sie to jako przebicie. */
-.arrow{
-  position:absolute; z-index:-1;
-  left:85.8%; top:15.6%;
-  width:clamp(150px,23vw,318px);
-  pointer-events:none;
-  animation:shoot 1.05s cubic-bezier(.16,.74,.24,1) 1.2s both;
+@keyframes wlot{
+  0%   { opacity:0; transform:translate(-50%,-50%) translate(40vw,-34vh) rotate(-22deg) scale(.78); }
+  12%  { opacity:1; }
+  60%  { transform:translate(-50%,-50%) translate(0,2.6vh) rotate(4deg) scale(1); }
+  80%  { transform:translate(-50%,-50%) translate(0,-1.4vh) rotate(-2deg) scale(1); }
+  100% { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
 }
-.arrow img{ width:100%; height:auto; display:block; }
 
-@keyframes shoot{
-  0%   { opacity:0; transform:translate(-50%,-50%) translate(52vw,-34vh) rotate(-33deg); }
-  22%  { opacity:1; }
-  100% { opacity:1; transform:translate(-50%,-50%) rotate(-33deg); }
+@keyframes oddech{
+  0%,100% { margin-top:0; }
+  50%     { margin-top:-9px; }
 }
 
 @media (prefers-reduced-motion:reduce){
-  .ball{ animation:none; }
-  .arrow{ animation:none; transform:translate(-50%,-50%) rotate(-33deg); }
+  .mark{ animation:none; }
 }
 
 /* ============================================================
@@ -543,38 +515,42 @@ p:last-child{ margin-bottom:0; }
   section{ padding:56px 0; }
 
   /* --- HERO --- */
-  .hero{ min-height:auto; padding:20px 0 44px; }
-  .hero-mid{ padding-top:34px; max-width:none; }
+  .hero{ min-height:auto; padding:18px 0 34px; }
+  .hero-mid{ padding-top:24px; max-width:none; }
+
+  /* linie kortu przeswituja przez tekst, wiec na malym ekranie
+     przygaszamy tlo mocniej */
+  .hero::after{
+    background:linear-gradient(180deg,rgba(20,26,16,.58) 0%,rgba(20,26,16,.44) 45%,rgba(20,26,16,.66) 100%);
+  }
 
   .hero-top{ gap:12px; }
   .hero-top .right{ flex-direction:column; align-items:flex-end; gap:4px; }
-  .wordmark, .back{ font-size:.78rem; letter-spacing:.14em; }
-  .ig{ font-size:.72rem; letter-spacing:.06em; }
-  .hero-top .eyebrow{ font-size:.62rem; letter-spacing:.14em; }
+  .wordmark, .back{ font-size:.72rem; letter-spacing:.12em; }
+  .ig{ font-size:.68rem; letter-spacing:.04em; }
+  .hero-top .eyebrow{ font-size:.58rem; letter-spacing:.12em; }
 
   h1{
-    font-size:1.85rem; line-height:1.18; letter-spacing:0;
+    font-size:1.55rem; line-height:1.22; letter-spacing:0;
     text-wrap:pretty;
   }
 
   /* lockup: mniejszy trekking, zeby dlugie slowo nie wychodzilo za ekran */
-  .lockup{ margin-top:26px; }
+  .lockup{ margin-top:18px; }
   .lockup .n{
-    font-size:clamp(2rem,12.5vw,3.4rem);
-    letter-spacing:.06em; line-height:1;
+    font-size:2.35rem;
+    letter-spacing:.05em; line-height:1;
   }
-  .lockup .s{ font-size:clamp(1.9rem,11vw,3rem); margin-top:-.04em; margin-left:.03em; }
+  .lockup .s{ font-size:2rem; margin-top:-.04em; margin-left:.03em; }
 
-  .lead{ margin-top:20px; font-size:1rem; line-height:1.65; max-width:none; }
+  .lead{ margin-top:14px; font-size:.95rem; line-height:1.55; max-width:none; }
 
   /* --- dane wydarzenia w hero: siatka 2 kolumny --- */
-  .hero-bottom{ flex-direction:column; align-items:stretch; gap:26px; margin-top:36px; }
-  .meta{
-    display:grid; grid-template-columns:1fr 1fr; gap:16px 18px;
-  }
+  .hero-bottom{ flex-direction:column; align-items:stretch; gap:18px; margin-top:26px; }
+  .meta{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
   .meta li{ min-width:0; padding:0; }
-  .meta .k{ font-size:.62rem; letter-spacing:.14em; }
-  .meta .v{ font-size:1.15rem; }
+  .meta .k{ font-size:.56rem; letter-spacing:.12em; }
+  .meta .v{ font-size:1.02rem; }
 
   /* --- przyciski na cala szerokosc --- */
   .cta{
@@ -650,13 +626,13 @@ p:last-child{ margin-bottom:0; }
   .doc-body ol > li{ font-size:.95rem; line-height:1.7; }
 
   /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
-  .ball{ width:46px; left:82%; top:13%; }
-  .arrow{ width:135px; left:82%; top:13%; }
+  /* znak nie moze wchodzic w linijke z logo i Instagramem */
+  .mark{ width:150px; left:78%; top:27%; opacity:.5; }
 }
 
 @media (max-width:380px){
   .wrap{ padding:0 16px; }
-  .meta{ grid-template-columns:1fr; gap:12px; }
+  .meta{ grid-template-columns:1fr 1fr; gap:10px 12px; }
   .board{ grid-template-columns:1fr; }
   .lockup .n{ letter-spacing:.03em; }
 }
