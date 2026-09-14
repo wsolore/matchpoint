@@ -101,15 +101,22 @@ img{ max-width:100%; display:block; }
 
 .hero-mid{ padding:56px 0 0; max-width:960px; }
 
+/* Haslo jest teraz linijka wprowadzajaca, nie glownym elementem.
+   Rola pierwszego planu przechodzi na lockup pod nim.
+   Przygaszenie robimy kolorem z alfa, nie opacity, zeby nie tworzyc
+   warstwy kompozytowanej i nie tracic ostrosci tekstu. */
 h1{
-  font-size:clamp(1.9rem,5.4vw,4rem);
-  font-weight:600; letter-spacing:-.01em; text-transform:uppercase;
-  text-wrap:balance;
+  font-size:clamp(1.02rem,1.7vw,1.32rem);
+  font-weight:600; letter-spacing:.1em; line-height:1.5;
+  text-transform:uppercase;
+  color:rgba(245,243,236,.68);
+  max-width:38ch;
+  text-wrap:pretty;
 }
-h1 em{ font-style:normal; color:var(--lime); }
+h1 em{ font-style:normal; color:rgba(230,239,134,.85); }
 
 /* lockup: SANS WERSALIKAMI + script pod spodem */
-.lockup{ margin:34px 0 0; }
+.lockup{ margin:18px 0 0; }
 .lockup .n{
   display:block;
   font-size:clamp(2.3rem,9vw,6.6rem);
@@ -527,9 +534,15 @@ p:last-child{ margin-bottom:0; }
   .hero-top .eyebrow{ font-size:.58rem; letter-spacing:.12em; }
 
   h1{
-    font-size:1.55rem; line-height:1.22; letter-spacing:0;
-    text-wrap:pretty;
+    font-size:.9rem; line-height:1.5; letter-spacing:.08em;
+    max-width:none;
   }
+
+  /* lead powtarza to, co mowi haslo, wiec na telefonie go nie ma */
+  .lead{ display:none; }
+
+  /* dyscyplina jest widoczna w terminarzu nizej */
+  .meta--home li:nth-child(2){ display:none; }
 
   /* lockup: mniejszy trekking, zeby dlugie slowo nie wychodzilo za ekran */
   .lockup{ margin-top:18px; }
