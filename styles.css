@@ -92,43 +92,112 @@ img{ max-width:100%; display:block; }
   background:linear-gradient(180deg, rgba(18,23,14,.20) 0%, rgba(18,23,14,.04) 42%, rgba(18,23,14,.34) 100%);
 }
 
-/* Znak marki: strzala biegnie przez cala przekatna strony, od lewego
-   dolnego naroznika do prawego gornego, i przebija pilke wpisana
-   w 72 procentach jej dlugosci.
-   Grafika w pliku jest pozioma, skos daje jej obrot. Kat jest
-   dobrany do proporcji ekranu, zeby konce wypadaly przy naroznikach.
-   118vmax przyblizia dlugosc przekatnej i dziala zarowno na szerokim
-   monitorze, jak i na wysokim telefonie. Bez animacji, wiec element
-   rysuje sie raz i zostaje ostry. */
+/* Znak marki: strzala przebija pilke wpisana w 72 procentach jej
+   dlugosci, a na koncu ma serce.
+   Nie biegnie juz przez cala przekatna strony. Przekatna przecinala
+   naglowek i przycisk, a na telefonie kladla sie na calej tresci.
+   Teraz strzala jest wpisana w wolne pole obok bloku tekstu, wiec
+   niczego nie przekresla.
+   Grafika w pliku jest pozioma, skos daje jej obrot. Pole wolne od
+   tekstu ma na kazdym breakpoincie inny kształt, wiec kat, dlugosc
+   i polozenie sa dobrane osobno. Grubosc linii jest jedna dla
+   wszystkich, patrz non-scaling-stroke nizej.
+   Dlugosc liczymy w vw, nie vmax: na telefonie w pionie vmax to
+   wysokosc ekranu, wiec strzala wychodzila dwa razy szersza niz
+   ekran. */
 .diag{
+  --skos:-31deg;
   position:absolute; z-index:-1;
-  left:50%; top:50%;
-  width:104vmax;
-  transform:translate(-50%,-50%) rotate(-30deg);
+  left:70%; top:63%;
+  width:58vw;
+  transform:translate(-50%,-50%) rotate(var(--skos));
   pointer-events:none;
 }
-.diag img{ width:100%; height:auto; display:block; }
+.diag svg{ width:100%; height:auto; display:block; overflow:visible; }
+/* non-scaling-stroke: grubosc linii jest w pikselach i nie zalezy od
+   tego, jak bardzo grafika jest przeskalowana. Dzieki temu strzala ma
+   wszedzie te sama wage optyczna i nie trzeba dobierac grubosci do
+   kazdej dlugosci osobno. Szwy na pilce zostaja skalowane, bo maja byc
+   stala czescia jej srednicy. */
+.diag .strzala path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
 
-/* Grot jest osobnym elementem, zeby stal PIONOWO niezaleznie od tego,
-   pod jakim katem lezy strzala. W SVG strzaly lezal razem z nia,
-   czyli na boku, i nie czytal sie jako serce. Kat kontrujacy jest
-   ustawiany przy kazdym breakpoincie razem z katem skosu. */
+/* Grot stoi PIONOWO niezaleznie od kata skosu: kontruje go obrotem
+   o ten sam kat ze znakiem przeciwnym, policzonym z --skos. Dzieki
+   temu serce siedzi w tym samym SVG co reszta i nie trzeba go
+   wyjmowac do osobnego elementu, zeby nie lezalo na boku. */
 .diag .grot{
-  position:absolute; left:97.5%; top:50%;
-  width:5.6%; height:auto;
-  transform:translate(-52%,-50%) rotate(30deg);
-  opacity:0; animation:grotWejdz .4s ease-out 1.05s forwards;
+  transform:rotate(calc(-1 * var(--skos)));
+  transform-box:fill-box; transform-origin:center;
 }
-@keyframes grotWejdz{ to{ opacity:1; } }
-@media (prefers-reduced-motion:reduce){ .diag .grot{ opacity:1; animation:none; } }
 
-@media (max-width:1100px){
-  .diag{ width:86vmax; transform:translate(-50%,-50%) rotate(-42deg); }
-  .diag .grot{ transform:translate(-52%,-50%) rotate(42deg); width:7%; }
+/* Os czasu, JEDNA dla calej grafiki, bo cale SVG jest w dokumencie:
+     0,10 s  lotki i drzewce startuja razem — drzewce rosnie od lotek,
+             wiec lotki nie moga wejsc w polowie rysowania
+     0,40 s  pilka zaczyna sie pojawiac, zeby byc na miejscu, gdy
+             dobiega do niej linia
+     0,56 s  linia dotyka przedniej krawedzi pilki
+     1,10 s  drzewce dochodzi do konca
+     1,10 s  i dokladnie wtedy pojawia sie serce, nie wczesniej
+   Chwila trafienia nie jest wzieta z oka, tylko z krzywej czasu:
+   przednia krawedz pilki lezy na 64 procentach drogi, a przy
+   cubic-bezier(0,0,.58,1) linia pokrywa te 64 procent po 46
+   procentach trwania, czyli 0,46 s po starcie rysowania. */
+.diag .drzewce{
+  stroke-dasharray:100; stroke-dashoffset:100;
+  animation:mpRysuj 1s cubic-bezier(0,0,.58,1) .1s forwards;
 }
-@media (max-width:640px){
-  .diag{ width:80vmax; top:54%; transform:translate(-50%,-50%) rotate(-57deg); }
-  .diag .grot{ transform:translate(-52%,-50%) rotate(57deg); width:8.5%; }
+.diag .lotki{ opacity:0; animation:mpPojaw .3s ease-out .1s forwards; }
+.diag .pilka{ opacity:0; animation:mpPojaw .16s ease-out .4s forwards; }
+.diag .grot{ opacity:0; animation:mpPojaw .32s ease-out 1.1s forwards; }
+
+@keyframes mpRysuj{ to{ stroke-dashoffset:0; } }
+@keyframes mpPojaw{ to{ opacity:1; } }
+
+@media (prefers-reduced-motion:reduce){
+  .diag .drzewce{ stroke-dashoffset:0; animation:none; }
+  .diag .lotki, .diag .pilka, .diag .grot{ opacity:1; animation:none; }
+}
+
+/* Strona archiwalna ma hero o polowe nizsze (.hero--short), wiec pelny
+   znak nie ma sie gdzie zmiescic — lotki wychodzily dolem za krawedz.
+   Tu strzala jest krotsza i siedzi po prawej, obok bloku tekstu.
+   Ta regula ma dwie klasy, wiec wygrywa z .diag takze w blokach
+   media ponizej — i dlatego telefon musi ja zdjac jawnie. */
+.hero--short .diag{ --skos:-24deg; left:74%; top:52%; width:42vw; }
+
+/* Kształt wolnego pola zalezy nie od samej szerokosci, ale od tego,
+   czy ekran jest w pionie. W pionie tekst zajmuje cala szerokosc
+   i wolny jest tylko pas miedzy lockupem a stopka hero, wiec strzala
+   idzie tym pasem, plasko. W poziomie uklad wyglada jak na laptopie,
+   wiec zostaje przy ustawieniu wyjsciowym — dlatego te reguly maja
+   warunek orientacji. Bez niego tablet w poziomie dostawal wersje
+   pionowa i strzala wychodzila dolem za ekran, przez stopke hero. */
+@media (max-width:1100px) and (orientation:portrait){
+  .diag{ --skos:-24deg; left:50%; top:74%; width:84vw; }
+}
+/* Telefon w pionie. Pas wolny od tekstu ma na kazdej stronie podobna
+   wysokosc (ok. 105 px), ale lezy na innej wysokosci, bo stopka hero
+   jest inna: strona glowna ma jeden rzad meta, strona wydarzenia dwa,
+   a strona archiwalna wlasna stopke. Zmierzone srodki pasa to
+   50, 55 i 59 procent wysokosci hero, wiec top jest ustawiany per
+   strona — jedna liczba nie da sie dobrac, bo rozrzut to 50 px przy
+   pasie na 105 px. */
+@media (max-width:640px) and (orientation:portrait){
+  .diag, .hero--short .diag{ --skos:-13deg; left:50%; width:86vw; }
+  .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
+  .hero--short .diag{ top:55%; }  /* archiwum */
+  .hero--home .diag{ top:59%; }   /* strona glowna, jeden rzad meta */
+  .diag .strzala path{ stroke-width:4px; }
+}
+/* Niskie telefony (360x640 i podobne): hero jest krotsze, wiec pas
+   miedzy lockupem a stopka ma niecale 70 px. Strzala musi byc
+   krotsza i jeszcze plaszcza, inaczej lotki siadaja na napisie
+   NAJBLIZSZE. */
+@media (max-width:640px) and (orientation:portrait) and (max-height:700px){
+  .diag, .hero--short .diag{ --skos:-10deg; width:80vw; }
+  .diag{ top:42%; }
+  .hero--short .diag{ top:49%; }
+  .hero--home .diag{ top:53%; }
 }
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
@@ -646,9 +715,6 @@ p:last-child{ margin-bottom:0; }
   .doc-body ol{ padding-left:1.15rem; }
   .doc-body ol > li{ font-size:.95rem; line-height:1.7; }
 
-  /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
-  /* pelne krycie: przy 0.7 roz szarzal i pilka gasla */
-  .diag{ opacity:1; }
 }
 
 @media (max-width:380px){

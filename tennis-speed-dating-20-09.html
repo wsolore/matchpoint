@@ -71,9 +71,43 @@
       </g>
     </svg>
   </div>
+  <!-- Znak marki: strzala z pilka i sercem. Grafika jest wpisana w strone,
+       a nie podlaczona przez <img>, zeby animacja szla na JEDNYM zegarze
+       razem z reszta CSS. Geometria, kat i os czasu siedza w styles.css,
+       sekcja .diag. -->
   <div class="diag" aria-hidden="true">
-    <img src="arrow-ball-diag.svg" alt="" width="2000" height="260">
-    <img class="grot" src="heart.svg" alt="" width="120" height="108">
+    <svg viewBox="0 0 1000 220" role="presentation">
+      <defs>
+        <clipPath id="mpPilka"><circle cx="659" cy="110" r="66"/></clipPath>
+      </defs>
+
+      <g class="strzala" fill="none" stroke="#f2a7ba"
+         stroke-linecap="round" stroke-linejoin="round">
+        <g class="lotki">
+          <path d="M30 84 72 110 30 136"/>
+          <path d="M64 88 102 110 64 132"/>
+        </g>
+        <!-- pathLength=100 zamiast liczenia dlugosci sciezki: dasharray
+             i dashoffset sa wtedy w procentach i zawsze sie zgadzaja -->
+        <path class="drzewce" d="M40 110H900" pathLength="100"/>
+      </g>
+
+      <!-- pilka jest po drzewcu, wiec je zaslania i czyta sie to jako przebicie -->
+      <g class="pilka">
+        <circle cx="659" cy="110" r="66" fill="#c9dd85"/>
+        <g clip-path="url(#mpPilka)" fill="none" stroke="#f7f5ef"
+           stroke-width="9.3" stroke-linecap="butt">
+          <path d="M607 69Q659 115 711 69"/>
+          <path d="M607 151Q659 105 711 151"/>
+        </g>
+      </g>
+
+      <g class="grot">
+        <g transform="translate(881 65) scale(.82)">
+          <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z" fill="#f2a7ba"/>
+        </g>
+      </g>
+    </svg>
   </div>
 
   <div class="wrap hero-top">
