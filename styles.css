@@ -149,15 +149,15 @@ img{ max-width:100%; display:block; }
    i rozmyc grafike.
 
    LOT WLACZA KLASA `mp-lot` NA <html>, ktora dodaje znak.js po
-   pierwszym wymalowaniu strony. Animacja nie jest przypisana do
-   wczytania, bo Safari na iOS wstrzymuje pierwsze malowanie do konca
-   nawigacji: caly lot mijal za czarnym ekranem i na iPhonie strzala
-   pojawiala sie od razu na miejscu. Potwierdzone nagraniem — miedzy
-   czarna klatka a gotowa strona nie bylo ani jednej klatki przelotu.
+   pierwszym wymalowaniu strony. Lot trwa 0,37 s razem z opoznieniem,
+   wiec animacja przypisana wprost do wczytania strony moze sie zmiescic
+   przed pierwsza klatka, ktora zobaczy uzytkownik. Start po pierwszym
+   wymalowaniu to wyklucza. Szczegoly i historia w znak.js.
    Stan bazowy, bez klasy i bez JavaScriptu, to pozycja koncowa. To
    jest warunek calego mechanizmu: jesli skrypt nie wykona sie, strzala
    ma stac na miejscu, a nie zostac poza ekranem. Nie przenos wiec
-   `animation` z powrotem na samo `.diag .strzala`. */
+   `animation` z powrotem na samo `.diag .strzala` bez zdjecia klasy
+   z regul `animation-name` nizej. */
 .diag .strzala{
   animation:.25s cubic-bezier(.3,.6,.5,1) .12s backwards;
   animation-name:none;
@@ -172,10 +172,12 @@ img{ max-width:100%; display:block; }
    pol animacji poza ekranem, dlatego kazdy breakpoint ma wlasna.
 
    Kazdy breakpoint ma wlasny ZESTAW KLATEK i przelacza sie na niego
-   przez `animation-name`. Klatki sa wypisane wprost, razem z `to`:
-   wartosci NIE wolno podawac przez var(), bo Safari nie odtwarza
-   animacji, ktorej klatka bierze wartosc z wlasciwosci niestandardowej,
-   i nie dopisuje brakujacej klatki koncowej. */
+   przez `animation-name`. Wartosci sa wypisane wprost, razem z klatka
+   `to`, zamiast jednej klatki `translateX(var(--lot))` bez `to`.
+   Powod jest ostroznosciowy, nie sprawdzony na urzadzeniu: `var()`
+   w `@keyframes` i domyslna klatka koncowa to dwa miejsca, w ktorych
+   przegladarki historycznie sie roznily. Wersja wypisana wprost
+   nie zalezy od niczyjej interpretacji. */
 @keyframes mpLot40{ from{ transform:translateX(-2600px); } to{ transform:translateX(0); } }
 @keyframes mpLot72{ from{ transform:translateX(-1450px); } to{ transform:translateX(0); } }
 @keyframes mpLot66{ from{ transform:translateX(-1580px); } to{ transform:translateX(0); } }

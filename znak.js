@@ -1,26 +1,27 @@
 /* Start animacji znaku marki (strzaly w hero).
  *
- * Animacja NIE jest przypisana do wczytania strony. Dodajemy klase
- * `mp-lot` na <html> dopiero wtedy, gdy przegladarka wymalowala juz
- * pierwsza klatke, i to ona wlacza animacje w CSS.
+ * Animacja nie jest przypisana do wczytania strony. Klase `mp-lot`
+ * dodajemy na <html> dopiero po pierwszym wymalowaniu (`load` plus dwie
+ * klatki requestAnimationFrame), a to ona wlacza lot w CSS.
  *
- * Dlaczego: Safari na iOS wstrzymuje pierwsze malowanie do konca
- * nawigacji. Animacja trwa 0,37 s razem z opoznieniem, wiec caly jej
- * czas mijal za czarnym ekranem i na iPhonie nikt jej nie widzial —
- * strzala pojawiala sie od razu w pozycji koncowej. Potwierdzone
- * nagraniem z iPhone'a: klatka przed pojawieniem sie strony jest czarna,
- * a pierwsza wymalowana pokazuje juz strzale na miejscu, bez zadnej
- * klatki przelotu pomiedzy. Skrocenie lotu z 0,8 s do 0,25 s pogorszylo
- * sprawe, bo okno, w ktorym cokolwiek dalo sie zobaczyc, zrobilo sie
- * ponad trzy razy krotsze.
+ * Po co: lot trwa 0,37 s razem z opoznieniem. Animacja przypisana
+ * wprost do wczytania strony moze sie w calosci zmiescic przed
+ * pierwsza klatka, ktora zobaczy uzytkownik, i wtedy nikt jej nie
+ * zobaczy. Start po pierwszym wymalowaniu to wyklucza.
  *
- * Bez JavaScriptu strzala po prostu stoi w pozycji koncowej — nic nie
- * znika i nic nie zostaje poza ekranem. To jest warunek, ktory trzyma
- * caly ten mechanizm: stanem bazowym w CSS jest pozycja koncowa.
+ * Uwaga na historie: ten mechanizm powstal jako poprawka zgloszenia
+ * „animacja nie dziala na iPhonie". Prawdziwa przyczyna byla inna —
+ * w telefonie wlaczone bylo systemowe ograniczanie ruchu, ktore
+ * animacje wylacza celowo (patrz prefers-reduced-motion w styles.css).
+ * Mechanizm zostaje, bo sam w sobie jest poprawny, ale NIE jest
+ * lekarstwem na zaden potwierdzony blad przegladarki. Jesli kiedys
+ * bedzie przeszkadzal, mozna go zdjac: wystarczy przeniesc
+ * `animation-name` z regul `.mp-lot ...` na `.diag .strzala ...`
+ * i usunac ten plik razem z trzema tagami <script>.
  *
- * Podwojne requestAnimationFrame po zdarzeniu `load`: `load` daje
- * pewnosc, ze pierwsze malowanie juz bylo, a dwie klatki rAF daja
- * pewnosc, ze przegladarka zdazyla je oddac na ekran.
+ * Bez JavaScriptu strzala stoi w pozycji koncowej — nic nie znika
+ * i nic nie zostaje poza ekranem. To warunek calego mechanizmu:
+ * stanem bazowym w CSS jest pozycja koncowa.
  */
 (function () {
   var html = document.documentElement;
