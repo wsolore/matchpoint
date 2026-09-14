@@ -1,25 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Piłka tenisowa przebita strzałą">
-  <!-- Ta sama konstrukcja co znak w hero, ale zwarta i w mocniejszym
-       kontrascie, zeby czytala sie przy 20 pikselach. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" role="img" aria-label="Piłka tenisowa przebita strzałą">
+  <!-- Ta sama konstrukcja co znak w hero, ale w rozmiarze ikony:
+       pilka kryjaca (na 20 pikselach przezroczystosc by zniknela),
+       strzala rozowa i dluga, zeby bylo widac oba jej konce. -->
 
   <defs>
-    <clipPath id="ballIco">
-      <circle cx="120" cy="100" r="76"/>
+    <clipPath id="ballClipIco">
+      <circle cx="150" cy="110" r="66"/>
     </clipPath>
   </defs>
 
-  <g transform="rotate(-30 120 100)" fill="none" stroke="#c2653f"
-     stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M6 100H234"/>
-    <path d="M206 74 234 100 206 126"/>
-    <path d="M12 78 40 100 12 122" stroke-width="11"/>
+  <g transform="rotate(-30 150 110)" fill="none" stroke="#ef7d95"
+     stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 110H292"/>
+    <path d="M262 84 292 110 262 136"/>
+    <path d="M14 88 44 110 14 132" stroke-width="12"/>
   </g>
 
-  <circle cx="120" cy="100" r="76" fill="#d9e565"/>
+  <circle cx="150" cy="110" r="66" fill="#7d8f68"/>
 
-  <g clip-path="url(#ballIco)" fill="none" stroke="#55634a"
-     stroke-width="15" stroke-linecap="butt">
-    <path d="M48.6 74.2Q120 142 191.4 74.2"/>
-    <path d="M48.6 125.8Q120 58 191.4 125.8"/>
+  <g clip-path="url(#ballClipIco)" fill="none" stroke="#f2efe7"
+     stroke-width="13" stroke-linecap="butt">
+    <path d="M98.2 69.1Q150 115.3 201.8 69.1"/>
+    <path d="M98.2 150.9Q150 104.7 201.8 150.9"/>
   </g>
 </svg>

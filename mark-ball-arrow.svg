@@ -1,31 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 200" role="presentation">
-  <!-- Znak wg logo Match Point: pilka tenisowa z wycietymi szwami,
-       przebita strzala. Strzale rysujemy pierwsza, pilka ja zaslania
-       w srodku, wiec drzewce widac tylko po bokach.
-       Paleta: pilka w kolorze linii kortu, szwy w kolorze murawy. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 300" role="presentation">
+  <!-- Znak: pilka tenisowa przebita strzala.
+       Pilka mocno transparentna, w zieleni. Strzala rozowa, dluga,
+       zeby byla wyraznie widoczna po obu stronach pilki.
+       Szwy biegna osobno i NIE przecinaja sie: gorny opada tylko do
+       27 procent promienia nad srodkiem, dolny podnosi sie tyle samo
+       pod srodkiem, wiec miedzy nimi zostaje szeroki pas. -->
 
   <defs>
-    <clipPath id="ball">
-      <circle cx="170" cy="100" r="80"/>
+    <clipPath id="ballClip">
+      <circle cx="230" cy="150" r="86"/>
     </clipPath>
   </defs>
 
-  <!-- strzala, obrocona o 30 stopni w gore -->
-  <g transform="rotate(-30 170 100)" fill="none" stroke="#f5f3ec"
-     stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 100H332"/>
-    <path d="M300 72 332 100 300 128"/>
-    <path d="M14 76 44 100 14 124" stroke-width="9"/>
-    <path d="M38 80 62 100 38 120" stroke-width="9"/>
+  <!-- strzala pod pilka: w srodku zaslonieta, widac ja po bokach -->
+  <g transform="rotate(-30 230 150)" fill="none" stroke="#ef7d95"
+     stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 150H450"/>
+    <path d="M412 116 450 150 412 184"/>
+    <path d="M16 120 54 150 16 180" stroke-width="11"/>
+    <path d="M46 124 80 150 46 176" stroke-width="11"/>
   </g>
 
   <!-- pilka -->
-  <circle cx="170" cy="100" r="80" fill="#f5f3ec"/>
+  <circle cx="230" cy="150" r="86" fill="#3f4a35" opacity="0.34"/>
 
-  <!-- szwy, przyciete do okregu, zeby nie wychodzily za krawedz -->
-  <g clip-path="url(#ball)" fill="none" stroke="#7d8f68"
-     stroke-width="15" stroke-linecap="butt">
-    <path d="M94.8 72.8Q170 144 245.2 72.8"/>
-    <path d="M94.8 127.2Q170 56 245.2 127.2"/>
+  <!-- szwy, przyciete do okregu -->
+  <g clip-path="url(#ballClip)" fill="none" stroke="#eef1e6" opacity="0.5"
+     stroke-width="14" stroke-linecap="butt">
+    <path d="M162.5 96.7Q230 156.9 297.5 96.7"/>
+    <path d="M162.5 203.3Q230 143.1 297.5 203.3"/>
   </g>
 </svg>

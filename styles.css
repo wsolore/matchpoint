@@ -84,7 +84,7 @@ img{ max-width:100%; display:block; }
 .mark{
   position:absolute; z-index:-1;
   left:81%; top:24%;
-  width:clamp(210px,33vw,430px);
+  width:clamp(265px,42vw,540px);
   transform:translate(-50%,-50%);
   pointer-events:none;
 }
@@ -372,7 +372,7 @@ body.ev .rule{ background:rgba(107,120,92,.35); }
 
 /* --- lista "w cenie" / "co zabrac" --- */
 .ticks{ list-style:none; margin:24px 0 0; padding:0; display:grid; gap:12px; }
-.ticks li{ display:grid; grid-template-columns:1.5rem 1fr; gap:12px; font-weight:300; }
+.ticks li{ display:grid; grid-template-columns:1.9rem 1fr; gap:10px; font-weight:300; }
 .ticks li b{ font-weight:600; }
 .ticks .m{ color:var(--warm); }
 
@@ -427,7 +427,7 @@ body.doc{ background:var(--paper); }
 
 /* pilka przebita strzala Amora: ikona stoi OBOK tekstu */
 .ico{
-  width:1.35em; height:1.35em; flex:none;
+  width:1.75em; height:1.28em; flex:none;
   display:inline-block;
 }
 .col h3{
@@ -627,7 +627,7 @@ p:last-child{ margin-bottom:0; }
 
   /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
   /* znak nie moze wchodzic w linijke z logo i Instagramem */
-  .mark{ width:150px; left:78%; top:27%; opacity:.5; }
+  .mark{ width:190px; left:78%; top:27%; opacity:.55; }
 }
 
 @media (max-width:380px){
