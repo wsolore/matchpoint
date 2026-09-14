@@ -146,10 +146,23 @@ img{ max-width:100%; display:block; }
    pierwsza klatka (strzala za ekranem), a po animacji wlasciwosc
    wraca do wartosci bazowej, czyli braku przesuniecia. Nie zostaje
    wiec zaden transform, ktory moglby trzymac warstwe kompozytowana
-   i rozmyc grafike. */
+   i rozmyc grafike.
+
+   LOT WLACZA KLASA `mp-lot` NA <html>, ktora dodaje znak.js po
+   pierwszym wymalowaniu strony. Animacja nie jest przypisana do
+   wczytania, bo Safari na iOS wstrzymuje pierwsze malowanie do konca
+   nawigacji: caly lot mijal za czarnym ekranem i na iPhonie strzala
+   pojawiala sie od razu na miejscu. Potwierdzone nagraniem — miedzy
+   czarna klatka a gotowa strona nie bylo ani jednej klatki przelotu.
+   Stan bazowy, bez klasy i bez JavaScriptu, to pozycja koncowa. To
+   jest warunek calego mechanizmu: jesli skrypt nie wykona sie, strzala
+   ma stac na miejscu, a nie zostac poza ekranem. Nie przenos wiec
+   `animation` z powrotem na samo `.diag .strzala`. */
 .diag .strzala{
-  animation:mpLot40 .25s cubic-bezier(.3,.6,.5,1) .12s backwards;
+  animation:.25s cubic-bezier(.3,.6,.5,1) .12s backwards;
+  animation-name:none;
 }
+.mp-lot .diag .strzala{ animation-name:mpLot40; }
 
 /* Droga lotu, w jednostkach viewBoxa: tyle strzala cofa sie na starcie,
    zeby stanac cala poza ekranem. Wartosc to w przyblizeniu
@@ -158,21 +171,20 @@ img{ max-width:100%; display:block; }
    Przy jednej wartosci dla wszystkich strzala na telefonie spedzalaby
    pol animacji poza ekranem, dlatego kazdy breakpoint ma wlasna.
 
-   Wazne: kazdy breakpoint ma wlasny ZESTAW KLATEK i przelacza sie na
-   niego przez `animation-name`. Wczesniej byla jedna klatka
-   `translateX(var(--lot))`, bez klatki `to`. Na iOS strzala stala
-   w miejscu — Safari nie odtwarza animacji, ktorej wartosc klatki
-   pochodzi z wlasciwosci niestandardowej, i nie dopisuje brakujacej
-   klatki koncowej. Klatki musza byc wypisane wprost, razem z `to`.
-   Nie wstawiaj tu var(). */
+   Kazdy breakpoint ma wlasny ZESTAW KLATEK i przelacza sie na niego
+   przez `animation-name`. Klatki sa wypisane wprost, razem z `to`:
+   wartosci NIE wolno podawac przez var(), bo Safari nie odtwarza
+   animacji, ktorej klatka bierze wartosc z wlasciwosci niestandardowej,
+   i nie dopisuje brakujacej klatki koncowej. */
 @keyframes mpLot40{ from{ transform:translateX(-2600px); } to{ transform:translateX(0); } }
 @keyframes mpLot72{ from{ transform:translateX(-1450px); } to{ transform:translateX(0); } }
 @keyframes mpLot66{ from{ transform:translateX(-1580px); } to{ transform:translateX(0); } }
 @keyframes mpLot86{ from{ transform:translateX(-1200px); } to{ transform:translateX(0); } }
 @keyframes mpLot78{ from{ transform:translateX(-1300px); } to{ transform:translateX(0); } }
 
+/* Przy ograniczonym ruchu zdejmujemy animacje niezaleznie od klasy. */
 @media (prefers-reduced-motion:reduce){
-  .diag .strzala{ animation:none; }
+  .diag .strzala, .mp-lot .diag .strzala{ animation:none; }
 }
 
 /* Strona archiwalna ma hero o polowe nizsze (.hero--short), wiec znak
@@ -190,12 +202,12 @@ img{ max-width:100%; display:block; }
    pionowa i strzala wychodzila dolem za ekran, przez stopke hero. */
 @media (max-width:1100px) and (orientation:portrait){
   .diag{ left:50%; top:72%; width:72vw; }
-  .diag .strzala{ animation-name:mpLot72; }
+  .mp-lot .diag .strzala{ animation-name:mpLot72; }
   /* Archiwum: hero ma tu 444 px, a pas miedzy lockupem a stopka niecale
      50 px, wiec znak nie ma jak wejsc w pas. Stoi po prawej, w wolnym
      polu obok lockupu — tak jak w ukladzie poziomym. */
   .hero--short .diag{ left:68%; top:46%; width:66vw; }
-  .hero--short .diag .strzala{ animation-name:mpLot66; }
+  .mp-lot .hero--short .diag .strzala{ animation-name:mpLot66; }
 }
 /* Telefon w pionie. Pas wolny od tekstu ma na kazdej stronie podobna
    wysokosc (ok. 105 px), ale lezy na innej wysokosci, bo stopka hero
@@ -208,7 +220,7 @@ img{ max-width:100%; display:block; }
   /* Nadpisanie musi objac takze .hero--short, bo regula archiwum ma
      dwie klasy i inaczej wygralaby ta z tabletu. */
   .diag, .hero--short .diag{ --skos:-11deg; left:50%; width:86vw; }
-  .diag .strzala, .hero--short .diag .strzala{ animation-name:mpLot86; }
+  .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot86; }
   .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
   .hero--short .diag{ top:55%; }  /* archiwum */
   .hero--home .diag{ top:59%; }   /* strona glowna, jeden rzad meta */
@@ -220,7 +232,7 @@ img{ max-width:100%; display:block; }
    NAJBLIZSZE. */
 @media (max-width:640px) and (orientation:portrait) and (max-height:700px){
   .diag, .hero--short .diag{ --skos:-8deg; width:78vw; }
-  .diag .strzala, .hero--short .diag .strzala{ animation-name:mpLot78; }
+  .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot78; }
   .diag{ top:42%; }
   .hero--short .diag{ top:49%; }
   .hero--home .diag{ top:53%; }

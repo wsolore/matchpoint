@@ -41,6 +41,13 @@
   /* D: statyczny test — czy tresc POZA viewBoxem jest widoczna */
   .d svg{ position:absolute; left:50%; top:50%; width:40%; transform:translate(-50%,-50%); overflow:visible; }
 
+  /* E: tak jak na stronie — animacja startuje dopiero z klasa mp-lot,
+     ktora skrypt dodaje po pierwszym wymalowaniu. Bez klasy strzala
+     stoi w pozycji koncowej. */
+  .e .strzala{ animation:.9s ease-out backwards; animation-name:none; }
+  .mp-lot .e .strzala{ animation-name:lotE; }
+  @keyframes lotE{ from{ transform:translateX(-1600px); } to{ transform:translateX(0); } }
+
   .wynik{ padding:10px 12px; font-size:.82rem; background:rgba(27,32,22,.05); }
   .wynik b{ font-weight:600; }
   button{
@@ -123,6 +130,26 @@
   <p class="opis">Jeśli B stoi, a C leci — WebKit nie animuje transformu na grupie w SVG.</p>
 </div>
 
+<div class="test e">
+  <h2>E — start po pierwszym wymalowaniu (tak jak na stronie)</h2>
+  <div class="scena">
+    <div class="znak">
+      <svg viewBox="0 0 1000 280" overflow="visible">
+        <g class="strzala">
+          <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M44 108 96 140 44 172"/><path d="M50 140H885"/>
+          </g>
+          <g transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+            <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z" fill="#f2a7ba"/>
+          </g>
+        </g>
+        <circle cx="640" cy="140" r="88" fill="#c9dd85"/>
+      </svg>
+    </div>
+  </div>
+  <p class="opis">Ta ma tę samą mechanikę co strona po poprawce.</p>
+</div>
+
 <div class="test d">
   <h2>D — statyczny: czy widać treść poza viewBoxem</h2>
   <div class="scena">
@@ -142,21 +169,48 @@
 
 <script>
   function powtorz(){
+    document.documentElement.classList.remove('mp-lot');
     document.querySelectorAll('.strzala, .znak-lot').forEach(function(e){
       e.style.animation = 'none';
       e.getBoundingClientRect();
       e.style.animation = '';
     });
+    requestAnimationFrame(function(){
+      document.documentElement.classList.add('mp-lot');
+    });
   }
-  (function(){
+
+  // Pomiar, ktory rozstrzyga sprawe: ile mija od startu strony do
+  // pierwszej klatki rAF i do zdarzenia load. Animacja na stronie trwa
+  // 370 ms razem z opoznieniem — jesli te liczby sa wieksze, to znaczy,
+  // ze caly lot mial szanse skonczyc sie przed pierwszym wymalowaniem.
+  var tRaf = null, tLoad = null;
+  requestAnimationFrame(function(){ tRaf = Math.round(performance.now()); raport(); });
+  window.addEventListener('load', function(){
+    tLoad = Math.round(performance.now());
+    raport();
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        document.documentElement.classList.add('mp-lot');
+      });
+    });
+  }, { once: true });
+
+  function raport(){
     var red = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.getElementById('srodowisko').innerHTML =
       '<b>Ograniczanie ruchu w systemie:</b> ' + (red
         ? 'WŁĄCZONE — to samo w sobie wyłącza animację na stronie. ' +
           'Ustawienia → Dostępność → Ruch → Ogranicz ruch.'
         : 'wyłączone (czyli to nie jest przyczyna)') +
+      '<br><b>Pierwsza klatka rAF:</b> ' + (tRaf === null ? '—' : tRaf + ' ms') +
+      '<br><b>Zdarzenie load:</b> ' + (tLoad === null ? '—' : tLoad + ' ms') +
+      '<br><span style="color:#5a6150">Animacja na stronie trwa 370 ms. ' +
+      'Jeśli liczby wyżej są większe, lot kończył się przed pierwszym ' +
+      'wymalowaniem i dlatego nie było go widać.</span>' +
       '<br><b>Przeglądarka:</b> ' + navigator.userAgent;
-  })();
+  }
+  raport();
 </script>
 
 </body>
