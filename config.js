@@ -16,6 +16,10 @@ const MATCHPOINT = {
      https://script.google.com/macros/s/AKfy.../exec            */
   sheetEndpoint: 'https://script.google.com/macros/s/AKfycbxHiSMEiB8geAq8-VjcQl7IBm7bf51cIs0aPKPMzSSBKMot_BZZ7wFtDK5AXcAxIul4UQ/exec',
 
+  /* Token Cloudflare Web Analytics. Wklejasz raz, instrukcja
+     w docs/analytics.md. Puste = licznik odwiedzin wylaczony.     */
+  cfBeaconToken: '',
+
   /* Czy licznik ma czytac liczbe oplaconych z arkusza.
      Przy false liczniki zostaja puste, bo nie ma zapasowego zrodla. */
   useSheetCounter: true,
