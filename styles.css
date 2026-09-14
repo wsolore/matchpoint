@@ -108,26 +108,38 @@ img{ max-width:100%; display:block; }
    ekran. */
 .diag{
   --skos:-25deg;
+  --dl:40vw;
   position:absolute; z-index:-1;
   left:72%; top:64%;
-  width:40vw;
-  transform:translate(-50%,-50%) rotate(var(--skos));
+  width:var(--dl); height:calc(.28 * var(--dl));
+  transform:translate(-50%,-50%);
   pointer-events:none;
+}
+
+/* Skos siedzi na oplocie strzaly, a NIE na .diag. Inaczej pilka
+   spadalaby po skosie, a nie pionowo: translateY dziecka rotowanego
+   rodzica idzie po obroconej osi.
+   Obrot leci wokol punktu przebicia (64% szerokosci, polowa wysokosci),
+   czyli wokol pilki — zmiana kata nie rusza jej z miejsca. */
+.diag .strzala-lot{
+  position:absolute; inset:0;
+  transform-origin:64% 50%;
+  transform:rotate(var(--skos));
 }
 /* overflow:visible jest tu warunkiem lotu: na starcie strzala stoi
    daleko poza wlasnym viewBoxem. Przycina ja dopiero .hero. */
-.diag .strzala-svg{ width:100%; height:auto; display:block; overflow:visible; }
+.diag .strzala-svg{ width:100%; height:100%; display:block; overflow:visible; }
 
 /* Pilka stoi w punkcie przebicia. W viewBoxie strzaly jej srodek byl
    w 640 140 przy 1000x280, a srednica miala 176 jednostek — stad
    17,6% szerokosci pudelka, lewa krawedz w 55,2% szerokosci i gorna
    w 18,571% wysokosci. Procenty, wiec trzyma sie przy kazdej dlugosci
    strzaly. Jest po strzale w kolejnosci, wiec ja zaslania. */
-.diag .pilka-svg{
+.diag .pilka-kosz{
   position:absolute;
-  left:55.2%; top:18.571%; width:17.6%; height:auto;
-  display:block;
+  left:55.2%; top:18.571%; width:17.6%;
 }
+.diag .pilka-svg{ width:100%; height:auto; display:block; }
 
 /* non-scaling-stroke: grubosc linii jest w pikselach i nie zalezy od
    tego, jak bardzo grafika jest przeskalowana. Dzieki temu strzala ma
@@ -171,7 +183,7 @@ img{ max-width:100%; display:block; }
    ma stac na miejscu, a nie zostac poza ekranem. Nie przenos wiec
    animacji z powrotem na sama regule bez klasy. */
 .diag .strzala-svg{
-  animation:.33s cubic-bezier(.3,.6,.5,1) .12s backwards;
+  animation:.33s cubic-bezier(.3,.6,.5,1) .9s backwards;
   animation-name:none;
 }
 .mp-lot .diag .strzala-svg{ animation-name:mpLotO; }
@@ -191,12 +203,13 @@ img{ max-width:100%; display:block; }
    pilka jest osobnym elementem <svg>, wiec obrot idzie wokol srodka
    jej wlasnego pudelka i nie trzeba nic ustawiac.
    Opoznienie 0,33 s to chwila, w ktorej grot wchodzi w pilke. */
-.mp-lot .diag .pilka-svg{ animation:mpObrot 3.5s .33s infinite; }
+.mp-lot .diag .pilka-kosz{ animation:mpSpadek .85s backwards; }
+.mp-lot .diag .pilka-svg{ animation:mpObrot 3.5s 1.05s infinite; }
 
 /* Przy ograniczonym ruchu zdejmujemy animacje niezaleznie od klasy. */
 @media (prefers-reduced-motion:reduce){
   .diag .strzala-svg, .mp-lot .diag .strzala-svg,
-  .mp-lot .diag .pilka-svg{ animation:none; }
+  .mp-lot .diag .pilka-kosz, .mp-lot .diag .pilka-svg{ animation:none; }
 }
 
 /* Strona archiwalna ma hero o polowe nizsze (.hero--short), wiec znak
@@ -213,11 +226,11 @@ img{ max-width:100%; display:block; }
    warunek orientacji. Bez niego tablet w poziomie dostawal wersje
    pionowa i strzala wychodzila dolem za ekran, przez stopke hero. */
 @media (max-width:1100px) and (orientation:portrait){
-  .diag{ left:50%; top:72%; width:72vw; }
+  .diag{ left:50%; top:72%; --dl:72vw; }
   /* Archiwum: hero ma tu 444 px, a pas miedzy lockupem a stopka niecale
      50 px, wiec znak nie ma jak wejsc w pas. Stoi po prawej, w wolnym
      polu obok lockupu — tak jak w ukladzie poziomym. */
-  .hero--short .diag{ left:68%; top:38%; width:66vw; }
+  .hero--short .diag{ left:68%; top:34%; --dl:66vw; }
 }
 /* Telefon w pionie. Pas wolny od tekstu ma na kazdej stronie podobna
    wysokosc (ok. 105 px), ale lezy na innej wysokosci, bo stopka hero
@@ -229,9 +242,9 @@ img{ max-width:100%; display:block; }
 @media (max-width:640px) and (orientation:portrait){
   /* Nadpisanie musi objac takze .hero--short, bo regula archiwum ma
      dwie klasy i inaczej wygralaby ta z tabletu. */
-  .diag, .hero--short .diag{ --skos:-17.2deg; left:50%; width:86vw; }
-  .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
-  .hero--short .diag{ top:55%; }  /* archiwum */
+  .diag, .hero--short .diag{ --skos:-17.2deg; left:50%; --dl:86vw; }
+  .diag{ top:48%; }               /* strona wydarzenia, dwa rzedy meta */
+  .hero--short .diag{ top:52%; }  /* archiwum */
   .diag .strzala-svg path{ stroke-width:4px; }
 }
 /* Niskie telefony (360x640 i podobne): hero jest krotsze, wiec pas
@@ -239,7 +252,7 @@ img{ max-width:100%; display:block; }
    krotsza i jeszcze plaszcza, inaczej lotki siadaja na napisie
    NAJBLIZSZE. */
 @media (max-width:640px) and (orientation:portrait) and (max-height:700px){
-  .diag, .hero--short .diag{ --skos:-12.5deg; width:78vw; }
+  .diag, .hero--short .diag{ --skos:-12.5deg; --dl:78vw; }
   .diag{ top:42%; }
   .hero--short .diag{ top:49%; }
 }
@@ -287,8 +300,8 @@ img{ max-width:100%; display:block; }
    transform tego SVG — dwie rzeczy nie zmieszcza sie w jednej
    wlasciwosci. */
 .o-znak .strzala-lot{
-  --skos:-12.5deg;
-  --dl:64vw;
+  --skos:-30deg;
+  --dl:44vw;
   position:absolute;
   left:calc(-.64 * var(--dl)); top:calc(-.14 * var(--dl));
   width:var(--dl); height:calc(.28 * var(--dl));
@@ -314,13 +327,18 @@ img{ max-width:100%; display:block; }
 
 /* Spadek: w dol przyspiesza, w gore hamuje. Krzywe sa podane przy
    klatkach, bo kazdy odcinek ma inny charakter — z jedna krzywa na
-   calosc wyszedlby rowny ruch, a nie grawitacja. */
+   calosc wyszedlby rowny ruch, a nie grawitacja.
+   Drogi sa w PROCENTACH wlasnego pudelka pilki, nie w em: pudelko ma
+   rozmiar pilki, wiec te same klatki pasuja do obu znakow — do pilki
+   wielkosci litery na stronie glownej i do duzej pilki na stronach
+   wydarzen. 900 procent to dziewiec srednic, czyli zawsze ponad gorna
+   krawedz ekranu. */
 @keyframes mpSpadek{
-  0%   { transform:translateY(-7em);    animation-timing-function:ease-in; }
-  48%  { transform:translateY(0);       animation-timing-function:ease-out; }
-  64%  { transform:translateY(-1.15em); animation-timing-function:ease-in; }
-  80%  { transform:translateY(0);       animation-timing-function:ease-out; }
-  90%  { transform:translateY(-.34em);  animation-timing-function:ease-in; }
+  0%   { transform:translateY(-900%); animation-timing-function:ease-in; }
+  48%  { transform:translateY(0);     animation-timing-function:ease-out; }
+  64%  { transform:translateY(-140%); animation-timing-function:ease-in; }
+  80%  { transform:translateY(0);     animation-timing-function:ease-out; }
+  90%  { transform:translateY(-40%);  animation-timing-function:ease-in; }
   100% { transform:translateY(0); }
 }
 /* Obrot powtarza sie co 3,5 s: sam obrot zajmuje pierwsza sekunde
@@ -346,10 +364,10 @@ img{ max-width:100%; display:block; }
 }
 
 @media (max-width:1100px){
-  .o-znak .strzala-lot{ --dl:69vw; }
+  .o-znak .strzala-lot{ --dl:52vw; }
 }
 @media (max-width:640px){
-  .o-znak .strzala-lot{ --skos:-10.9deg; --dl:70vw; }
+  .o-znak .strzala-lot{ --skos:-30deg; --dl:64vw; }
   .o-znak .strzala-svg path{ stroke-width:4px; }
 }
 
