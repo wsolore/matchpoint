@@ -6,21 +6,28 @@
    ============================================================ */
 
 :root{
-  /* paleta z plakatu: kort, strefa zewnętrzna, linie, beton */
-  --court:      #7d8f68;
-  --court-dark: #6a7a56;
-  --court-deep: #55634a;
-  --sky:        #6d9cb8;
-  --line:       #f5f3ec;
-  --concrete:   #cec8bd;
-  --paper:      #f2efe7;
-  --paper-alt:  #e9e5db;
+  /* JEDEN akcent na cały serwis: pudrowy róż.
+     Wcześniej było ich cztery, terakota, limonka, błękit i róż,
+     i to one odbierały stronie spójność. Nazwy --warm i --lime
+     zostają jako aliasy, żeby żadne użycie nie zostało pominięte. */
+  --accent:     #f2a7ba;
+  --accent-alt: #e58fa6;
+  --warm:       #f2a7ba;
+  --warm-dark:  #e58fa6;
+  --lime:       #f2a7ba;
+
+  /* zieleń kortu, głębsza i mniej nasycona */
+  --court:      #5f7050;
+  --court-dark: #4b5a3f;
+  --court-deep: #3a4630;
+
+  --line:       #f7f5ef;
+  --paper:      #f7f6f2;
+  --paper-alt:  #efeee8;
   --ink:        #1b2016;
-  --ink-soft:   #4a5342;
-  --lime:       #e6ef86;
-  /* jedyny ciepły akcent — wyłącznie CTA i statusy */
-  --warm:       #c2653f;
-  --warm-dark:  #a9522f;
+  --ink-soft:   #5a6150;
+  /* włos, nie kreska */
+  --concrete:   rgba(27,32,22,.13);
 
   --f-sans: 'Archivo', system-ui, -apple-system, sans-serif;
   --f-script: 'Great Vibes', cursive;
@@ -54,7 +61,7 @@ img{ max-width:100%; display:block; }
 }
 .script{ font-family:var(--f-script); font-weight:400; text-transform:none; letter-spacing:0; }
 .glyph{ color:var(--warm); font-weight:400; }
-.todo{ color:#a9522f; }
+.todo{ color:var(--accent-alt); }
 .dark .todo{ color:#f0c9b6; }
 
 /* ============================ HERO ============================ */
@@ -72,12 +79,17 @@ img{ max-width:100%; display:block; }
 /* kort odwzorowany w SVG — zero zewnętrznych assetów.
    preserveAspectRatio="none" daje przewidywalną geometrię,
    dzięki czemu piłka trafia dokładnie w przecięcie linii. */
-.court{ position:absolute; inset:0; z-index:-2; background:var(--court); }
-.court svg{ width:100%; height:100%; display:block; }
+.court{
+  position:absolute; inset:0; z-index:-2;
+  background:linear-gradient(163deg,#657a54 0%,#4d5c42 52%,#3a4630 100%);
+}
+/* Linie kortu i pas blekitu wypadaja: byly trzecim i czwartym
+   akcentem, i przechodzily przez tekst. Zostaje czysty gradient. */
+.court svg{ display:none; }
 
 .hero::after{
   content:''; position:absolute; inset:0; z-index:-1;
-  background:linear-gradient(180deg, rgba(20,26,16,.44) 0%, rgba(20,26,16,.16) 38%, rgba(20,26,16,.58) 100%);
+  background:linear-gradient(180deg, rgba(18,23,14,.20) 0%, rgba(18,23,14,.04) 42%, rgba(18,23,14,.34) 100%);
 }
 
 /* znak marki: pilka przebita strzala, jeden plik SVG.
@@ -147,15 +159,15 @@ h1 em{ font-style:normal; color:rgba(230,239,134,.85); }
 
 /* ============================ CTA ============================ */
 .cta{
-  display:inline-flex; align-items:center; gap:.7rem;
-  padding:17px 30px;
-  background:var(--warm); color:#fff;
-  font-weight:600; font-size:.82rem; letter-spacing:.16em; text-transform:uppercase;
-  text-decoration:none; border:0; border-radius:2px;
+  display:inline-flex; align-items:center; gap:.6rem;
+  padding:15px 30px;
+  background:var(--accent); color:var(--ink);
+  font-weight:600; font-size:1rem; letter-spacing:0; text-transform:none;
+  text-decoration:none; border:0; border-radius:980px;
   transition:background .18s ease, transform .18s ease;
 }
 .cta:hover{ background:var(--warm-dark); transform:translateY(-1px); }
-.cta:focus-visible{ outline:3px solid var(--lime); outline-offset:3px; }
+.cta:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
 .cta .arw{ transition:transform .18s ease; }
 .cta:hover .arw{ transform:translateX(4px); }
 
@@ -165,26 +177,26 @@ h1 em{ font-style:normal; color:rgba(230,239,134,.85); }
 .cta-note{ margin:12px 0 0; font-size:.8rem; font-weight:300; color:rgba(245,243,236,.72); }
 
 /* ============================ SEKCJE ============================ */
-section{ padding:clamp(64px,9vw,124px) 0; }
+section{ padding:clamp(84px,11vw,164px) 0; }
 .alt{ background:var(--paper-alt); }
 .dark{ background:var(--court); color:var(--line); }
 .deep{ background:var(--court-deep); color:var(--line); }
 
 .h2{
-  font-size:clamp(1.5rem,3.4vw,2.5rem);
+  font-size:clamp(1.7rem,4vw,3.1rem);
   font-weight:500; letter-spacing:-.005em; text-transform:uppercase; text-wrap:balance;
 }
 .h2 .script{
   display:block; text-transform:none; font-weight:400;
-  font-size:clamp(2rem,4.8vw,3.5rem); line-height:1.02;
+  font-size:clamp(2.2rem,5.4vw,4.1rem); line-height:1.02;
   margin-top:.06em; color:var(--court-dark);
 }
 .dark .h2 .script,.deep .h2 .script{ color:var(--lime); }
 
-.sub{ margin:20px 0 0; max-width:60ch; color:var(--ink-soft); font-weight:300; font-size:1.05rem; }
+.sub{ margin:24px 0 0; max-width:56ch; color:var(--ink-soft); font-weight:300; font-size:1.15rem; line-height:1.65; }
 .dark .sub,.deep .sub{ color:rgba(245,243,236,.86); }
 
-.rule{ height:2px; background:var(--concrete); border:0; margin:0; }
+.rule{ height:1px; background:var(--concrete); border:0; margin:0; }
 
 /* --- kolumny --- */
 .cols{ display:grid; gap:36px; margin:56px 0 0; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
@@ -193,13 +205,13 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 .dark .col p,.deep .col p{ color:rgba(245,243,236,.82); }
 
 /* --- kroki --- */
-.steps{ counter-reset:s; list-style:none; margin:56px 0 0; padding:0; display:grid; gap:2px; }
+.steps{ counter-reset:s; list-style:none; margin:64px 0 0; padding:0; display:grid; gap:1px; }
 .steps li{
   counter-increment:s;
   display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:baseline;
-  padding:26px 0; border-top:2px solid var(--concrete);
+  padding:30px 0; border-top:1px solid var(--concrete);
 }
-.steps li:last-child{ border-bottom:2px solid var(--concrete); }
+.steps li:last-child{ border-bottom:1px solid var(--concrete); }
 .steps li::before{
   content:counter(s,decimal-leading-zero);
   font-size:clamp(1.6rem,3.4vw,2.4rem); font-weight:300; color:var(--court-dark); letter-spacing:.02em;
@@ -212,9 +224,9 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 
 /* --- scoreboard --- */
 .board{
-  display:grid; gap:2px; margin:56px 0 0;
+  display:grid; gap:1px; margin:64px 0 0;
   grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  background:var(--concrete); border:2px solid var(--concrete);
+  background:var(--concrete); border:1px solid var(--concrete);
 }
 .board div{ background:var(--paper); padding:26px 22px; }
 .alt .board div{ background:var(--paper-alt); }
@@ -225,15 +237,15 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 .board .v small{ font-size:.9rem; font-weight:400; color:var(--ink-soft); letter-spacing:.02em; }
 
 /* --- lista wydarzeń jako tabela ligowa --- */
-.fixtures{ margin:56px 0 0; display:grid; gap:2px; }
+.fixtures{ margin:64px 0 0; display:grid; gap:1px; }
 .fixture{
   display:grid; grid-template-columns:auto 1fr auto; gap:28px; align-items:center;
   padding:30px 4px;
-  border-top:2px solid var(--concrete);
+  border-top:1px solid var(--concrete);
   text-decoration:none;
   transition:background .18s ease, padding-left .18s ease;
 }
-.fixture:last-of-type{ border-bottom:2px solid var(--concrete); }
+.fixture:last-of-type{ border-bottom:1px solid var(--concrete); }
 .fixture:hover{ background:rgba(125,143,104,.09); padding-left:14px; }
 .fixture:focus-visible{ outline:3px solid var(--warm); outline-offset:2px; }
 .fixture .when{ font-size:clamp(1.3rem,2.6vw,1.9rem); font-weight:300; letter-spacing:.01em; white-space:nowrap; }
@@ -241,7 +253,7 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 .fixture .what{ font-size:clamp(1.05rem,2vw,1.3rem); font-weight:500; text-transform:uppercase; letter-spacing:.06em; }
 .fixture .where{ display:block; margin-top:4px; font-size:.9rem; font-weight:300; text-transform:none; letter-spacing:0; color:var(--ink-soft); }
 .fixture .go{ display:flex; align-items:center; gap:14px; white-space:nowrap; }
-.fixture .free{ font-size:.8rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--warm); }
+.fixture .free{ font-size:.85rem; font-weight:500; letter-spacing:0; text-transform:none; color:var(--ink-soft); }
 .fixture .arw{ font-size:1.3rem; color:var(--court-dark); transition:transform .18s ease; }
 .fixture:hover .arw{ transform:translateX(5px); }
 
@@ -249,7 +261,7 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 .fixture--soon .free{ color:var(--ink-soft); }
 
 /* --- pule miejsc per płeć --- */
-.pools{ display:grid; gap:2px; margin:44px 0 0; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+.pools{ display:grid; gap:1px; margin:48px 0 0; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
 .pool{ border:2px solid rgba(245,243,236,.3); padding:26px 24px; }
 .pool .k{ font-size:.68rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; opacity:.78; }
 .pool .n{ display:block; margin:10px 0 4px; font-size:clamp(2.4rem,6vw,3.6rem); font-weight:300; line-height:1; }
@@ -259,8 +271,8 @@ section{ padding:clamp(64px,9vw,124px) 0; }
 
 /* --- FAQ --- */
 .faq{ margin:48px 0 0; }
-.faq details{ border-top:2px solid var(--concrete); }
-.faq details:last-of-type{ border-bottom:2px solid var(--concrete); }
+.faq details{ border-top:1px solid var(--concrete); }
+.faq details:last-of-type{ border-bottom:1px solid var(--concrete); }
 .faq summary{
   cursor:pointer; padding:22px 0; list-style:none;
   font-weight:600; font-size:1rem;
@@ -285,7 +297,7 @@ footer h4{
 footer p{ margin:0 0 8px; }
 footer a{ color:var(--line); text-decoration:underline; text-underline-offset:3px; }
 footer .fbot{
-  margin-top:48px; padding-top:24px; border-top:1px solid rgba(245,243,236,.16);
+  margin-top:56px; padding-top:26px; border-top:1px solid rgba(247,245,239,.14);
   display:flex; flex-wrap:wrap; gap:12px 28px; justify-content:space-between; font-size:.8rem;
 }
 
@@ -329,10 +341,7 @@ footer .fbot{
 body.ev{ background:linear-gradient(180deg,#f5f3ec 0%,#ebe8dd 100%); }
 
 /* stala geometria kortu w tle, widoczna przez cala strone */
-.courtbg{
-  position:fixed; inset:0; z-index:-1;
-  opacity:.16; pointer-events:none;
-}
+.courtbg{ display:none; }
 .courtbg svg{ width:100%; height:100%; display:block; }
 
 /* hero: mniej przygaszenia, wiecej kortu */
@@ -367,7 +376,7 @@ body.ev .rule{ background:rgba(107,120,92,.35); }
 .cta-line:hover{ background:var(--ink); color:var(--paper); }
 
 /* --- lista dojazdu --- */
-.transit{ margin:28px 0 0; display:grid; gap:2px; }
+.transit{ margin:28px 0 0; display:grid; gap:1px; }
 .transit div{
   display:grid; grid-template-columns:5.5rem 1fr; gap:18px; align-items:baseline;
   padding:13px 0; border-top:1px solid rgba(107,120,92,.3);
@@ -414,7 +423,7 @@ body.doc{ background:var(--paper); }
   font-size:.95rem;
 }
 .doc-body .updated{
-  margin:56px 0 0; padding-top:22px; border-top:2px solid var(--concrete);
+  margin:64px 0 0; padding-top:24px; border-top:1px solid var(--concrete);
   font-size:.88rem; color:var(--ink-soft);
 }
 
