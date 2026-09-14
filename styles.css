@@ -132,12 +132,13 @@ img{ max-width:100%; display:block; }
    wiec w pilke, do ktorej strzala leci. */
 
 /* Os czasu, jedno zdarzenie, jeden zegar dokumentu:
-     0,12–0,37 s  strzala leci: jedno przesuniecie wzdluz wlasnej osi
+     0,12–0,45 s  strzala leci: jedno przesuniecie wzdluz wlasnej osi
    Pilka nie jest animowana. Stoi na ekranie od pierwszej klatki, bo ma
    byc celem, ktory czeka na strzale — wczesniej pojawiala sie kryciem
    i wyglądalo to, jakby materializowala sie z niczego.
-   0,25 s to lot strzaly, nie rysowanie linii: predkosc ma byc
-   predkoscia strzaly. Poprzednie 0,8 s bylo leniwe.
+   0,33 s to lot strzaly, nie rysowanie linii: predkosc ma byc
+   predkoscia strzaly. Wersja na 0,8 s byla leniwa, 0,25 s okazalo sie
+   o 30 procent za szybkie.
    Kolejnosc zdarzen jest zagwarantowana kompozycja, a nie dobieraniem
    opoznien: lotki, drzewce i grot sa jedna grupa, wiec nie maja jak
    sie rozjechac, a przebicie widac, bo pilka jest narysowana PO
@@ -159,7 +160,7 @@ img{ max-width:100%; display:block; }
    `animation` z powrotem na samo `.diag .strzala` bez zdjecia klasy
    z regul `animation-name` nizej. */
 .diag .strzala{
-  animation:.25s cubic-bezier(.3,.6,.5,1) .12s backwards;
+  animation:.33s cubic-bezier(.3,.6,.5,1) .12s backwards;
   animation-name:none;
 }
 .mp-lot .diag .strzala{ animation-name:mpLot40; }
@@ -225,7 +226,6 @@ img{ max-width:100%; display:block; }
   .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot86; }
   .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
   .hero--short .diag{ top:55%; }  /* archiwum */
-  .hero--home .diag{ top:59%; }   /* strona glowna, jeden rzad meta */
   .diag .strzala path{ stroke-width:4px; }
 }
 /* Niskie telefony (360x640 i podobne): hero jest krotsze, wiec pas
@@ -237,7 +237,105 @@ img{ max-width:100%; display:block; }
   .mp-lot .diag .strzala, .mp-lot .hero--short .diag .strzala{ animation-name:mpLot78; }
   .diag{ top:42%; }
   .hero--short .diag{ top:49%; }
-  .hero--home .diag{ top:53%; }
+}
+
+/* ========= ZNAK MARKI NA STRONIE GLOWNEJ: PILKA JAKO DRUGIE O =========
+   Na stronie glownej pilka nie stoi w wolnym polu obok tekstu, tylko
+   zajmuje miejsce drugiego O w slowie SPORTOWY. Kolejnosc zdarzen:
+   pilka spada z gory i dwa razy sie odbija, potem przylatuje strzala
+   i ja przebija, a po przebiciu pilka kreci sie wokol wlasnej osi
+   i wyhamowuje.
+   Litera zostaje w tresci, tylko przezroczysta. Dzieki temu wszystko
+   jest pozycjonowane wzgledem niej i zgadza sie przy kazdej szerokosci
+   oraz kazdym stopniu pisma — zero wyliczania, gdzie wypada to O.
+   Na stronach wydarzen znak zostaje w .diag, bo w TENNIS nie ma O. */
+.o-znak{ position:relative; display:inline-block; color:transparent; }
+
+/* Zerowy punkt zaczepienia w srodku oka litery; wszystko dalej liczy
+   sie od niego, w em, wiec skaluje sie razem z napisem.
+   Po literze idzie jeszcze swiatlo (letter-spacing .14em), wiec srodek
+   glifu nie wypada w 50% szerokosci pudelka — stad odjeta polowa. */
+.o-znak .kosz{
+  position:absolute;
+  left:calc(50% - .07em); top:.44em;
+  width:0; height:0;
+}
+
+/* Srodkowanie pilki przez offsety, a nie przez translate: transform ma
+   zostac wolny dla animacji skoku. Skok i obrot siedza na dwoch
+   osobnych elementach, bo obie animacje ruszaja ta sama wlasciwosc
+   i na jednym elemencie nie dalyby sie zlozyc. */
+.o-znak .pilka-skok{
+  position:absolute; left:-.39em; top:-.39em;
+  width:.78em; height:.78em;
+}
+.o-znak .pilka-svg{ width:100%; height:100%; display:block; }
+
+/* Strzala jest ustawiona tak, zeby punkt przebicia z jej viewBoxa
+   (640 140 przy 1000x280, czyli 64% szerokosci i polowa wysokosci)
+   wypadl dokladnie w punkcie zaczepienia, czyli w srodku litery.
+   `transform-origin` jest w tym samym punkcie, wiec zmiana kata obraca
+   strzale wokol pilki, a nie przesuwa jej z O.
+   Dlugosc w vw, niezaleznie od stopnia pisma: przy dlugosci liczonej
+   w em strzala na telefonie bylaby dlugosci litery.
+   Skos siedzi na osobnym oplotku, a nie na samym SVG, bo lot animuje
+   transform tego SVG — dwie rzeczy nie zmieszcza sie w jednej
+   wlasciwosci. */
+.o-znak .strzala-lot{
+  --skos:-8deg;
+  --dl:63vw;
+  position:absolute;
+  left:calc(-.64 * var(--dl)); top:calc(-.14 * var(--dl));
+  width:var(--dl); height:calc(.28 * var(--dl));
+  transform-origin:64% 50%;
+  transform:rotate(var(--skos));
+  z-index:-1;          /* strzala za literami, pilka nad nimi */
+  pointer-events:none;
+}
+.o-znak .strzala-svg{ width:100%; height:100%; display:block; overflow:visible; }
+.o-znak .strzala-svg path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
+
+/* --- os czasu strony glownej, wlaczana klasa mp-lot tak samo jak .diag ---
+     0,00–0,85 s  pilka spada i odbija sie dwa razy
+     0,90–1,23 s  strzala leci; grot wchodzi w pilke okolo 1,06 s
+     1,05–2,05 s  pilka kreci sie od uderzenia i wyhamowuje
+   Obrot jest o pelne dwa obroty, wiec konczy sie tam, gdzie sie zaczal
+   i nie trzeba wypelnienia `forwards` — po animacji nie zostaje zaden
+   transform, ktory moglby trzymac warstwe kompozytowana. */
+.mp-lot .o-znak .pilka-skok{ animation:mpSpadek .85s backwards; }
+.mp-lot .o-znak .strzala-svg{ animation:mpLotO .33s cubic-bezier(.3,.6,.5,1) .9s backwards; }
+.mp-lot .o-znak .pilka-svg{ animation:mpObrot 1s cubic-bezier(.12,.78,.18,1) 1.05s; }
+
+/* Spadek: w dol przyspiesza, w gore hamuje. Krzywe sa podane przy
+   klatkach, bo kazdy odcinek ma inny charakter — z jedna krzywa na
+   calosc wyszedlby rowny ruch, a nie grawitacja. */
+@keyframes mpSpadek{
+  0%   { transform:translateY(-7em);    animation-timing-function:ease-in; }
+  48%  { transform:translateY(0);       animation-timing-function:ease-out; }
+  64%  { transform:translateY(-1.15em); animation-timing-function:ease-in; }
+  80%  { transform:translateY(0);       animation-timing-function:ease-out; }
+  90%  { transform:translateY(-.34em);  animation-timing-function:ease-in; }
+  100% { transform:translateY(0); }
+}
+@keyframes mpObrot{ from{ transform:rotate(0deg); } to{ transform:rotate(720deg); } }
+/* Droga lotu w vw, nie w jednostkach viewBoxa: tu przesuwany jest
+   element HTML, nie grupa w SVG, wiec przesuniecie liczy sie w pikselach
+   ekranu. 95vw to z zapasem tyle, zeby grot stanal poza lewa krawedzia
+   na kazdym breakpoincie — i jedna wartosc wystarcza dla wszystkich. */
+@keyframes mpLotO{ from{ transform:translateX(-95vw); } to{ transform:translateX(0); } }
+
+@media (prefers-reduced-motion:reduce){
+  .mp-lot .o-znak .pilka-skok,
+  .mp-lot .o-znak .strzala-svg,
+  .mp-lot .o-znak .pilka-svg{ animation:none; }
+}
+
+@media (max-width:1100px){
+  .o-znak .strzala-lot{ --dl:68vw; }
+}
+@media (max-width:640px){
+  .o-znak .strzala-lot{ --skos:-7deg; --dl:70vw; }
+  .o-znak .strzala-svg path{ stroke-width:4px; }
 }
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
