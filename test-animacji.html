@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Match Point — test animacji (strona tymczasowa)</title>
+<style>
+  :root{ --roz:#f2a7ba; --pilka:#c9dd85; --zielen:#4b5a3f; --papier:#f7f6f2; }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; padding:20px 16px 60px;
+    font:15px/1.5 -apple-system, system-ui, sans-serif;
+    background:var(--papier); color:#1b2016;
+  }
+  h1{ font-size:1.15rem; margin:0 0 4px; }
+  p.wstep{ margin:0 0 20px; color:#5a6150; font-size:.9rem; }
+  .test{ margin:0 0 18px; border:1px solid rgba(27,32,22,.14); border-radius:12px; overflow:hidden; background:#fff; }
+  .test h2{ font-size:.82rem; letter-spacing:.06em; text-transform:uppercase; margin:0; padding:10px 12px; background:rgba(27,32,22,.05); }
+  .test .opis{ margin:0; padding:8px 12px; font-size:.82rem; color:#5a6150; }
+  .scena{ position:relative; height:120px; background:var(--zielen); overflow:hidden; }
+  .scena svg{ display:block; }
+
+  /* --- wspolna grafika strzaly, uproszczona --- */
+  .znak{ position:absolute; left:62%; top:50%; width:52%; transform:translate(-50%,-50%) rotate(-12deg); }
+  .znak svg{ width:100%; height:auto; overflow:visible; }
+  .znak .strzala path{ vector-effect:non-scaling-stroke; stroke-width:4px; }
+
+  /* A: stara wersja — var() w klatce, bez klatki `to` */
+  .a .strzala{ --lot:-1600px; animation:lotA .9s ease-out .2s backwards; }
+  @keyframes lotA{ from{ transform:translateX(var(--lot)); } }
+
+  /* B: nowa wersja — wartosc wpisana wprost, z klatka `to` */
+  .b .strzala{ animation:lotB .9s ease-out .2s backwards; }
+  @keyframes lotB{ from{ transform:translateX(-1600px); } to{ transform:translateX(0); } }
+
+  /* C: to samo, ale przesuwany jest element HTML, nie grupa w SVG */
+  .c .znak-lot{ position:absolute; inset:0; animation:lotC .9s ease-out .2s backwards; }
+  @keyframes lotC{ from{ transform:translateX(-90%); } to{ transform:translateX(0); } }
+
+  /* D: statyczny test — czy tresc POZA viewBoxem jest widoczna */
+  .d svg{ position:absolute; left:50%; top:50%; width:40%; transform:translate(-50%,-50%); overflow:visible; }
+
+  .wynik{ padding:10px 12px; font-size:.82rem; background:rgba(27,32,22,.05); }
+  .wynik b{ font-weight:600; }
+  button{
+    display:block; width:100%; padding:14px; margin:0 0 22px;
+    font:600 15px/1 -apple-system, system-ui, sans-serif;
+    color:#1b2016; background:var(--roz); border:0; border-radius:999px;
+  }
+  code{ font-size:.85em; background:rgba(27,32,22,.07); padding:1px 4px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<h1>Test animacji — strona tymczasowa</h1>
+<p class="wstep">
+  Otwórz na iPhonie i zobacz, <b>które strzały przelatują</b> przez zieloną
+  scenę, a które stoją w miejscu. Przycisk niżej powtarza wszystkie animacje.
+  Do usunięcia po diagnozie.
+</p>
+
+<button onclick="powtorz()">Powtórz animacje</button>
+
+<div class="wynik" id="srodowisko"></div>
+
+<div class="test a">
+  <h2>A — stara wersja (var w klatce, bez „to")</h2>
+  <div class="scena">
+    <div class="znak">
+      <svg viewBox="0 0 1000 280" overflow="visible">
+        <g class="strzala">
+          <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M44 108 96 140 44 172"/><path d="M50 140H885"/>
+          </g>
+          <g transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+            <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z" fill="#f2a7ba"/>
+          </g>
+        </g>
+        <circle cx="640" cy="140" r="88" fill="#c9dd85"/>
+      </svg>
+    </div>
+  </div>
+  <p class="opis">Jeśli TA stoi, a B leci — problemem był <code>var()</code> w klatkach.</p>
+</div>
+
+<div class="test b">
+  <h2>B — nowa wersja (wartość wprost, z „to")</h2>
+  <div class="scena">
+    <div class="znak">
+      <svg viewBox="0 0 1000 280" overflow="visible">
+        <g class="strzala">
+          <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M44 108 96 140 44 172"/><path d="M50 140H885"/>
+          </g>
+          <g transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+            <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z" fill="#f2a7ba"/>
+          </g>
+        </g>
+        <circle cx="640" cy="140" r="88" fill="#c9dd85"/>
+      </svg>
+    </div>
+  </div>
+  <p class="opis">To jest wersja, która jest teraz na stronie.</p>
+</div>
+
+<div class="test c">
+  <h2>C — przesuwany element HTML, nie grupa w SVG</h2>
+  <div class="scena">
+    <div class="znak">
+      <div class="znak-lot">
+        <svg viewBox="0 0 1000 280" overflow="visible">
+          <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M44 108 96 140 44 172"/><path d="M50 140H885"/>
+          </g>
+          <g transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+            <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z" fill="#f2a7ba"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <p class="opis">Jeśli B stoi, a C leci — WebKit nie animuje transformu na grupie w SVG.</p>
+</div>
+
+<div class="test d">
+  <h2>D — statyczny: czy widać treść poza viewBoxem</h2>
+  <div class="scena">
+    <svg viewBox="0 0 200 200" overflow="visible">
+      <rect x="0" y="0" width="200" height="200" fill="none" stroke="#f7f5ef" stroke-opacity=".5" stroke-width="3"/>
+      <circle cx="100" cy="100" r="40" fill="#c9dd85"/>
+      <circle cx="-120" cy="100" r="40" fill="#f2a7ba"/>
+      <circle cx="320" cy="100" r="40" fill="#f2a7ba"/>
+    </svg>
+  </div>
+  <p class="opis">
+    Mają być widoczne <b>trzy</b> kółka: zielone w ramce i dwa różowe po jej
+    bokach. Jeśli różowych nie ma, WebKit obcina treść do viewBoxa i strzała
+    nie ma skąd wylecieć.
+  </p>
+</div>
+
+<script>
+  function powtorz(){
+    document.querySelectorAll('.strzala, .znak-lot').forEach(function(e){
+      e.style.animation = 'none';
+      e.getBoundingClientRect();
+      e.style.animation = '';
+    });
+  }
+  (function(){
+    var red = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('srodowisko').innerHTML =
+      '<b>Ograniczanie ruchu w systemie:</b> ' + (red
+        ? 'WŁĄCZONE — to samo w sobie wyłącza animację na stronie. ' +
+          'Ustawienia → Dostępność → Ruch → Ogranicz ruch.'
+        : 'wyłączone (czyli to nie jest przyczyna)') +
+      '<br><b>Przeglądarka:</b> ' + navigator.userAgent;
+  })();
+</script>
+
+</body>
+</html>

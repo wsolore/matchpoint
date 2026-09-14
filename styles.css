@@ -76,15 +76,15 @@ img{ max-width:100%; display:block; }
 }
 .hero--short{ min-height:auto; padding-bottom:56px; }
 
-/* kort odwzorowany w SVG — zero zewnętrznych assetów.
-   preserveAspectRatio="none" daje przewidywalną geometrię,
-   dzięki czemu piłka trafia dokładnie w przecięcie linii. */
+/* Kort odwzorowany w SVG — zero zewnetrznych assetow. Nawierzchnia to
+   gradient z trzech zieleni palety, linie i uklad kortu siedza w SVG
+   w HTML (sekcja .court w kazdej stronie).
+   Zielenie bierzemy ze zmiennych, a nie z wpisanych na sztywno hexow,
+   zeby tlo bylo tym samym kolorem co reszta serwisu. */
 .court{
   position:absolute; inset:0; z-index:-2;
-  background:linear-gradient(163deg,#657a54 0%,#4d5c42 52%,#3a4630 100%);
+  background:linear-gradient(163deg,var(--court) 0%,var(--court-dark) 52%,var(--court-deep) 100%);
 }
-/* Zostaly tylko dwie bardzo delikatne linie kortu, przy kryciu 11
-   procent. Pas blekitu wypadl razem z nadmiarem akcentow. */
 .court svg{ width:100%; height:100%; display:block; }
 
 .hero::after{
@@ -108,14 +108,6 @@ img{ max-width:100%; display:block; }
    ekran. */
 .diag{
   --skos:-16deg;
-  /* Droga lotu, w jednostkach viewBoxa: tyle strzala cofa sie na
-     starcie, zeby stanac cala poza ekranem.
-     Wartosc to w przyblizeniu 100000 / szerokosc znaku w vw. Wychodzi
-     z tego, ze grot musi sie cofnac o szerokosc ekranu, a jednostka
-     viewBoxa jest tym mniejsza, im wezszy jest znak. Dlatego kazdy
-     breakpoint ma wlasna wartosc: przy jednej dla wszystkich strzala
-     na telefonie spedzala pol animacji poza ekranem. */
-  --lot:-2600px;      /* 40vw */
   position:absolute; z-index:-1;
   left:72%; top:64%;
   width:40vw;
@@ -156,10 +148,28 @@ img{ max-width:100%; display:block; }
    wiec zaden transform, ktory moglby trzymac warstwe kompozytowana
    i rozmyc grafike. */
 .diag .strzala{
-  animation:mpLot .25s cubic-bezier(.3,.6,.5,1) .12s backwards;
+  animation:mpLot40 .25s cubic-bezier(.3,.6,.5,1) .12s backwards;
 }
 
-@keyframes mpLot{ from{ transform:translateX(var(--lot)); } }
+/* Droga lotu, w jednostkach viewBoxa: tyle strzala cofa sie na starcie,
+   zeby stanac cala poza ekranem. Wartosc to w przyblizeniu
+   100000 / szerokosc znaku w vw — grot musi sie cofnac o szerokosc
+   ekranu, a jednostka viewBoxa jest tym mniejsza, im wezszy jest znak.
+   Przy jednej wartosci dla wszystkich strzala na telefonie spedzalaby
+   pol animacji poza ekranem, dlatego kazdy breakpoint ma wlasna.
+
+   Wazne: kazdy breakpoint ma wlasny ZESTAW KLATEK i przelacza sie na
+   niego przez `animation-name`. Wczesniej byla jedna klatka
+   `translateX(var(--lot))`, bez klatki `to`. Na iOS strzala stala
+   w miejscu — Safari nie odtwarza animacji, ktorej wartosc klatki
+   pochodzi z wlasciwosci niestandardowej, i nie dopisuje brakujacej
+   klatki koncowej. Klatki musza byc wypisane wprost, razem z `to`.
+   Nie wstawiaj tu var(). */
+@keyframes mpLot40{ from{ transform:translateX(-2600px); } to{ transform:translateX(0); } }
+@keyframes mpLot72{ from{ transform:translateX(-1450px); } to{ transform:translateX(0); } }
+@keyframes mpLot66{ from{ transform:translateX(-1580px); } to{ transform:translateX(0); } }
+@keyframes mpLot86{ from{ transform:translateX(-1200px); } to{ transform:translateX(0); } }
+@keyframes mpLot78{ from{ transform:translateX(-1300px); } to{ transform:translateX(0); } }
 
 @media (prefers-reduced-motion:reduce){
   .diag .strzala{ animation:none; }
@@ -179,11 +189,13 @@ img{ max-width:100%; display:block; }
    warunek orientacji. Bez niego tablet w poziomie dostawal wersje
    pionowa i strzala wychodzila dolem za ekran, przez stopke hero. */
 @media (max-width:1100px) and (orientation:portrait){
-  .diag{ left:50%; top:72%; width:72vw; --lot:-1450px; }
+  .diag{ left:50%; top:72%; width:72vw; }
+  .diag .strzala{ animation-name:mpLot72; }
   /* Archiwum: hero ma tu 444 px, a pas miedzy lockupem a stopka niecale
      50 px, wiec znak nie ma jak wejsc w pas. Stoi po prawej, w wolnym
      polu obok lockupu — tak jak w ukladzie poziomym. */
-  .hero--short .diag{ left:68%; top:46%; width:66vw; --lot:-1580px; }
+  .hero--short .diag{ left:68%; top:46%; width:66vw; }
+  .hero--short .diag .strzala{ animation-name:mpLot66; }
 }
 /* Telefon w pionie. Pas wolny od tekstu ma na kazdej stronie podobna
    wysokosc (ok. 105 px), ale lezy na innej wysokosci, bo stopka hero
@@ -195,7 +207,8 @@ img{ max-width:100%; display:block; }
 @media (max-width:640px) and (orientation:portrait){
   /* Nadpisanie musi objac takze .hero--short, bo regula archiwum ma
      dwie klasy i inaczej wygralaby ta z tabletu. */
-  .diag, .hero--short .diag{ --skos:-11deg; left:50%; width:86vw; --lot:-1200px; }
+  .diag, .hero--short .diag{ --skos:-11deg; left:50%; width:86vw; }
+  .diag .strzala, .hero--short .diag .strzala{ animation-name:mpLot86; }
   .diag{ top:50%; }               /* strona wydarzenia, dwa rzedy meta */
   .hero--short .diag{ top:55%; }  /* archiwum */
   .hero--home .diag{ top:59%; }   /* strona glowna, jeden rzad meta */
@@ -206,7 +219,8 @@ img{ max-width:100%; display:block; }
    krotsza i jeszcze plaszcza, inaczej lotki siadaja na napisie
    NAJBLIZSZE. */
 @media (max-width:640px) and (orientation:portrait) and (max-height:700px){
-  .diag, .hero--short .diag{ --skos:-8deg; width:78vw; --lot:-1300px; }
+  .diag, .hero--short .diag{ --skos:-8deg; width:78vw; }
+  .diag .strzala, .hero--short .diag .strzala{ animation-name:mpLot78; }
   .diag{ top:42%; }
   .hero--short .diag{ top:49%; }
   .hero--home .diag{ top:53%; }

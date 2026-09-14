@@ -30,15 +30,75 @@
 
 <header class="hero hero--short">
   <div class="court" aria-hidden="true">
-    <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" role="presentation">
-      <!-- Linie kortu: cienkie i rowne, bez rozciagania proporcji.
-           Wczesniej byl tu preserveAspectRatio="none", ktory rozjezdzal
-           je w miekkie smugi. Narysowany jest narozik kortu: linia
-           koncowa i biegnaca od niej linia boczna. -->
-      <g fill="none" stroke="#f7f5ef" stroke-opacity="0.16" stroke-width="5">
-        <path d="M-40 268 1240 196"/>
-        <path d="M980 210 700 940"/>
-        <path d="M-40 452 1240 404" stroke-opacity="0.09"/>
+    <!-- Kort w perspektywie, patrzac od linii koncowej w strone siatki.
+         Wczesniej byly tu trzy luzne kreski, ktore nie czytaly sie jako
+         kort; teraz jest pelny uklad: korytarze deblowe, linie
+         pojedyncze, dwie linie serwisowe, linia srodkowa, znaczniki
+         srodka i siatka. Proporcje sa prawdziwe — szerokosc gry
+         pojedynczej to 75 procent szerokosci deblowej.
+         Perspektywa jest splaszczona wzgledem fotograficznej. Przy
+         wiernej dalsza polowa kortu scisnela sie do 30 jednostek
+         i przestawala byc czytelna.
+         preserveAspectRatio="slice" przycina kadr, a nie rozciaga —
+         rozciaganie rozjezdzalo linie w miekkie smugi. Obszar widoczny
+         na kazdym ekranie to x 184-1016 i y 225-975, wiec kort
+         pojedynczy i pola serwisowe mieszcza sie w calosci, a korytarze
+         deblowe wychodza bokami za kadr. -->
+    <svg viewBox="0 0 1200 1200" preserveAspectRatio="xMidYMid slice" role="presentation">
+      <defs>
+        <!-- Glebia: linie gasna w strone punktu zbiegu, jak w perspektywie
+             powietrznej. Dzieki temu gora hero zostaje czysta, a kort nie
+             wchodzi pod wordmark. -->
+        <linearGradient id="mpKortGlebia" x1="0" y1="300" x2="0" y2="960"
+                        gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+          <stop offset=".2" stop-color="#fff" stop-opacity=".4"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+        </linearGradient>
+        <mask id="mpKortMaska">
+          <rect x="-300" y="0" width="1800" height="1200" fill="url(#mpKortGlebia)"/>
+        </mask>
+      </defs>
+
+      <g mask="url(#mpKortMaska)">
+        <!-- Nawierzchnia w grze jest o ton jasniejsza od otoczenia, tak jak
+             na korcie twardym. To najmocniejszy sygnal, ze to kort, a nie
+             przypadkowe linie. Jasnienie robimy kolorem linii z alfa, zeby
+             nie wprowadzac do palety kolejnego odcienia. -->
+        <path d="M-100 960H1300L720 395H480Z" fill="#f7f5ef" fill-opacity=".045"/>
+
+        <g fill="none" stroke="#f7f5ef" stroke-opacity=".17">
+          <!-- linie boczne: deblowe, potem pojedyncze -->
+          <path d="M-100 960 480 395" stroke-width="4.5"/>
+          <path d="M1300 960 720 395" stroke-width="4.5"/>
+          <path d="M75 960 510 395" stroke-width="4"/>
+          <path d="M1125 960 690 395" stroke-width="4"/>
+
+          <!-- linie koncowe -->
+          <path d="M-100 960H1300" stroke-width="6"/>
+          <path d="M480 395H720" stroke-width="3"/>
+
+          <!-- linie serwisowe i linia srodkowa -->
+          <path d="M198 800H1002" stroke-width="4.5"/>
+          <path d="M445 480H755" stroke-width="3"/>
+          <path d="M600 800V480" stroke-width="3.5"/>
+
+          <!-- znaczniki srodka linii koncowych -->
+          <path d="M600 960V932" stroke-width="6"/>
+          <path d="M600 395V407" stroke-width="3"/>
+        </g>
+
+        <!-- Siatka: pas o wysokosci wynikajacej ze skali w tym miejscu
+             kortu, z jasniejsza tasma na gorze i slupkami po bokach. -->
+        <g>
+          <path d="M240 620H1060V570H240Z" fill="#f7f5ef" fill-opacity=".05"/>
+          <g fill="none" stroke="#f7f5ef" stroke-opacity=".22">
+            <path d="M240 570H1060" stroke-width="4"/>
+            <path d="M240 620H1060" stroke-width="3"/>
+            <path d="M240 566V624" stroke-width="4"/>
+            <path d="M1060 566V624" stroke-width="4"/>
+          </g>
+        </g>
       </g>
     </svg>
   </div>
@@ -53,7 +113,7 @@
        przelatuje. To ona daje wrazenie przebicia.
        Geometria, kat i os czasu siedza w styles.css, sekcja .diag. -->
   <div class="diag" aria-hidden="true">
-    <svg viewBox="0 0 1000 280" role="presentation">
+    <svg viewBox="0 0 1000 280" overflow="visible" role="presentation">
       <defs>
         <clipPath id="mpPilka"><circle cx="640" cy="140" r="88"/></clipPath>
       </defs>
