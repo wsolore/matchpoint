@@ -293,27 +293,13 @@
       : 'Wolnych miejsc ' + free;
   }
 
-  /* Czekamy na arkusz, zeby licznik nie mrugal liczba z config.js.
-     Wartosci awaryjne tylko przy bledzie albo po czterech sekundach. */
-  let policzone = false;
-  function awaryjnie(){
-    if (policzone) return;
-    policzone = true;
-    render(e.paidWomen, e.paidMen);
-  }
-
+  /* Liczby wylacznie z arkusza. Gdy nie odpowie, zostaje neutralny
+     tekst wpisany w HTML, bez zadnej liczby.                      */
   if (ep && MATCHPOINT.useSheetCounter) {
-    const zegar = setTimeout(awaryjnie, 4000);
     fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
-      .then(d => {
-        clearTimeout(zegar);
-        if (d && d.ok) { policzone = true; render(d.womenPaid, d.menPaid); }
-        else awaryjnie();
-      })
-      .catch(() => { clearTimeout(zegar); awaryjnie(); });
-  } else {
-    awaryjnie();
+      .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })
+      .catch(() => {});
   }
 })();
 </script>

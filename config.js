@@ -1,8 +1,9 @@
 /* ============================================================
    MATCH POINT — jedyny plik do edycji
    ------------------------------------------------------------
-   1) PO KAZDEJ ZAKSIEGOWANEJ WPLACIE zmien paidWomen / paidMen.
-      Licznik na stronie pokazuje OPLACONE miejsca, nie zgloszenia.
+   1) Licznik oplaconych miejsc czyta arkusz sam, wiec nie ma tu
+      zadnych liczb do utrzymywania. Gdy arkusz nie odpowie, strona
+      nie pokazuje zadnej liczby zamiast pokazywac nieaktualna.
    2) sheetEndpoint wklejasz raz, po wdrozeniu skryptu Google
       (instrukcja: docs/apps-script.md). Dopoki jest puste,
       formularz na stronie pokazuje przycisk do Google Forms.
@@ -16,8 +17,7 @@ const MATCHPOINT = {
   sheetEndpoint: 'https://script.google.com/macros/s/AKfycbxHiSMEiB8geAq8-VjcQl7IBm7bf51cIs0aPKPMzSSBKMot_BZZ7wFtDK5AXcAxIul4UQ/exec',
 
   /* Czy licznik ma czytac liczbe oplaconych z arkusza.
-     false = liczby ponizej (paidWomen / paidMen) sa zrodlem prawdy.
-     Wlaczyc dopiero, gdy uklad blokow w arkuszu jest potwierdzony.  */
+     Przy false liczniki zostaja puste, bo nie ma zapasowego zrodla. */
   useSheetCounter: true,
 
   /* --- najblizsze wydarzenie, w sprzedazy --- */
@@ -43,12 +43,7 @@ const MATCHPOINT = {
     blik:    '731 210 703',
 
     limitWomen: 6,
-    limitMen:   6,
-
-    /* ↓↓↓ TYLKO TE DWIE LICZBY ZMIENIASZ NA BIEZACO ↓↓↓
-       Liczba osob z "TAK" w kolumnie "Oplacone" w arkuszu.         */
-    paidWomen: 3,
-    paidMen:   0
+    limitMen:   6
   },
 
   /* --- archiwum --- */

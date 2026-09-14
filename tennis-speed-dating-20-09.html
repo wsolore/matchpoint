@@ -472,29 +472,14 @@
       : 'Wolnych miejsc ' + wolne;
   }
 
-  /* Nie pokazujemy liczb z config.js od razu, bo po chwili zmienilyby
-     sie na dane z arkusza i licznik by mrugal. Czekamy na arkusz.
-     Liczby awaryjne wchodza tylko wtedy, gdy odpytanie sie nie uda
-     albo trwa dluzej niz cztery sekundy.                          */
-  let policzone = false;
-  function awaryjnie(){
-    if (policzone) return;
-    policzone = true;
-    renderPools(e.paidWomen, e.paidMen);
-  }
-
+  /* Liczby bierzemy wylacznie z arkusza. Jesli nie odpowie, pule
+     zostaja z kreska, a nad nimi widnieje tylko limit miejsc.
+     Lepiej nie pokazac nic, niz pokazac nieaktualna liczbe.       */
   if (ep && MATCHPOINT.useSheetCounter) {
-    const zegar = setTimeout(awaryjnie, 4000);
     fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
       .then(r => r.json())
-      .then(d => {
-        clearTimeout(zegar);
-        if (d && d.ok) { policzone = true; renderPools(d.womenPaid, d.menPaid); }
-        else awaryjnie();
-      })
-      .catch(() => { clearTimeout(zegar); awaryjnie(); });
-  } else {
-    awaryjnie();
+      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
+      .catch(() => {});
   }
 
   document.querySelectorAll('[data-blik]').forEach(n => n.textContent = e.blik);
