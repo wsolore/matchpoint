@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 300" role="presentation">
   <!-- Znak: pilka tenisowa przebita strzala.
-       Pilka mocno transparentna, w zieleni. Strzala rozowa, dluga,
-       zeby byla wyraznie widoczna po obu stronach pilki.
-       Szwy biegna osobno i NIE przecinaja sie: gorny opada tylko do
-       27 procent promienia nad srodkiem, dolny podnosi sie tyle samo
-       pod srodkiem, wiec miedzy nimi zostaje szeroki pas. -->
+       Paleta pastelowa: pilka w jasnej, szalwiowej zieleni, strzala
+       w pudrowym rozu. Szwy biegna osobno i sie nie przecinaja. -->
 
   <defs>
     <clipPath id="ballClip">
@@ -13,19 +10,19 @@
   </defs>
 
   <!-- strzala pod pilka: w srodku zaslonieta, widac ja po bokach -->
-  <g transform="rotate(-30 230 150)" fill="none" stroke="#ef7d95"
-     stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="rotate(-30 230 150)" fill="none" stroke="#f2a7ba"
+     stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 150H450"/>
     <path d="M412 116 450 150 412 184"/>
-    <path d="M16 120 54 150 16 180" stroke-width="11"/>
-    <path d="M46 124 80 150 46 176" stroke-width="11"/>
+    <path d="M16 120 54 150 16 180" stroke-width="12"/>
+    <path d="M46 124 80 150 46 176" stroke-width="12"/>
   </g>
 
-  <!-- pilka -->
-  <circle cx="230" cy="150" r="86" fill="#3f4a35" opacity="0.34"/>
+  <!-- pilka: wyrazna, pastelowa zielen -->
+  <circle cx="230" cy="150" r="86" fill="#adc78d"/>
 
   <!-- szwy, przyciete do okregu -->
-  <g clip-path="url(#ballClip)" fill="none" stroke="#eef1e6" opacity="0.5"
+  <g clip-path="url(#ballClip)" fill="none" stroke="#f7f5ea"
      stroke-width="14" stroke-linecap="butt">
     <path d="M162.5 96.7Q230 156.9 297.5 96.7"/>
     <path d="M162.5 203.3Q230 143.1 297.5 203.3"/>
