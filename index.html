@@ -304,12 +304,12 @@
     const summary = document.querySelector('[data-spots-summary]');
     if (summary) summary.textContent = free === 0
       ? 'Skład zamknięty'
-      : 'Opłaconych miejsc ' + taken + ' z ' + total;
+      : 'Wolnych miejsc ' + free;
 
     const badge = document.querySelector('[data-fixture-free]');
     if (badge) badge.textContent = free === 0
       ? 'Skład zamknięty'
-      : taken + ' / ' + total + ' miejsc zajętych';
+      : 'Wolnych miejsc ' + free;
   }
 
   render(e.paidWomen, e.paidMen);
