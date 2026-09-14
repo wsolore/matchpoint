@@ -13,6 +13,6 @@
 
   <g transform="translate(150 112) scale(1.75)">
     <path d="M0 27C-31 6-35-17-18-25-7-30 0-21 0-13 0-21 7-30 18-25 35-17 31 6 0 27Z"
-          fill="#fbe4ea" stroke="#f2a7ba" stroke-width="3"/>
+          fill="#f2a7ba"/>
   </g>
 </svg>
