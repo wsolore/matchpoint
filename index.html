@@ -68,13 +68,16 @@
         <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
           <path d="M44 108 96 140 44 172"/>
           <path d="M88 113 136 140 88 167"/>
-          <path d="M50 140H870"/>
+          <path d="M50 140H885"/>
         </g>
-        <g class="grot">
-          <g transform="translate(846 91) scale(.893)">
-            <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"
-                  fill="#f2a7ba"/>
-          </g>
+        <!-- Serce jest GROTEM, nie ozdoba na koncu: obrocone o -90 stopni,
+             wiec ostry czubek celuje w kierunku lotu, a wciecie miedzy
+             garbami nasadza sie na koniec drzewca. Czubek wypada dokladnie
+             na osi strzaly, w punkcie 960 140. Wciecie wypada na 883. Nie kontruje skosu — grot
+             ma lezec wzdluz strzaly, a nie stac pionowo. -->
+        <g class="grot" transform="translate(835 197) rotate(-90) scale(.95 1.25)">
+          <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"
+                fill="#f2a7ba"/>
         </g>
       </g>
 

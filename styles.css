@@ -132,24 +132,21 @@ img{ max-width:100%; display:block; }
    stala czescia jej srednicy. */
 .diag .strzala path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
 
-/* Grot stoi PIONOWO niezaleznie od kata skosu: kontruje go obrotem
-   o ten sam kat ze znakiem przeciwnym, policzonym z --skos. Siedzi
-   w grupie strzaly, wiec leci razem z nia, a obraca sie wokol wlasnego
-   srodka. */
-.diag .grot{
-  transform:rotate(calc(-1 * var(--skos)));
-  transform-box:fill-box; transform-origin:center;
-}
+/* Grot lezy wzdluz strzaly — obrot jest wpisany w SVG, nie w CSS, bo
+   grot nie kontruje juz skosu. Serce stalo wczesniej pionowo, w zwyklym
+   ulozeniu, i czytalo sie jako ozdoba doklejona do konca drzewca.
+   Teraz jest obrocone tak, ze ostry czubek celuje w kierunku lotu, a
+   wciecie miedzy garbami nasadza sie na drzewce. W locie czubek celuje
+   wiec w pilke, do ktorej strzala leci. */
 
-/* Os czasu, dwa zdarzenia, jeden zegar dokumentu:
-     0,00–0,35 s  pilka pojawia sie kryciem, wiec czeka na strzale
-     0,12–0,92 s  strzala leci: jedno przesuniecie wzdluz wlasnej osi
-     ok. 0,63 s   grot wchodzi w pilke, potem strzala jeszcze sie
-                  dociska i staje — to jest moment przebicia
-   Krzywa czasu jest blisko liniowej z krotkim wyhamowaniem. Mocne
-   ease-out konczylo sie tym, ze ostatnie 15 procent czasu dawalo
-   1,5 procent drogi i strzala pelzla w miejscu.
-   Kolejnosc jest zagwarantowana kompozycja, a nie dobieraniem
+/* Os czasu, jedno zdarzenie, jeden zegar dokumentu:
+     0,12–0,37 s  strzala leci: jedno przesuniecie wzdluz wlasnej osi
+   Pilka nie jest animowana. Stoi na ekranie od pierwszej klatki, bo ma
+   byc celem, ktory czeka na strzale — wczesniej pojawiala sie kryciem
+   i wyglądalo to, jakby materializowala sie z niczego.
+   0,25 s to lot strzaly, nie rysowanie linii: predkosc ma byc
+   predkoscia strzaly. Poprzednie 0,8 s bylo leniwe.
+   Kolejnosc zdarzen jest zagwarantowana kompozycja, a nie dobieraniem
    opoznien: lotki, drzewce i grot sa jedna grupa, wiec nie maja jak
    sie rozjechac, a przebicie widac, bo pilka jest narysowana PO
    strzale i zaslania to, co za nia przelatuje.
@@ -159,16 +156,13 @@ img{ max-width:100%; display:block; }
    wiec zaden transform, ktory moglby trzymac warstwe kompozytowana
    i rozmyc grafike. */
 .diag .strzala{
-  animation:mpLot .8s cubic-bezier(.3,.55,.5,1) .12s backwards;
+  animation:mpLot .25s cubic-bezier(.3,.6,.5,1) .12s backwards;
 }
-.diag .pilka{ opacity:0; animation:mpPojaw .35s ease-out forwards; }
 
 @keyframes mpLot{ from{ transform:translateX(var(--lot)); } }
-@keyframes mpPojaw{ to{ opacity:1; } }
 
 @media (prefers-reduced-motion:reduce){
   .diag .strzala{ animation:none; }
-  .diag .pilka{ opacity:1; animation:none; }
 }
 
 /* Strona archiwalna ma hero o polowe nizsze (.hero--short), wiec znak
@@ -615,8 +609,8 @@ p:last-child{ margin-bottom:0; }
   section{ padding:56px 0; }
 
   /* --- HERO --- */
-  /* hero potrzebuje wysokosci, inaczej skos nie ma gdzie sie rozlozyc
-     i grot wychodzi za gorna krawedz */
+  /* Hero potrzebuje wysokosci, zeby miedzy lockupem a stopka zostal
+     pas na znak marki. Bez tego nie ma go gdzie polozyc. */
   .hero{ min-height:72svh; padding:18px 0 34px; }
   .hero-mid{ padding-top:24px; max-width:none; }
 
