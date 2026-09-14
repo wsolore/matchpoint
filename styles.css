@@ -77,8 +77,8 @@ img{ max-width:100%; display:block; }
 .hero--short{ min-height:auto; padding-bottom:56px; }
 
 /* Kort odwzorowany w SVG — zero zewnetrznych assetow. Nawierzchnia to
-   gradient z trzech zieleni palety, linie i uklad kortu siedza w SVG
-   w HTML (sekcja .court w kazdej stronie).
+   gradient trzech zieleni palety, narozik kortu siedzi w SVG w HTML
+   (sekcja .court w kazdej stronie).
    Zielenie bierzemy ze zmiennych, a nie z wpisanych na sztywno hexow,
    zeby tlo bylo tym samym kolorem co reszta serwisu. */
 .court{
