@@ -37,15 +37,14 @@
 <header class="hero">
   <div class="court" aria-hidden="true">
     <svg viewBox="0 0 1200 900" preserveAspectRatio="none" role="presentation">
-      <rect width="1200" height="900" fill="#7d8f68"/>
-      <polygon points="0,0 1200,0 1200,120 0,260" fill="#6d9cb8"/>
-      <polygon points="0,260 1200,120 1200,142 0,282" fill="#f5f3ec"/>
-      <polygon points="1030,142 1050,142 780,900 760,900" fill="#f5f3ec"/>
-      <polygon points="0,282 1200,142 1200,900 0,900" fill="#000" opacity="0.05"/>
+      <!-- tylko linie kortu, bardzo delikatne. Tlo daje gradient w CSS,
+           pas blekitu wypadl razem z nadmiarem akcentow. -->
+      <polygon points="0,260 1200,120 1200,140 0,280" fill="#f7f5ef" opacity="0.11"/>
+      <polygon points="1030,140 1048,140 782,900 764,900" fill="#f7f5ef" opacity="0.11"/>
     </svg>
   </div>
-  <div class="mark" aria-hidden="true">
-    <img src="mark-ball-arrow.svg" alt="" width="540" height="352">
+  <div class="diag" aria-hidden="true">
+    <img src="arrow-ball-diag.svg" alt="" width="2000" height="260">
   </div>
 
   <div class="wrap hero-top">

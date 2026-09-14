@@ -83,26 +83,34 @@ img{ max-width:100%; display:block; }
   position:absolute; inset:0; z-index:-2;
   background:linear-gradient(163deg,#657a54 0%,#4d5c42 52%,#3a4630 100%);
 }
-/* Linie kortu i pas blekitu wypadaja: byly trzecim i czwartym
-   akcentem, i przechodzily przez tekst. Zostaje czysty gradient. */
-.court svg{ display:none; }
+/* Zostaly tylko dwie bardzo delikatne linie kortu, przy kryciu 11
+   procent. Pas blekitu wypadl razem z nadmiarem akcentow. */
+.court svg{ width:100%; height:100%; display:block; }
 
 .hero::after{
   content:''; position:absolute; inset:0; z-index:-1;
   background:linear-gradient(180deg, rgba(18,23,14,.20) 0%, rgba(18,23,14,.04) 42%, rgba(18,23,14,.34) 100%);
 }
 
-/* znak marki: pilka przebita strzala, jeden plik SVG.
-   Pozycjonowany przez right i top, BEZ transform w stanie koncowym.
-   Kazdy transform zostawia element na warstwie kompozytowanej i
-   czesto na ulamkowej pozycji piksela, co widac jako rozmycie. */
-.mark{
+/* Znak marki: strzala biegnie przez cala przekatna strony, od lewego
+   dolnego naroznika do prawego gornego, i przebija pilke wpisana
+   w 72 procentach jej dlugosci.
+   Grafika w pliku jest pozioma, skos daje jej obrot. Kat jest
+   dobrany do proporcji ekranu, zeby konce wypadaly przy naroznikach.
+   118vmax przyblizia dlugosc przekatnej i dziala zarowno na szerokim
+   monitorze, jak i na wysokim telefonie. Bez animacji, wiec element
+   rysuje sie raz i zostaje ostry. */
+.diag{
   position:absolute; z-index:-1;
-  right:2%; top:6%;
-  width:clamp(265px,42vw,540px);
+  left:50%; top:50%;
+  width:118vmax;
+  transform:translate(-50%,-50%) rotate(-30deg);
   pointer-events:none;
 }
-.mark img{ width:100%; height:auto; display:block; }
+.diag img{ width:100%; height:auto; display:block; }
+
+@media (max-width:1100px){ .diag{ transform:translate(-50%,-50%) rotate(-42deg); } }
+@media (max-width:640px){  .diag{ transform:translate(-50%,-50%) rotate(-60deg); } }
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .wordmark{
@@ -341,9 +349,6 @@ footer .fbot{
 body.ev{ background:linear-gradient(180deg,#f5f3ec 0%,#ebe8dd 100%); }
 
 /* stala geometria kortu w tle, widoczna przez cala strone */
-.courtbg{ display:none; }
-.courtbg svg{ width:100%; height:100%; display:block; }
-
 /* hero: mniej przygaszenia, wiecej kortu */
 body.ev .hero::after{
   background:linear-gradient(180deg,rgba(20,26,16,.34) 0%,rgba(20,26,16,.08) 40%,rgba(20,26,16,.48) 100%);
@@ -477,29 +482,6 @@ body.doc{ background:var(--paper); }
 .pool .bar{ display:block; height:6px; margin:18px 0 0; background:rgba(245,243,236,.2); }
 .pool .bar i{ display:block; height:100%; background:var(--lime); transition:width .4s ease; }
 .pool[data-full="true"] .bar i{ background:#f0a98b; }
-
-/* ============================================================
-   ANIMACJA znaku marki
-   Nadlatuje z gory po skosie, odbija sie i osiada.
-   ============================================================ */
-
-.mark{ animation:wlot 1.35s cubic-bezier(.3,.05,.25,1) both; }
-
-/* Bez scale i bez rotate w klatce koncowej. Animowanie scale kaze
-   przegladarce zrasteryzowac obrazek raz i rozciagnac bitmape, wiec
-   znak zostawal rozmyty na stale. Konczymy na transform:none, czyli
-   element wraca na siatke pikseli i rysuje sie maksymalnie ostro. */
-@keyframes wlot{
-  0%   { opacity:0; transform:translate(38vw,-30vh); }
-  14%  { opacity:1; }
-  62%  { transform:translate(0,2.4vh); }
-  82%  { transform:translate(0,-1.2vh); }
-  100% { opacity:1; transform:none; }
-}
-
-@media (prefers-reduced-motion:reduce){
-  .mark{ animation:none; }
-}
 
 /* ============================================================
    MOBILE — pelny przeglad
@@ -644,8 +626,8 @@ p:last-child{ margin-bottom:0; }
   .doc-body ol > li{ font-size:.95rem; line-height:1.7; }
 
   /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
-  /* znak nie moze wchodzic w linijke z logo i Instagramem */
-  .mark{ width:190px; right:-2%; top:16%; opacity:.55; }
+  /* skos zostaje, tylko przygaszony, zeby nie walczyl z tekstem */
+  .diag{ opacity:.7; }
 }
 
 @media (max-width:380px){
@@ -829,7 +811,7 @@ p:last-child{ margin-bottom:0; }
     box-shadow:none; display:block !important;
   }
   .ticket-actions{ display:none !important; }
-  .courtbg,.hero{ display:none !important; }
+  .hero{ display:none !important; }
 }
 
 /* ============================================================
