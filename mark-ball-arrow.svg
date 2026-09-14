@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 300" role="presentation">
-  <!-- Znak: pilka tenisowa przebita strzala.
-       Paleta pastelowa: pilka w jasnej, szalwiowej zieleni, strzala
-       w pudrowym rozu. Szwy biegna osobno i sie nie przecinaja. -->
+  <!-- Znak: pilka tenisowa przebita strzala Amora.
+       Grot w formie serca, pilka w pastelowej zielono-zoltej barwie
+       piłki tenisowej, strzala w pudrowym rozu.
+       Szwy biegna osobno i sie nie przecinaja. -->
 
   <defs>
     <clipPath id="ballClip">
@@ -9,17 +10,24 @@
     </clipPath>
   </defs>
 
-  <!-- strzala pod pilka: w srodku zaslonieta, widac ja po bokach -->
+  <!-- drzewce i lotki, pod pilka -->
   <g transform="rotate(-30 230 150)" fill="none" stroke="#f2a7ba"
      stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 150H450"/>
-    <path d="M412 116 450 150 412 184"/>
+    <path d="M10 150H420"/>
     <path d="M16 120 54 150 16 180" stroke-width="12"/>
     <path d="M46 124 80 150 46 176" stroke-width="12"/>
   </g>
 
-  <!-- pilka: wyrazna, pastelowa zielen -->
-  <circle cx="230" cy="150" r="86" fill="#adc78d"/>
+  <!-- grot w formie serca, na koncu drzewca -->
+  <g transform="rotate(-30 230 150)">
+    <g transform="translate(424 150) rotate(-90)">
+      <path d="M0 30C-34 7-38-19-20-28-8-33 0-23 0-14 0-23 8-33 20-28 38-19 34 7 0 30Z"
+            fill="#f2a7ba"/>
+    </g>
+  </g>
+
+  <!-- pilka -->
+  <circle cx="230" cy="150" r="86" fill="#c9dd85"/>
 
   <!-- szwy, przyciete do okregu -->
   <g clip-path="url(#ballClip)" fill="none" stroke="#f7f5ea"
