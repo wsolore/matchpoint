@@ -80,12 +80,14 @@ img{ max-width:100%; display:block; }
   background:linear-gradient(180deg, rgba(20,26,16,.44) 0%, rgba(20,26,16,.16) 38%, rgba(20,26,16,.58) 100%);
 }
 
-/* znak marki: pilka przebita strzala, jeden plik SVG */
+/* znak marki: pilka przebita strzala, jeden plik SVG.
+   Pozycjonowany przez right i top, BEZ transform w stanie koncowym.
+   Kazdy transform zostawia element na warstwie kompozytowanej i
+   czesto na ulamkowej pozycji piksela, co widac jako rozmycie. */
 .mark{
   position:absolute; z-index:-1;
-  left:81%; top:24%;
+  right:2%; top:6%;
   width:clamp(265px,42vw,540px);
-  transform:translate(-50%,-50%);
   pointer-events:none;
 }
 .mark img{ width:100%; height:auto; display:block; }
@@ -284,7 +286,7 @@ footer .fbot{
 .sticky{
   position:fixed; left:0; right:0; bottom:0; z-index:50; display:none;
   padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-  background:rgba(27,32,22,.94); backdrop-filter:blur(8px);
+  background:rgba(27,32,22,.97);
 }
 .sticky .cta{ width:100%; justify-content:center; }
 
@@ -334,19 +336,18 @@ body.ev .hero::after{
 /* sekcje przepuszczaja tlo */
 body.ev section{ background:transparent; }
 body.ev .alt{ background:rgba(233,229,219,.52); }
-body.ev .dark{ background:rgba(125,143,104,.88); backdrop-filter:blur(8px); }
-body.ev .deep{ background:rgba(85,99,74,.90); backdrop-filter:blur(8px); }
+body.ev .dark{ background:rgba(125,143,104,.94); }
+body.ev .deep{ background:rgba(85,99,74,.95); }
 
 /* szklane karty */
 body.ev .board{ background:rgba(206,200,189,.55); border-color:rgba(206,200,189,.65); }
-body.ev .board div{ background:rgba(250,249,244,.70); backdrop-filter:blur(10px); }
+body.ev .board div{ background:rgba(250,249,244,.86); }
 body.ev .faq details{ border-color:rgba(107,120,92,.35); }
 body.ev .steps li{ border-color:rgba(107,120,92,.35); }
 body.ev .rule{ background:rgba(107,120,92,.35); }
 
 .glass{
-  background:rgba(250,249,244,.70);
-  backdrop-filter:blur(10px);
+  background:rgba(250,249,244,.86);
   border:1px solid rgba(255,255,255,.55);
   padding:28px 26px;
 }
@@ -466,23 +467,18 @@ body.doc{ background:var(--paper); }
    Nadlatuje z gory po skosie, odbija sie i osiada.
    ============================================================ */
 
-.mark{
-  animation:
-    wlot 1.45s cubic-bezier(.3,.05,.25,1) both,
-    oddech 5s ease-in-out 1.6s infinite;
-}
+.mark{ animation:wlot 1.35s cubic-bezier(.3,.05,.25,1) both; }
 
+/* Bez scale i bez rotate w klatce koncowej. Animowanie scale kaze
+   przegladarce zrasteryzowac obrazek raz i rozciagnac bitmape, wiec
+   znak zostawal rozmyty na stale. Konczymy na transform:none, czyli
+   element wraca na siatke pikseli i rysuje sie maksymalnie ostro. */
 @keyframes wlot{
-  0%   { opacity:0; transform:translate(-50%,-50%) translate(40vw,-34vh) rotate(-22deg) scale(.78); }
-  12%  { opacity:1; }
-  60%  { transform:translate(-50%,-50%) translate(0,2.6vh) rotate(4deg) scale(1); }
-  80%  { transform:translate(-50%,-50%) translate(0,-1.4vh) rotate(-2deg) scale(1); }
-  100% { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
-}
-
-@keyframes oddech{
-  0%,100% { margin-top:0; }
-  50%     { margin-top:-9px; }
+  0%   { opacity:0; transform:translate(38vw,-30vh); }
+  14%  { opacity:1; }
+  62%  { transform:translate(0,2.4vh); }
+  82%  { transform:translate(0,-1.2vh); }
+  100% { opacity:1; transform:none; }
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -627,7 +623,7 @@ p:last-child{ margin-bottom:0; }
 
   /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
   /* znak nie moze wchodzic w linijke z logo i Instagramem */
-  .mark{ width:190px; left:78%; top:27%; opacity:.55; }
+  .mark{ width:190px; right:-2%; top:16%; opacity:.55; }
 }
 
 @media (max-width:380px){
