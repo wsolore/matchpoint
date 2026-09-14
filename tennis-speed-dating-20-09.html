@@ -117,6 +117,45 @@
   </div>
 </header>
 
+<!-- ==================== SZCZEGÓŁY ==================== -->
+<section class="alt">
+  <div class="wrap">
+    <span class="eyebrow">Szczegóły</span>
+    <h2 class="h2" style="margin-top:14px">Wszystko w jednym miejscu</h2>
+
+    <div class="board">
+      <div><span class="k">Data</span><span class="v">20.09.2026 <small>niedziela</small></span></div>
+      <div><span class="k">Godzina</span><span class="v">17:00–19:00</span></div>
+      <div><span class="k">Miejsce</span><span class="v">Wolica SGGW <small>Nowoursynowska 92</small></span></div>
+      <div><span class="k">Nawierzchnia</span><span class="v">Mączka <small>kort ziemny</small></span></div>
+      <div><span class="k">Wiek</span><span class="v">25–40 <small>lat</small></span></div>
+      <div><span class="k">Limit</span><span class="v">6 + 6 <small>osób</small></span></div>
+      <div><span class="k">Kobiety</span><span class="v">90 <small>zł</small></span></div>
+      <div><span class="k">Mężczyźni</span><span class="v">100 <small>zł</small></span></div>
+      <div><span class="k">Płatność</span><span class="v">BLIK <small>731 210 703</small></span></div>
+    </div>
+
+    <div class="pair">
+      <div class="glass">
+        <h3>W cenie</h3>
+        <ul class="ticks">
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Kort</span></li>
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Piłki</span></li>
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Woda i przekąski</span></li>
+        </ul>
+      </div>
+      <div class="glass">
+        <h3>Weź ze sobą</h3>
+        <ul class="ticks">
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Własną rakietę. <b>Rakiety na miejscu są dodatkowo płatne</b>, napisz dzień przed, jeśli potrzebujesz.</span></li>
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span><b>Obuwie na mączkę.</b> Gramy na korcie ziemnym.</span></li>
+          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Strój sportowy</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ==================== DLACZEGO KORT ==================== -->
 <section class="dark">
   <div class="wrap">
@@ -174,45 +213,6 @@
         </div>
       </li>
     </ol>
-  </div>
-</section>
-
-<!-- ==================== SZCZEGÓŁY ==================== -->
-<section class="alt">
-  <div class="wrap">
-    <span class="eyebrow">Szczegóły</span>
-    <h2 class="h2" style="margin-top:14px">Wszystko w jednym miejscu</h2>
-
-    <div class="board">
-      <div><span class="k">Data</span><span class="v">20.09.2026 <small>niedziela</small></span></div>
-      <div><span class="k">Godzina</span><span class="v">17:00–19:00</span></div>
-      <div><span class="k">Miejsce</span><span class="v">Wolica SGGW <small>Nowoursynowska 92</small></span></div>
-      <div><span class="k">Nawierzchnia</span><span class="v">Mączka <small>kort ziemny</small></span></div>
-      <div><span class="k">Wiek</span><span class="v">25–40 <small>lat</small></span></div>
-      <div><span class="k">Limit</span><span class="v">6 + 6 <small>osób</small></span></div>
-      <div><span class="k">Kobiety</span><span class="v">90 <small>zł</small></span></div>
-      <div><span class="k">Mężczyźni</span><span class="v">100 <small>zł</small></span></div>
-      <div><span class="k">Płatność</span><span class="v">BLIK <small>731 210 703</small></span></div>
-    </div>
-
-    <div class="pair">
-      <div class="glass">
-        <h3>W cenie</h3>
-        <ul class="ticks">
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Kort</span></li>
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Piłki</span></li>
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Woda i przekąski</span></li>
-        </ul>
-      </div>
-      <div class="glass">
-        <h3>Weź ze sobą</h3>
-        <ul class="ticks">
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Własną rakietę. <b>Rakiety na miejscu są dodatkowo płatne</b>, napisz dzień przed, jeśli potrzebujesz.</span></li>
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span><b>Obuwie na mączkę.</b> Gramy na korcie ziemnym.</span></li>
-          <li><img class="ico" src="icon-ball-arrow.svg" alt="" width="20" height="20" loading="lazy"><span>Strój sportowy</span></li>
-        </ul>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -474,9 +474,10 @@
     const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
     const total = e.limitWomen + e.limitMen;
     const summary = document.querySelector('[data-spots-summary]');
-    if (summary) summary.textContent = taken >= total
+    const wolne = Math.max(0, total - taken);
+    if (summary) summary.textContent = wolne === 0
       ? 'Skład zamknięty, napisz do nas na listę rezerwową'
-      : 'Opłaconych miejsc ' + taken + ' z ' + total;
+      : 'Wolnych miejsc ' + wolne;
   }
 
   renderPools(e.paidWomen, e.paidMen);
