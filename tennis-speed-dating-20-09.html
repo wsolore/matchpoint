@@ -338,10 +338,6 @@
       </label>
       <span class="err" data-err="terms" style="margin-bottom:16px">Bez tego nie możemy przyjąć zgłoszenia.</span>
 
-      <label class="consent">
-        <input type="checkbox" name="marketing">
-        <span>Chcę dostawać maile o kolejnych wydarzeniach Match Point. (opcjonalnie)</span>
-      </label>
 
       <p style="margin:28px 0 0">
         <button class="cta" type="submit">Zapisz się <span class="arw" aria-hidden="true">&#8594;</span></button>
@@ -575,7 +571,6 @@
       level:     v('level'),
       price:     price,
       terms:     !!f.get('terms'),
-      marketing: !!f.get('marketing'),
       tab:       e.sheetTab
     };
 
@@ -599,8 +594,7 @@
         phone:        payload.phone,
         level:        payload.level,
         price:        String(payload.price),
-        terms:        payload.terms ? 'TAK' : 'NIE',
-        marketing:    payload.marketing ? 'TAK' : 'NIE'
+        terms:        payload.terms ? 'TAK' : 'NIE'
       });
 
       const r = await fetch('/', {
