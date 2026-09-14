@@ -30,15 +30,21 @@
 
 <header class="hero hero--short">
   <div class="court" aria-hidden="true">
-    <svg viewBox="0 0 1200 900" preserveAspectRatio="none" role="presentation">
-      <!-- tylko linie kortu, bardzo delikatne. Tlo daje gradient w CSS,
-           pas blekitu wypadl razem z nadmiarem akcentow. -->
-      <polygon points="0,260 1200,120 1200,140 0,280" fill="#f7f5ef" opacity="0.11"/>
-      <polygon points="1030,140 1048,140 782,900 764,900" fill="#f7f5ef" opacity="0.11"/>
+    <svg viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" role="presentation">
+      <!-- Linie kortu: cienkie i rowne, bez rozciagania proporcji.
+           Wczesniej byl tu preserveAspectRatio="none", ktory rozjezdzal
+           je w miekkie smugi. Narysowany jest narozik kortu: linia
+           koncowa i biegnaca od niej linia boczna. -->
+      <g fill="none" stroke="#f7f5ef" stroke-opacity="0.16" stroke-width="5">
+        <path d="M-40 268 1240 196"/>
+        <path d="M980 210 700 940"/>
+        <path d="M-40 452 1240 404" stroke-opacity="0.09"/>
+      </g>
     </svg>
   </div>
   <div class="diag" aria-hidden="true">
     <img src="arrow-ball-diag.svg" alt="" width="2000" height="260">
+    <img class="grot" src="heart.svg" alt="" width="120" height="108">
   </div>
 
   <div class="wrap hero-top">
@@ -83,15 +89,15 @@
 
     <div class="cols">
       <div class="col">
-        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="26" height="19" loading="lazy"><span>Format się obronił</span></h3>
+        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" loading="lazy"><span>Format się obronił</span></h3>
         <p>Krótkie gry w&nbsp;rotacji zamiast rozmów przy stoliku.</p>
       </div>
       <div class="col">
-        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="26" height="19" loading="lazy"><span>Mała grupa</span></h3>
+        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" loading="lazy"><span>Mała grupa</span></h3>
         <p>Dwanaście osób, więc każdy zagrał z&nbsp;każdym.</p>
       </div>
       <div class="col">
-        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="26" height="19" loading="lazy"><span>Kontakt przy wzajemnym wyborze</span></h3>
+        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" loading="lazy"><span>Kontakt przy wzajemnym wyborze</span></h3>
         <p>Numer dostawały tylko osoby, które zaznaczyły się nawzajem.</p>
       </div>
     </div>

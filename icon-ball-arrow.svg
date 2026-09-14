@@ -1,18 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" role="img" aria-label="Piłka tenisowa z serduszkiem, przebita strzałą">
-  <!-- Wersja do punktow w tekscie: serduszko wypelnia niemal cala
-       pilke, zeby czytalo sie przy dwudziestu pikselach. -->
-
-  <g transform="rotate(-30 150 110)" fill="none" stroke="#f2a7ba"
-     stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 110H292"/>
-    <path d="M260 82 292 110 260 138"/>
-    <path d="M14 86 46 110 14 134" stroke-width="13"/>
-  </g>
-
-  <circle cx="150" cy="110" r="66" fill="#c9dd85"/>
-
-  <g transform="translate(150 112) scale(1.75)">
-    <path d="M0 27C-31 6-35-17-18-25-7-30 0-21 0-13 0-21 7-30 18-25 35-17 31 6 0 27Z"
-          fill="#f2a7ba"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Piłka tenisowa z serduszkiem">
+  <!-- Przy rozmiarze ikony strzala byla nieczytelna i calosc wygladala
+       jak lizak. Zostaje sama pilka z serduszkiem. -->
+  <circle cx="60" cy="60" r="56" fill="#c9dd85"/>
+  <path d="M60 96C22 70 18 46 34 36 48 27 60 38 60 48 60 38 72 27 86 36 102 46 98 70 60 96Z"
+        fill="#f2a7ba"/>
 </svg>

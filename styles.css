@@ -103,14 +103,33 @@ img{ max-width:100%; display:block; }
 .diag{
   position:absolute; z-index:-1;
   left:50%; top:50%;
-  width:118vmax;
+  width:104vmax;
   transform:translate(-50%,-50%) rotate(-30deg);
   pointer-events:none;
 }
 .diag img{ width:100%; height:auto; display:block; }
 
-@media (max-width:1100px){ .diag{ transform:translate(-50%,-50%) rotate(-42deg); } }
-@media (max-width:640px){  .diag{ transform:translate(-50%,-50%) rotate(-60deg); } }
+/* Grot jest osobnym elementem, zeby stal PIONOWO niezaleznie od tego,
+   pod jakim katem lezy strzala. W SVG strzaly lezal razem z nia,
+   czyli na boku, i nie czytal sie jako serce. Kat kontrujacy jest
+   ustawiany przy kazdym breakpoincie razem z katem skosu. */
+.diag .grot{
+  position:absolute; left:97.5%; top:50%;
+  width:5.6%; height:auto;
+  transform:translate(-52%,-50%) rotate(30deg);
+  opacity:0; animation:grotWejdz .4s ease-out 1.05s forwards;
+}
+@keyframes grotWejdz{ to{ opacity:1; } }
+@media (prefers-reduced-motion:reduce){ .diag .grot{ opacity:1; animation:none; } }
+
+@media (max-width:1100px){
+  .diag{ width:86vmax; transform:translate(-50%,-50%) rotate(-42deg); }
+  .diag .grot{ transform:translate(-52%,-50%) rotate(42deg); width:7%; }
+}
+@media (max-width:640px){
+  .diag{ width:80vmax; top:54%; transform:translate(-50%,-50%) rotate(-57deg); }
+  .diag .grot{ transform:translate(-52%,-50%) rotate(57deg); width:8.5%; }
+}
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .wordmark{
@@ -394,7 +413,7 @@ body.ev .rule{ background:rgba(107,120,92,.35); }
 
 /* --- lista "w cenie" / "co zabrac" --- */
 .ticks{ list-style:none; margin:24px 0 0; padding:0; display:grid; gap:12px; }
-.ticks li{ display:grid; grid-template-columns:1.9rem 1fr; gap:10px; font-weight:300; }
+.ticks li{ display:grid; grid-template-columns:1.5rem 1fr; gap:12px; font-weight:300; }
 .ticks li b{ font-weight:600; }
 .ticks .m{ color:var(--warm); }
 
@@ -449,7 +468,7 @@ body.doc{ background:var(--paper); }
 
 /* pilka przebita strzala Amora: ikona stoi OBOK tekstu */
 .ico{
-  width:1.75em; height:1.28em; flex:none;
+  width:1.35em; height:1.35em; flex:none;
   display:inline-block;
 }
 .col h3{
@@ -509,20 +528,22 @@ p:last-child{ margin-bottom:0; }
   section{ padding:56px 0; }
 
   /* --- HERO --- */
-  .hero{ min-height:auto; padding:18px 0 34px; }
+  /* hero potrzebuje wysokosci, inaczej skos nie ma gdzie sie rozlozyc
+     i grot wychodzi za gorna krawedz */
+  .hero{ min-height:72svh; padding:18px 0 34px; }
   .hero-mid{ padding-top:24px; max-width:none; }
 
-  /* linie kortu przeswituja przez tekst, wiec na malym ekranie
-     przygaszamy tlo mocniej */
+  /* Lekkie przygaszenie. Mocne bylo potrzebne, gdy tlo mialo pas
+     blekitu i grube linie kortu; teraz tylko gasilo roz strzaly. */
   .hero::after{
-    background:linear-gradient(180deg,rgba(20,26,16,.58) 0%,rgba(20,26,16,.44) 45%,rgba(20,26,16,.66) 100%);
+    background:linear-gradient(180deg,rgba(18,23,14,.26) 0%,rgba(18,23,14,.10) 45%,rgba(18,23,14,.34) 100%);
   }
 
   .hero-top{ gap:12px; }
   .hero-top .right{ flex-direction:column; align-items:flex-end; gap:4px; }
   .wordmark, .back{ font-size:.72rem; letter-spacing:.12em; }
   .ig{ font-size:.68rem; letter-spacing:.04em; }
-  .hero-top .eyebrow{ font-size:.58rem; letter-spacing:.12em; }
+  .hero-top .eyebrow{ display:none; }
 
   h1{
     font-size:.9rem; line-height:1.5; letter-spacing:.08em;
@@ -626,8 +647,8 @@ p:last-child{ margin-bottom:0; }
   .doc-body ol > li{ font-size:.95rem; line-height:1.7; }
 
   /* --- animacja: mniejszy tor lotu, zeby pilka nie znikala za ekranem --- */
-  /* skos zostaje, tylko przygaszony, zeby nie walczyl z tekstem */
-  .diag{ opacity:.7; }
+  /* pelne krycie: przy 0.7 roz szarzal i pilka gasla */
+  .diag{ opacity:1; }
 }
 
 @media (max-width:380px){
