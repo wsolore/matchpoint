@@ -97,20 +97,23 @@
          <svg>, bo to dziala pewnie. Pilka jest po strzale, wiec
          zaslania to, co za nia przelatuje — i to daje przebicie. -->
     <span class="strzala-lot"><svg class="strzala-svg" viewBox="0 0 1000 280" overflow="visible" role="presentation">
-      <g fill="none" stroke="#f2a7ba" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M44 108 96 140 44 172"/>
-        <path d="M88 113 136 140 88 167"/>
-        <path d="M50 140H885"/>
+      <!-- Lotki to dwa PELNE piora z rozwidlonym koncem, a nie dwie
+           kreski: rozwidlenie jest tym, co odroznia lotke od strzalki
+           narysowanej dwoma pociagnieciami.
+           Piora sa wypelnione, drzewce jest stroke'iem — dlatego lezy
+           nizej w kolejnosci i jego zakonczenie chowa sie pod piorami. -->
+      <g fill="#f2a7ba">
+        <path d="M215 141Q118 84 62 84L96 112L52 141Q140 142 215 141Z"/>
+        <path d="M215 139Q118 196 62 196L96 168L52 139Q140 138 215 139Z"/>
+        <!-- Grot: serce obrocone o -90 stopni, czubkiem w kierunku lotu.
+             Czubek wypada dokladnie na osi, w punkcie 960 140, a wciecie
+             miedzy garbami na 888 — tam konczy sie drzewce i dlatego
+             styk jest niewidoczny. -->
+        <path transform="translate(844.6 198.9) rotate(-90) scale(.982 1.154)"
+              d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"/>
       </g>
-      <!-- Serce jest GROTEM, nie ozdoba na koncu: obrocone o -90 stopni,
-           wiec ostry czubek celuje w kierunku lotu, a wciecie miedzy
-           garbami nasadza sie na koniec drzewca. Czubek wypada dokladnie
-           na osi strzaly, w punkcie 960 140, wciecie na 883. Grot nie
-           kontruje skosu — ma lezec wzdluz strzaly, a nie stac pionowo. -->
-      <g class="grot" transform="translate(835 197) rotate(-90) scale(.95 1.25)">
-        <path d="M60 100C10 66 4 34 26 20 44 9 60 24 60 38 60 24 76 9 94 20 116 34 110 66 60 100Z"
-              fill="#f2a7ba"/>
-      </g>
+      <path d="M40 140H895" fill="none" stroke="#f2a7ba"
+            stroke-width="18" stroke-linecap="round"/>
     </svg></span>
 
     <!-- Pilka stoi w punkcie przebicia, czyli tam, gdzie w viewBoxie
@@ -129,7 +132,7 @@
   </div>
 
   <div class="wrap hero-top">
-    <a class="back" href="index.html"><span aria-hidden="true">←</span> Match&nbsp;Point</a>
+    <a class="back" href="index.html"><span aria-hidden="true">←</span> Match&nbsp;Point&nbsp;Date</a>
     <span class="right">
       <a class="ig" href="https://www.instagram.com/match.point.date/" target="_blank" rel="noopener">@match.point.date</a>
       <span class="eyebrow">Warszawa</span>
@@ -366,7 +369,16 @@
         <input type="checkbox" name="terms" required>
         <span>Mam ukończone 18 lat i akceptuję <a href="regulamin.html">regulamin</a> oraz <a href="regulamin.html#dane">informację o przetwarzaniu danych</a>.</span>
       </label>
-      <span class="err" data-err="terms" style="margin-bottom:16px">Bez tego nie możemy przyjąć zgłoszenia.</span>
+      <span class="err" data-err="terms">Bez tego nie możemy przyjąć zgłoszenia.</span>
+
+      <!-- Zgoda marketingowa jest OSOBNA od regulaminu, nieobowiazkowa
+           i domyslnie niezaznaczona. Wpisanie jej w akceptacje regulaminu
+           robiloby z niej zgode wymuszona, a taka w swietle RODO jest
+           niewazna. Nie scalaj tych dwoch pol. -->
+      <label class="consent" style="margin-top:16px">
+        <input type="checkbox" name="newsletter" value="TAK">
+        <span>Chcę dostawać maile o nowych wydarzeniach Match&nbsp;Point&nbsp;Date. Zgoda jest dobrowolna, nie wpływa na zapis na to wydarzenie i możesz ją wycofać w każdej chwili, odpowiadając na dowolny nasz mail.</span>
+      </label>
 
 
       <p style="margin:28px 0 0">
@@ -605,6 +617,7 @@
       level:     v('level'),
       price:     price,
       terms:     !!f.get('terms'),
+      newsletter: !!f.get('newsletter'),
       tab:       e.sheetTab,
       /* dane wydarzenia do maila z potwierdzeniem */
       eventName: e.name,
@@ -638,7 +651,8 @@
         phone:        payload.phone,
         level:        payload.level,
         price:        String(payload.price),
-        terms:        payload.terms ? 'TAK' : 'NIE'
+        terms:        payload.terms ? 'TAK' : 'NIE',
+        newsletter:   payload.newsletter ? 'TAK' : 'NIE'
       });
 
       const r = await fetch('/', {

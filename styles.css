@@ -141,12 +141,11 @@ img{ max-width:100%; display:block; }
 }
 .diag .pilka-svg{ width:100%; height:auto; display:block; }
 
-/* non-scaling-stroke: grubosc linii jest w pikselach i nie zalezy od
-   tego, jak bardzo grafika jest przeskalowana. Dzieki temu strzala ma
-   wszedzie te sama wage optyczna i nie trzeba dobierac grubosci do
-   kazdej dlugosci osobno. Szwy na pilce zostaja skalowane, bo maja byc
-   stala czescia jej srednicy. */
-.diag .strzala-svg path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
+/* Grubosc drzewca jest podana w SVG, w jednostkach viewBoxa, wiec
+   skaluje sie razem ze strzala — tak jak lotki i grot. Wczesniej byl tu
+   non-scaling-stroke z grubosc w pikselach, ale przy pelnym kształcie
+   (piora i grube drzewce) proporcje musza byc stale, a nie waga
+   optyczna. */
 
 /* Grot lezy wzdluz strzaly — obrot jest wpisany w SVG, nie w CSS, bo
    grot nie kontruje juz skosu. Serce stalo wczesniej pionowo, w zwyklym
@@ -243,9 +242,8 @@ img{ max-width:100%; display:block; }
   /* Nadpisanie musi objac takze .hero--short, bo regula archiwum ma
      dwie klasy i inaczej wygralaby ta z tabletu. */
   .diag, .hero--short .diag{ --skos:-17.2deg; left:50%; --dl:86vw; }
-  .diag{ top:48%; }               /* strona wydarzenia, dwa rzedy meta */
+  .diag{ top:46%; }               /* strona wydarzenia, dwa rzedy meta */
   .hero--short .diag{ top:52%; }  /* archiwum */
-  .diag .strzala-svg path{ stroke-width:4px; }
 }
 /* Niskie telefony (360x640 i podobne): hero jest krotsze, wiec pas
    miedzy lockupem a stopka ma niecale 70 px. Strzala musi byc
@@ -311,7 +309,6 @@ img{ max-width:100%; display:block; }
   pointer-events:none;
 }
 .o-znak .strzala-svg{ width:100%; height:100%; display:block; overflow:visible; }
-.o-znak .strzala-svg path{ vector-effect:non-scaling-stroke; stroke-width:5px; }
 
 /* --- os czasu strony glownej, wlaczana klasa mp-lot tak samo jak .diag ---
      0,00–0,85 s  pilka spada i odbija sie dwa razy
@@ -368,7 +365,6 @@ img{ max-width:100%; display:block; }
 }
 @media (max-width:640px){
   .o-znak .strzala-lot{ --skos:-30deg; --dl:64vw; }
-  .o-znak .strzala-svg path{ stroke-width:4px; }
 }
 
 .hero-top{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
