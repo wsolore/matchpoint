@@ -30,6 +30,10 @@ const MATCHPOINT = {
     venue:   'Korty Wolica SGGW',
     address: 'Nowoursynowska 92, Warszawa',
     age:     '25–40',
+    /* dane wykorzystywane w mailu z potwierdzeniem */
+    surface:   'ziemny, mączka',
+    shoes:     'obuwie na mączkę',
+    transport: 'Metro Ursynów → Nowoursynowska 92 → kampus SGGW',
     priceW:  90,
     priceM:  100,
     page:    'tennis-speed-dating-20-09.html',

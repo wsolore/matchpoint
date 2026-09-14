@@ -560,7 +560,17 @@
       level:     v('level'),
       price:     price,
       terms:     !!f.get('terms'),
-      tab:       e.sheetTab
+      tab:       e.sheetTab,
+      /* dane wydarzenia do maila z potwierdzeniem */
+      eventName: e.name,
+      date:      e.date,
+      weekday:   e.weekday,
+      time:      e.time,
+      venue:     e.venue,
+      address:   e.address,
+      surface:   e.surface,
+      shoes:     e.shoes,
+      transport: e.transport
     };
 
     /* tytul przelewu: imie i poczatek nazwiska. Musi byc PO payload. */
