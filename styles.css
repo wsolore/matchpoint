@@ -35,6 +35,20 @@
   --wrap: 1120px;
 }
 
+/* Motyw strony wydarzenia padlowego. Podmieniamy WYLACZNIE trzy
+   kolory nawierzchni — hero, sekcje .dark i .deep oraz akcenty
+   typograficzne czytaja je przez var(), wiec cala strona idzie
+   w niebieski bez duplikowania regul.
+   Akcentu (rozu) tu nie ruszamy: jeden akcent na cale serwis to
+   zasada z gory arkusza, a druga barwa akcentu na jednej stronie
+   znowu rozjechalaby marke. Niebieski jest kolorem KORTU, tak jak
+   na tenisie zielony. */
+body.ev--padel{
+  --court:      #1c46cf;
+  --court-dark: #133397;
+  --court-deep: #0b2168;
+}
+
 *,*::before,*::after{ box-sizing:border-box; }
 
 html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
@@ -523,6 +537,94 @@ section{ padding:clamp(84px,11vw,164px) 0; }
 .fixture--soon{ opacity:.62; pointer-events:none; }
 .fixture--soon .free{ color:var(--ink-soft); }
 
+/* --- karty wydarzen w sprzedazy ---
+   Wysoka karta: dyscyplina i tytul u gory, przycisk przyklejony
+   do dolu, zeby przy roznej dlugosci opisu wszystkie przyciski
+   staly w jednej linii.
+   Tlem jest gradient NAWIERZCHNI danej dyscypliny, nie zdjecie.
+   Caly serwis kort rysuje, a nie fotografuje — wklejone zdjecia
+   wypadalyby tu jak fragment innej strony. Kolor podmieniamy
+   lokalnie, przestawiajac --court na samej karcie: ten sam
+   mechanizm obsluguje motyw calej strony wydarzenia. */
+.cards{
+  margin:56px 0 0;
+  display:grid; gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(262px,1fr));
+}
+.card{
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  min-height:452px; padding:30px 26px;
+  color:var(--line); text-decoration:none;
+  background:linear-gradient(163deg,var(--court) 0%,var(--court-dark) 52%,var(--court-deep) 100%);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+/* Linie kortu w tle karty: jedna mocniejsza i jedna slabsza,
+   pod tym samym katem co kreski w hero. Sa w ::before, wiec
+   nie wchodza w uklad flexa i nie lapia klikniec. */
+.card::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(107deg,transparent calc(46% - 2px),rgba(247,245,239,.17) 46%,transparent calc(46% + 2px)),
+    linear-gradient(107deg,transparent calc(76% - 1px),rgba(247,245,239,.09) 76%,transparent calc(76% + 1px));
+}
+.card > *{ position:relative; }
+.card:hover{ transform:translateY(-4px); box-shadow:0 22px 48px rgba(20,26,16,.28); }
+.card:focus-visible{ outline:3px solid var(--warm); outline-offset:3px; }
+
+.card .kicker{
+  font-size:.68rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(247,245,239,.72);
+}
+.card h3{
+  margin:14px 0 0;
+  font-size:clamp(1.5rem,2.6vw,1.95rem); font-weight:500; letter-spacing:.01em; line-height:1.08;
+}
+.card .when{
+  display:block; margin:18px 0 0;
+  font-size:clamp(1.5rem,3vw,2rem); font-weight:300; letter-spacing:.01em;
+}
+.card .when small{
+  display:block; margin-top:4px;
+  font-size:.7rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(247,245,239,.72);
+}
+.card .where{
+  margin:20px 0 0; font-size:.92rem; font-weight:300; line-height:1.65;
+  color:rgba(247,245,239,.84);
+}
+/* Rozpiera karte od srodka, wiec .card-go zawsze siedzi u dolu. */
+.card .spacer{ flex:1 1 auto; min-height:22px; }
+.card .free{
+  display:block; margin:0 0 14px;
+  font-size:.84rem; font-weight:500; color:rgba(247,245,239,.84);
+}
+.card .card-go{
+  display:block; padding:15px 18px; text-align:center;
+  font-size:.74rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  background:var(--accent); color:var(--ink);
+  transition:background .18s ease;
+}
+.card:hover .card-go{ background:var(--warm-dark); }
+
+/* Nawierzchnia padla: ten sam uklad, inny kolor kortu.  */
+.card--padel{ --court:#1c46cf; --court-dark:#133397; --court-deep:#0b2168; }
+
+/* Archiwum pod kartami — lista, nie karta. Wydarzenie, ktore sie
+   odbylo, nie konkuruje o klikniecie z tym, na ktore sa zapisy. */
+.cards + .past-head{
+  margin:56px 0 0;
+  font-size:.68rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.past-head + .fixtures{ margin-top:14px; }
+
+@media (max-width:640px){
+  .cards{ gap:14px; }
+  .card{ min-height:0; padding:26px 22px; }
+  .card .spacer{ min-height:26px; }
+}
+
 /* --- pule miejsc per płeć --- */
 .pools{ display:grid; gap:1px; margin:48px 0 0; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
 .pool{ border:2px solid rgba(245,243,236,.3); padding:26px 24px; }
@@ -621,6 +723,21 @@ body.ev .board div{ background:rgba(250,249,244,.86); }
 body.ev .faq details{ border-color:rgba(107,120,92,.35); }
 body.ev .steps li{ border-color:rgba(107,120,92,.35); }
 body.ev .rule{ background:rgba(107,120,92,.35); }
+
+/* --- padel: te same przeswity, niebieska nawierzchnia ---
+   Reguly body.ev wyzej podaja gotowe rgba, a nie var(), bo maja
+   wlasne krycie — samo przestawienie --court na body ich nie rusza.
+   Dlatego powtarzamy je tutaj w niebieskim, z tymi samymi alfami.
+   Blok MUSI zostac pod blokiem body.ev: specyficznosc jest
+   identyczna, wiec wygrywa to, co stoi nizej w pliku. */
+body.ev--padel .dark{ background:rgba(28,70,207,.94); }
+body.ev--padel .deep{ background:rgba(18,48,145,.95); }
+body.ev--padel .faq details{ border-color:rgba(70,88,160,.35); }
+body.ev--padel .steps li{ border-color:rgba(70,88,160,.35); }
+body.ev--padel .rule{ background:rgba(70,88,160,.35); }
+body.ev--padel .transit div{ border-top-color:rgba(70,88,160,.3); }
+body.ev--padel .transit div:last-child{ border-bottom-color:rgba(70,88,160,.3); }
+body.ev--padel .fixture:hover{ background:rgba(28,70,207,.09); }
 
 .glass{
   background:rgba(250,249,244,.86);
@@ -926,6 +1043,15 @@ p:last-child{ margin-bottom:0; }
   background-repeat:no-repeat; background-position:right 16px center; background-size:12px;
   padding-right:44px;
 }
+/* rozwiniete opcje renderuje system, wiec daja im wlasny kontrast:
+   ciemny tekst na papierze, nie kremowy na bialym */
+.form select option{
+  color:var(--ink);
+  background:var(--paper);
+}
+.form select option:disabled,
+.form select option[value=""]{ color:var(--ink-soft); }
+
 .form input:focus,.form select:focus{
   outline:2px solid var(--lime); outline-offset:1px; background:rgba(255,255,255,.14);
 }

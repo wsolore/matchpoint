@@ -86,7 +86,7 @@
   <div class="wrap hero-bottom">
     <ul class="meta meta--home">
       <li><span class="k">Najbliższe</span><span class="v" data-next-date>20.09.2026</span></li>
-      <li><span class="k">Dyscyplina</span><span class="v">Tenis</span></li>
+      <li><span class="k">Dyscypliny</span><span class="v">Tenis i&nbsp;padel</span></li>
       <li><span class="k">Miasto</span><span class="v">Warszawa</span></li>
     </ul>
     <div>
@@ -97,6 +97,50 @@
     </div>
   </div>
 </header>
+
+<!-- ==================== WYDARZENIA W SPRZEDAZY ====================
+     Siedzi NAD sekcjami "dlaczego" i "jak to dziala", bo osoba, ktora
+     wchodzi tu z Instagrama, przychodzi po termin, a nie po
+     tlumaczenie pomyslu. Karty sa statyczne w HTML, nie skladane
+     z configu w JS: zapowiedz wydarzenia musi byc widoczna dla
+     Google i dla kogos z zablokowanym skryptem. Z configu dolatuje
+     tylko liczba wolnych miejsc.
+     Kolor karty = nawierzchnia dyscypliny. Padel dostaje niebieski
+     przez klase .card--padel, tenis zostaje na zieleni z palety. -->
+<section id="terminy">
+  <div class="wrap">
+    <span class="eyebrow">Najbliższe terminy</span>
+    <h2 class="h2" style="margin-top:14px">Wybierz, w co zagrasz</h2>
+
+    <div class="cards">
+      <a class="card" href="tennis-speed-dating-20-09.html">
+        <span class="kicker">Tenis · Warszawa</span>
+        <h3>Tennis Speed&nbsp;Dating</h3>
+        <span class="when"><small>Niedziela</small>20.09.2026</span>
+        <p class="where">
+          Wolica SGGW, Nowoursynowska&nbsp;92 · 17:00–19:00<br>
+          Kort ziemny, metro Ursynów. Wiek 25–40, każdy poziom.
+        </p>
+        <span class="spacer"></span>
+        <span class="free" data-free="TSD-2009">Zapisy otwarte</span>
+        <span class="card-go">Zapisz się →</span>
+      </a>
+
+      <a class="card card--padel" href="padel-speed-dating-03-10.html">
+        <span class="kicker">Padel · Warszawa</span>
+        <h3>Padel Speed&nbsp;Dating</h3>
+        <span class="when"><small>Sobota</small>03.10.2026</span>
+        <p class="where">
+          Warsaw Padel Club, Annopol&nbsp;3 · 17:00–18:30<br>
+          Rakietki na miejscu. Wiek 25–40, poziom początkujący+.
+        </p>
+        <span class="spacer"></span>
+        <span class="free" data-free="PSD-0310">Zapisy otwarte</span>
+        <span class="card-go">Zapisz się →</span>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- ==================== DLACZEGO KORT ==================== -->
 <section class="dark">
@@ -161,33 +205,13 @@
 <!-- ==================== TERMINARZ ==================== -->
 <section class="alt" id="wydarzenia">
   <div class="wrap">
-    <span class="eyebrow">Terminarz</span>
-    <h2 class="h2" style="margin-top:14px">Wydarzenia</h2>
+    <span class="eyebrow">Archiwum</span>
+    <h2 class="h2" style="margin-top:14px">Za nami</h2>
+    <p class="sub">Terminy, na które trwają zapisy, są <a href="#terminy">na górze strony</a>.</p>
 
     <div class="fixtures">
-      <a class="fixture" href="tennis-speed-dating-20-09.html">
-        <span class="when"><small>Niedziela</small>20.09.2026</span>
-        <span class="what">
-          Tennis Speed Dating
-          <span class="where">Wolica SGGW, Nowoursynowska&nbsp;92 · 17:00–19:00 · wiek 25–40 · kort ziemny · metro Ursynów</span>
-        </span>
-        <span class="go">
-          <span class="free" data-fixture-free>Zapisy otwarte</span>
-          <span class="arw" aria-hidden="true">→</span>
-        </span>
-      </a>
-
-      <span class="fixture fixture--soon" aria-disabled="true">
-        <span class="when"><small>Termin</small>Wkrótce</span>
-        <span class="what">
-          Padel Speed Dating
-          <span class="where">Warszawa. W&nbsp;padla gra się zawsze w&nbsp;parach, więc pasuje tu wręcz idealnie.</span>
-        </span>
-        <span class="go"><span class="free">W przygotowaniu</span></span>
-      </span>
-
       <a class="fixture fixture--past" href="tennis-speed-dating-12-09.html">
-        <span class="when"><small>Za nami</small>12.09.2026</span>
+        <span class="when"><small>Sobota</small>12.09.2026</span>
         <span class="what">
           Tennis Speed Dating
           <span class="where">WTS Orzeł, Warszawa. Pierwsza edycja.</span>
@@ -205,8 +229,8 @@
 <section class="deep">
   <div class="wrap">
     <h2 class="h2">
-      Zaczynamy od tenisa.
-      <span class="script">Ale to dopiero pierwszy set.</span>
+      Tenis, teraz padel.
+      <span class="script">A to dopiero pierwszy set.</span>
     </h2>
     <p class="sub">
       Interesują nas wszystkie sporty, w&nbsp;których gra się w&nbsp;parach i&nbsp;w&nbsp;rotacji.
@@ -284,36 +308,41 @@
 <script src="znak.js"></script>
 <script>
 (function(){
-  const e  = MATCHPOINT.next;
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
+  const e  = MATCHPOINT.next;
 
   document.querySelectorAll('[data-next-link]').forEach(a => a.href = e.page);
   document.querySelectorAll('[data-next-date]').forEach(n => n.textContent = e.date);
 
-  const total = e.limitWomen + e.limitMen;
+  /* Liczby wylacznie z arkusza, osobno dla kazdego wydarzenia, bo
+     kazde ma swoja zakladke. Gdy arkusz nie odpowie, na kartach
+     zostaje neutralne "Zapisy otwarte" wpisane w HTML — bez zadnej
+     liczby. Lepiej nie pokazac nic, niz nieaktualny stan miejsc. */
+  const opis = wolne => wolne === 0
+    ? 'Skład zamknięty'
+    : 'Wolnych miejsc ' + wolne;
 
-  function render(w, m){
-    const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
-    const free  = Math.max(0, total - taken);
+  function pokaz(ev, womenPaid, menPaid){
+    const zajete = Math.min(womenPaid, ev.limitWomen) + Math.min(menPaid, ev.limitMen);
+    const wolne  = Math.max(0, ev.limitWomen + ev.limitMen - zajete);
 
-    const summary = document.querySelector('[data-spots-summary]');
-    if (summary) summary.textContent = free === 0
-      ? 'Skład zamknięty'
-      : 'Wolnych miejsc ' + free;
+    document.querySelectorAll('[data-free="' + ev.id + '"]')
+      .forEach(n => n.textContent = opis(wolne));
 
-    const badge = document.querySelector('[data-fixture-free]');
-    if (badge) badge.textContent = free === 0
-      ? 'Skład zamknięty'
-      : 'Wolnych miejsc ' + free;
+    /* podpis pod przyciskiem w hero dotyczy tylko najblizszego */
+    if (ev.id === e.id) {
+      const podpis = document.querySelector('[data-spots-summary]');
+      if (podpis) podpis.textContent = opis(wolne);
+    }
   }
 
-  /* Liczby wylacznie z arkusza. Gdy nie odpowie, zostaje neutralny
-     tekst wpisany w HTML, bez zadnej liczby.                      */
   if (ep && MATCHPOINT.useSheetCounter) {
-    fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
-      .then(r => r.json())
-      .then(d => { if (d && d.ok) render(d.womenPaid, d.menPaid); })
-      .catch(() => {});
+    MATCHPOINT.upcoming.forEach(ev => {
+      fetch(ep + '?tab=' + encodeURIComponent(ev.sheetTab) + '&t=' + Date.now())
+        .then(r => r.json())
+        .then(d => { if (d && d.ok) pokaz(ev, d.womenPaid, d.menPaid); })
+        .catch(() => {});
+    });
   }
 })();
 </script>
