@@ -46,6 +46,13 @@ const MATCHPOINT = {
       surface:   'ziemny (mączka)',
       shoes:     'obuwie na mączkę',
       transport: 'Metro Ursynów → Nowoursynowska 92 → kampus SGGW',
+      /* blok "co zabrac" w mailu z potwierdzeniem. Trzyma go config,
+         a nie skrypt arkusza, bo przy kazdej dyscyplinie mowi co
+         innego — na padlu rakiety sa w pakiecie i zdanie o
+         wypozyczeniu bylo tam po prostu nieprawda. */
+      bring:      'Rakietę, obuwie na mączkę i strój sportowy.',
+      bringExtra: 'Potrzebujesz rakiety? Daj nam znać — można ją wypożyczyć za dodatkową opłatą.',
+      included:   'Kort, piłki, woda i przekąski.',
       priceW:  90,
       priceM:  100,
       page:    'tennis-speed-dating-20-09.html',
@@ -71,7 +78,14 @@ const MATCHPOINT = {
       level:   'Początkujący+',
       surface:   'sztuczna trawa',
       shoes:     'obuwie sportowe na płaskiej podeszwie',
-      transport: 'Annopol 3, Warszawa — szczegóły dojazdu wysyłamy w mailu z potwierdzeniem',
+      /* Puste — w mailu z potwierdzeniem linia "Dojazd" wtedy nie
+         wychodzi. Wczesniej bylo tu "szczegoly wysylamy w mailu",
+         co w tym wlasnie mailu brzmialo absurdalnie. Adres i tak
+         jest wyzej. Wypelnij, gdy bedzie co napisac o dojezdzie. */
+      transport: '',
+      bring:      'Obuwie sportowe na płaskiej podeszwie i strój sportowy.',
+      bringExtra: 'Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.',
+      included:   'Kort, rakiety i piłki, voucher na shake proteinowy.',
       priceW:  140,
       priceM:  150,
       page:    'padel-speed-dating-03-10.html',
