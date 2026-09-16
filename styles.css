@@ -903,7 +903,12 @@ p:last-child{ margin-bottom:0; }
     max-width:none;
   }
 
-  /* lead powtarza to, co mowi haslo, wiec na telefonie go nie ma */
+  /* lead powtarza to, co mowi haslo, wiec na telefonie go nie ma.
+     Na stronie wydarzenia probowalismy go odslonic i nie wchodzi:
+     wolny pas pod nim to 70 px na iPhonie 14 i 26 px na telefonie
+     360x640, a znak marki potrzebuje 94 px — strzala siadala na
+     tekscie. Jesli lead ma byc widoczny na telefonie, trzeba
+     najpierw przeniesc znak, nie samo display. */
   .lead{ display:none; }
 
   /* dyscyplina jest widoczna w terminarzu nizej */
