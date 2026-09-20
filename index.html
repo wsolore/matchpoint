@@ -113,19 +113,6 @@
     <h2 class="h2" style="margin-top:14px">Wybierz, w co zagrasz</h2>
 
     <div class="cards">
-      <a class="card" href="tennis-speed-dating-20-09.html">
-        <span class="kicker">Tenis · Warszawa</span>
-        <h3>Tennis Speed&nbsp;Dating</h3>
-        <span class="when"><small>Niedziela</small>20.09.2026</span>
-        <p class="where">
-          Wolica SGGW, Nowoursynowska&nbsp;92 · 17:00–19:00<br>
-          Kort ziemny, metro Ursynów. Wiek 25–40, każdy poziom.
-        </p>
-        <span class="spacer"></span>
-        <span class="free" data-free="TSD-2009">Zapisy otwarte</span>
-        <span class="card-go">Zapisz się →</span>
-      </a>
-
       <a class="card card--padel" href="padel-speed-dating-03-10.html">
         <span class="kicker">Padel · Warszawa</span>
         <h3>Padel Speed&nbsp;Dating</h3>
@@ -210,6 +197,17 @@
     <p class="sub">Terminy, na które trwają zapisy, są <a href="#terminy">na górze strony</a>.</p>
 
     <div class="fixtures">
+      <a class="fixture fixture--past" href="tennis-speed-dating-20-09.html">
+        <span class="when"><small>Niedziela</small>20.09.2026</span>
+        <span class="what">
+          Tennis Speed Dating
+          <span class="where">Korty Wolica SGGW, Warszawa. Komplet: 6 par.</span>
+        </span>
+        <span class="go">
+          <span class="free">Zakończone</span>
+          <span class="arw" aria-hidden="true">→</span>
+        </span>
+      </a>
       <a class="fixture fixture--past" href="tennis-speed-dating-12-09.html">
         <span class="when"><small>Sobota</small>12.09.2026</span>
         <span class="what">
@@ -311,6 +309,15 @@
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
   const e  = MATCHPOINT.next;
 
+  /* "Wybierz, w co zagrasz" ma sens przy kilku terminach. Gdy zostaje
+     jeden, nie ma czego wybierac. W HTML zostaje wersja mnoga, bo tak
+     czyta te sekcje Google i ktos z wylaczonym skryptem, a zwykle
+     terminow jest wiecej niz jeden.                                */
+  if (MATCHPOINT.upcoming.length === 1) {
+    const naglowek = document.querySelector('#terminy .h2');
+    if (naglowek) naglowek.textContent = 'Najbliższy termin';
+  }
+
   document.querySelectorAll('[data-next-link]').forEach(a => a.href = e.page);
   document.querySelectorAll('[data-next-date]').forEach(n => n.textContent = e.date);
 
@@ -322,12 +329,34 @@
     ? 'Skład zamknięty'
     : 'Wolnych miejsc ' + wolne;
 
-  function pokaz(ev, womenPaid, menPaid){
-    const zajete = Math.min(womenPaid, ev.limitWomen) + Math.min(menPaid, ev.limitMen);
-    const wolne  = Math.max(0, ev.limitWomen + ev.limitMen - zajete);
+  /* Wolne miejsca liczymy tak samo jak strona wydarzenia: limit minus
+     OPLACONE, ale nie wiecej niz zostalo wolnych wierszy w zakladce.
+     Blok zapisany do konca nie przyjmie nikogo, choc oplaconych jest
+     mniej niz limit — karta nie moze wtedy zaprasza do zapisu.     */
+  function wolneMiejsca(ev, d){
+    const pula = (limit, oplaceni, zapisani, wiersze) => {
+      const zLimitu = limit - oplaceni;
+      return Math.max(0, Math.min(zLimitu, wiersze > 0 ? wiersze - zapisani : zLimitu));
+    };
+    return pula(ev.limitWomen, d.womenPaid, d.women, d.womenLimit)
+         + pula(ev.limitMen,   d.menPaid,   d.men,   d.menLimit);
+  }
 
-    document.querySelectorAll('[data-free="' + ev.id + '"]')
-      .forEach(n => n.textContent = opis(wolne));
+  function pokaz(ev, d){
+    const wolne = wolneMiejsca(ev, d);
+
+    document.querySelectorAll('[data-free="' + ev.id + '"]').forEach(n => {
+      n.textContent = opis(wolne);
+
+      /* Karta pelnego wydarzenia nie wysyla nikogo do formularza,
+         ktory i tak juz nie przyjmie zgloszenia. Link zostaje: na
+         stronie wydarzenia czeka zaproszenie na liste rezerwowa. */
+      const karta = n.closest('.card');
+      if (!karta) return;
+      karta.dataset.full = String(wolne === 0);
+      const go = karta.querySelector('.card-go');
+      if (go) go.textContent = wolne === 0 ? 'Lista rezerwowa →' : 'Zapisz się →';
+    });
 
     /* podpis pod przyciskiem w hero dotyczy tylko najblizszego */
     if (ev.id === e.id) {
@@ -340,7 +369,7 @@
     MATCHPOINT.upcoming.forEach(ev => {
       fetch(ep + '?tab=' + encodeURIComponent(ev.sheetTab) + '&t=' + Date.now())
         .then(r => r.json())
-        .then(d => { if (d && d.ok) pokaz(ev, d.womenPaid, d.menPaid); })
+        .then(d => { if (d && d.ok) pokaz(ev, d); })
         .catch(() => {});
     });
   }

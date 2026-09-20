@@ -25,45 +25,14 @@ const MATCHPOINT = {
   cfBeaconToken: '',
 
   /* Czy licznik ma czytac liczbe oplaconych z arkusza.
-     Przy false liczniki zostaja puste, bo nie ma zapasowego zrodla. */
+     Przy false liczniki zostaja puste, bo nie ma zapasowego zrodla.
+     Blokada zapisow NIE zalezy od tej flagi: przy false strona nadal
+     pyta arkusz o miejsca i nie wpuszcza nikogo do pelnej puli,
+     tylko nie pokazuje liczb.                                      */
   useSheetCounter: true,
 
   /* --- wydarzenia w sprzedazy, od najblizszego --- */
   upcoming: [
-
-    {
-      id:      'TSD-2009',
-      name:    'Tennis Speed Dating',
-      sport:   'Tenis',
-      date:    '20.09.2026',
-      weekday: 'Niedziela',
-      time:    '17:00–19:00',
-      venue:   'Korty Wolica SGGW',
-      address: 'Nowoursynowska 92, Warszawa',
-      age:     '25–40',
-      level:   'Każdy poziom',
-      /* dane wykorzystywane w mailu z potwierdzeniem */
-      surface:   'ziemny (mączka)',
-      shoes:     'obuwie na mączkę',
-      transport: 'Metro Ursynów → Nowoursynowska 92 → kampus SGGW',
-      /* blok "co zabrac" w mailu z potwierdzeniem. Trzyma go config,
-         a nie skrypt arkusza, bo przy kazdej dyscyplinie mowi co
-         innego — na padlu rakiety sa w pakiecie i zdanie o
-         wypozyczeniu bylo tam po prostu nieprawda. */
-      bring:      'Rakietę, obuwie na mączkę i strój sportowy.',
-      bringExtra: 'Potrzebujesz rakiety? Daj nam znać — można ją wypożyczyć za dodatkową opłatą.',
-      included:   'Kort, piłki, woda i przekąski.',
-      priceW:  90,
-      priceM:  100,
-      page:    'tennis-speed-dating-20-09.html',
-      /* nazwa ZAKLADKI w arkuszu. Kazde wydarzenie ma swoja.   */
-      sheetTab: '20.09',
-      formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfqkm4kn6giUD2qxViy0b4kboN1vJ-utRemI2BE3KOZ9FuCQA/viewform',
-      blik:    '731 210 703',
-
-      limitWomen: 6,
-      limitMen:   6
-    },
 
     {
       id:      'PSD-0310',
@@ -75,6 +44,8 @@ const MATCHPOINT = {
       venue:   'Warsaw Padel Club',
       address: 'Annopol 3, Warszawa',
       age:     '25–35',
+      ageMin:  25,
+      ageMax:  35,
       level:   'Początkujący+',
       surface:   'sztuczna trawa',
       shoes:     'obuwie sportowe na płaskiej podeszwie',
@@ -94,13 +65,26 @@ const MATCHPOINT = {
       blik:    '731 210 703',
 
       limitWomen: 6,
-      limitMen:   6
+      limitMen:   6,
+
+      /* Pula kobiet zamknięta 20.09: komplet zebrał się poza arkuszem,
+         więc same liczby z arkusza jeszcze o tym nie wiedzą.
+         Wpisz false, gdy zwolni się miejsce.                      */
+      soldOutWomen: true,
+      soldOutMen:   false
     }
 
   ],
 
   /* --- archiwum --- */
   past: [
+    {
+      name:  'Tennis Speed Dating',
+      sport: 'Tenis',
+      date:  '20.09.2026',
+      venue: 'Korty Wolica SGGW, Warszawa',
+      page:  'tennis-speed-dating-20-09.html'
+    },
     {
       name:  'Tennis Speed Dating',
       sport: 'Tenis',

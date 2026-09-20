@@ -47,6 +47,19 @@ body.ev--padel{
   --court:      #1c46cf;
   --court-dark: #133397;
   --court-deep: #0b2168;
+
+  /* Akcent padla to limonka wzieta wprost z pilki (#c9dd85 z <svg>
+     w hero). Rozowy, ktory niesie caly serwis, gubil sie na granacie
+     i "Zapisz sie" bylo widac dopiero z bliska.
+     Trzy nazwy naraz, bo --warm i --lime sa w palecie aliasami
+     --accent i siedza w roznych miejscach tego arkusza; zmiana samego
+     --accent zostawilaby polowe przyciskow rozowa.
+     Tenis zostaje przy rozu — po to, zeby dyscypliny sie roznily.  */
+  --accent:     #c9dd85;
+  --accent-alt: #bacf6d;
+  --warm:       #c9dd85;
+  --warm-dark:  #bacf6d;
+  --lime:       #c9dd85;
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
@@ -551,6 +564,10 @@ section{ padding:clamp(84px,11vw,164px) 0; }
   display:grid; gap:20px;
   grid-template-columns:repeat(auto-fit,minmax(262px,1fr));
 }
+/* Gdy w sprzedazy zostaje jedno wydarzenie, auto-fit rozciaga jego
+   karte na cala szerokosc strony i wyglada ona jak baner z dziura po
+   prawej. Jedna karta trzyma szerokosc dwoch kolumn. */
+.cards > :only-child{ max-width:520px; }
 .card{
   position:relative; overflow:hidden;
   display:flex; flex-direction:column;
@@ -606,6 +623,18 @@ section{ padding:clamp(84px,11vw,164px) 0; }
   transition:background .18s ease;
 }
 .card:hover .card-go{ background:var(--warm-dark); }
+/* Wydarzenie z pelnym skladem. Karta zostaje klikalna, bo na stronie
+   wydarzenia czeka zaproszenie na liste rezerwowa, ale przycisk nie
+   udaje, ze mozna sie jeszcze zapisac. */
+.card[data-full="true"] .card-go{
+  background:rgba(247,245,239,.18); color:rgba(247,245,239,.92);
+}
+.card[data-full="true"]:hover .card-go{ background:rgba(247,245,239,.26); }
+/* Przejscie w "sklad zamkniety" przychodzi z arkusza, a nie z ruchu
+   myszy, wiec go nie animujemy: karta mrugalaby kolorem w losowym
+   momencie po wejsciu, zaleznie od tego, kiedy odpowie arkusz.
+   Kontrola znaku liczyla to zreszta jako druga animacje w toku. */
+.card[data-full="true"] .card-go{ transition:none; }
 
 /* Nawierzchnia padla: ten sam uklad, inny kolor kortu.  */
 .card--padel{ --court:#1c46cf; --court-dark:#133397; --court-deep:#0b2168; }
@@ -731,6 +760,11 @@ body.ev .rule{ background:rgba(107,120,92,.35); }
    Blok MUSI zostac pod blokiem body.ev: specyficznosc jest
    identyczna, wiec wygrywa to, co stoi nizej w pliku. */
 body.ev--padel .dark{ background:rgba(28,70,207,.94); }
+/* Zapisy na padlu dostaja granat zamiast kobaltu, zeby sekcja,
+   w ktorej cos sie robi, nie zlewala sie z reszta niebieskich.
+   Kolor jest z tej samej palety (--court-deep), wiec strona
+   zostaje spojna. Na tenisie zapisy zostaja w zieleni kortu. */
+body.ev--padel #zapisy.dark{ background:rgba(11,33,104,.96); }
 body.ev--padel .deep{ background:rgba(18,48,145,.95); }
 body.ev--padel .faq details{ border-color:rgba(70,88,160,.35); }
 body.ev--padel .steps li{ border-color:rgba(70,88,160,.35); }
@@ -853,6 +887,9 @@ body.doc{ background:var(--paper); }
 .pool .n .lim{ font-size:.5em; font-weight:400; opacity:.6; }
 .pool .bar{ display:block; height:6px; margin:18px 0 0; background:rgba(245,243,236,.2); }
 .pool .bar i{ display:block; height:100%; background:var(--lime); transition:width .4s ease; }
+/* Linia stanu siedzi POD paskiem, wiec dostaje wlasny odstep.
+   Wypelniona pula ma ja w cieplejszym kolorze (regula wyzej). */
+.pool .st{ display:block; margin:14px 0 0; }
 .pool[data-full="true"] .bar i{ background:#f0a98b; }
 
 /* ============================================================
@@ -1079,6 +1116,11 @@ p:last-child{ margin-bottom:0; }
   background:var(--warm); border-color:var(--warm); color:#fff;
 }
 .choice label:has(input:focus-visible){ outline:2px solid var(--lime); outline-offset:2px; }
+/* Pula bez wolnych miejsc: przycisk plci jest wylaczony (input ma
+   disabled) i sam mowi, dlaczego nie da sie go kliknac. */
+.choice label[data-full="true"]{ opacity:.45; cursor:not-allowed; }
+.choice label[data-full="true"]:hover{ background:rgba(255,255,255,.07); }
+.choice label[data-full="true"] span::after{ content:' · brak miejsc'; font-weight:400; }
 
 /* zgody */
 .consent{ display:grid; grid-template-columns:auto 1fr; gap:12px; margin:0 0 16px; cursor:pointer; }

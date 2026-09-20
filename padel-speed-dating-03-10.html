@@ -157,7 +157,10 @@
       <li><span class="k">Miejsce</span><span class="v">Warsaw Padel Club</span></li>
     </ul>
     <div>
-      <a class="cta" href="#zapisy">Zapisz się <span class="arw" aria-hidden="true">→</span></a>
+      <!-- Napis zmienia skrypt na "Lista rezerwowa", gdy sklad jest
+           pelny. Kotwica zostaje ta sama: w sekcji zapisow stoi
+           wtedy blok #closed z adresem na liste rezerwowa. -->
+      <a class="cta" href="#zapisy" data-cta-zapisy>Zapisz się <span class="arw" aria-hidden="true">→</span></a>
       <p class="cta-note" data-spots-summary>6 kobiet i 6 mężczyzn</p>
     </div>
   </div>
@@ -298,12 +301,25 @@
         <span class="k">Kobiety</span>
         <span class="n"><b data-taken>–</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
+        <span class="st" data-status></span>
       </div>
       <div class="pool" data-pool="men">
         <span class="k">Mężczyźni</span>
         <span class="n"><b data-taken>–</b><span class="lim"> / 6</span></span>
         <span class="bar"><i data-bar style="width:0"></i></span>
+        <span class="st" data-status></span>
       </div>
+    </div>
+
+    <!-- Zapisy zamkniete. Skrypt na dole strony pokazuje ten blok
+         i chowa formularz, gdy arkusz mowi, ze obie pule sa pelne.
+         Domyslnie jest ukryty: gdy arkusz nie odpowie, strona
+         zostaje przy formularzu, bo zgloszenie przyjmie jeszcze
+         Netlify, a my dopiszemy je recznie. -->
+    <div class="form-msg bad" id="closed">
+      <b>Zapisy zamknięte — skład na 03.10 jest pełny.</b>
+      Napisz na <a href="mailto:match.point.date@gmail.com?subject=Lista%20rezerwowa%20Padel%20Speed%20Dating%2003.10">match.point.date@gmail.com</a>,
+      wpiszemy Cię na listę rezerwową i damy znać, gdy zwolni się miejsce.
     </div>
 
     <form class="form" id="signup" name="zapisy" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
@@ -334,9 +350,11 @@
       <div class="form-grid">
         <div>
           <label class="lab" for="age">Wiek</label>
-          <input type="number" id="age" name="age" min="18" max="99" inputmode="numeric" required>
-          <span class="hint">To wydarzenie jest dla osób 25 do 35 lat.</span>
-          <span class="err" data-err="age">Podaj wiek (18+).</span>
+          <!-- Widelki wieku wpisuje skrypt z config.js (ageMin/ageMax).
+               Tu zostaja 18-99 na wypadek wylaczonego JS-u. -->
+          <input type="number" id="age" name="age" min="18" max="99" inputmode="numeric" required data-age>
+          <span class="hint" data-age-hint>To wydarzenie jest dla osób 25 do 35 lat.</span>
+          <span class="err" data-err="age">Podaj wiek.</span>
         </div>
         <div>
           <label class="lab" for="phone">Numer telefonu</label>
@@ -411,6 +429,9 @@
           <p><b>Opłać miejsce BLIK-iem na numer:</b></p>
           <span class="num" id="tBlik">731 210 703</span>
           <p class="title-hint">W tytule wpisz: <b id="tTitle"></b></p>
+          <!-- Ludzie pisali, ze po zapisie "nic nie dostali". Te same
+               dane do wplaty wysyla teraz mailem skrypt arkusza. -->
+          <p class="title-hint">Te dane wysłaliśmy Ci też mailem na <b id="tMail"></b>.</p>
 
           <div class="ticket-actions">
             <button type="button" class="btn-paid" id="tPaid">Zapłacono</button>
@@ -419,19 +440,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ukryty formularz, zeby Netlify zarejestrowal zgloszenia wplat -->
-    <form name="wplaty" method="POST" data-netlify="true" hidden>
-      <input type="hidden" name="form-name" value="wplaty">
-      <input type="text" name="ticket">
-      <input type="text" name="event">
-      <input type="text" name="firstName">
-      <input type="text" name="lastName">
-      <input type="text" name="gender">
-      <input type="email" name="email">
-      <input type="text" name="phone">
-      <input type="text" name="price">
-    </form>
 
   </div>
 </section>
@@ -519,53 +527,196 @@
      cudze ceny, limity i zakladke arkusza. */
   const e  = MATCHPOINT.byId('PSD-0310');
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
+  const form = document.getElementById('signup');
 
-  /* ---------- licznik oplaconych miejsc ----------
+  /* ---------- stan pul: licznik i blokada zapisow ----------
      Liczymy osoby z "TAK" w kolumnie "Oplacone", bo dopiero wplata
-     rezerwuje miejsce. Zrodlo prawdy to arkusz Google; wartosci
-     z config.js sluza jako awaryjne.                              */
-  function renderPools(w, m){
-    const pools = {
-      women: { taken: w, limit: e.limitWomen },
-      men:   { taken: m, limit: e.limitMen }
-    };
-    Object.entries(pools).forEach(([key, p]) => {
+     rezerwuje miejsce. Zrodlo prawdy to arkusz Google; strona nie
+     trzyma zadnych liczb zapasowych.                               */
+
+  /* Ostatni odczyt zakladki. null = jeszcze nie wiemy albo arkusz nie
+     odpowiedzial. Wtedy nie blokujemy niczego, bo blokada na podstawie
+     nieznanego stanu zamykalaby zapisy przy kazdej awarii arkusza —
+     zgloszenie przyjmie Netlify, a my dopiszemy je recznie.        */
+  let stan = null;
+  let wejsciowkaNaEkranie = false;
+
+  /* Adres na liste rezerwowa. Temat skladamy z configu, zeby maile nie
+     wpadaly jako "Bez tematu" i bylo widac, ktorego terminu dotycza. */
+  const mailRezerwowa = 'mailto:match.point.date@gmail.com?subject='
+    + encodeURIComponent('Lista rezerwowa — ' + e.name + ' ' + e.date);
+
+  function czytajStan(){
+    if (!ep) return Promise.resolve(null);
+    return fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
+      .then(r => r.json())
+      .then(d => (d && d.ok) ? d : null)
+      .catch(() => null);
+  }
+
+  /* Ile miejsc zostalo w puli danej plci. null = nie wiadomo.
+     Dwa ograniczenia, liczy sie mniejsze:
+     - limit z config.js minus OPLACONE, bo miejsce rezerwuje wplata,
+     - wolne wiersze bloku w zakladce, bo do zapisanego do konca bloku
+       arkusz nie dopisze nikogo i zgloszenie by przepadlo.
+     Gdy zakladka nie ma bloku (womenLimit 0), zostaje sam limit:
+     zle przygotowana zakladka to nie to samo co brak miejsc.       */
+  function wolneMiejsca(d, plec){
+    const k = String(plec).indexOf('Kobieta') === 0;
+
+    /* Reczne zamkniecie puli z config.js wygrywa z arkuszem i nie czeka
+       na niego: komplet potrafi zebrac sie poza strona, a wtedy arkusz
+       jeszcze o tym nie wie. Sprawdzamy je PRZED odczytem, bo inaczej
+       przy niedostepnym arkuszu zamknieta pula stalaby otworem.    */
+    if (k ? e.soldOutWomen : e.soldOutMen) return 0;
+
+    if (!d) return null;
+    const zLimitu  = (k ? e.limitWomen : e.limitMen) - (k ? d.womenPaid : d.menPaid);
+    const wiersze  = k ? d.womenLimit : d.menLimit;
+    const zWierszy = wiersze > 0 ? wiersze - (k ? d.women : d.men) : zLimitu;
+    return Math.max(0, Math.min(zLimitu, zWierszy));
+  }
+
+  function renderPools(d){
+    [['women', 'Kobieta'], ['men', 'Mężczyzna']].forEach(([key, plec]) => {
       const el = document.querySelector('[data-pool="' + key + '"]');
       if (!el) return;
-      const taken = Math.min(p.taken, p.limit);
-      const free  = Math.max(0, p.limit - taken);
+      const kobiety = key === 'women';
+      const reczne  = kobiety ? e.soldOutWomen : e.soldOutMen;
+      const wiersze = kobiety ? d.womenLimit : d.menLimit;
+
+      /* Prawdziwa pojemnosc puli to MNIEJSZA z dwoch liczb: limitu
+         z configu i liczby wierszy bloku w arkuszu. Gdy sie roznia,
+         wygrywa arkusz — bo to w nim miejsce jest albo go nie ma.
+         Inaczej blok skrocony do trzech wierszy pokazywalby "3 / 6"
+         i wygladal na wpol pusty, choc nikt sie juz nie zmiesci.   */
+      const limit = wiersze > 0
+        ? Math.min(kobiety ? e.limitWomen : e.limitMen, wiersze)
+        : (kobiety ? e.limitWomen : e.limitMen);
+
+      const free = wolneMiejsca(d, plec);
+      /* Przy recznym zamknieciu arkusz podaje swoje liczby, a te sa
+         nizsze niz prawda — licznik idzie wtedy na limit, bo "0 / 6"
+         nad napisem "brak miejsc" wyglada na awarie strony.        */
+      const taken = reczne
+        ? limit
+        : Math.min(kobiety ? d.womenPaid : d.menPaid, limit);
+
       el.dataset.full = String(free === 0);
       el.querySelector('[data-taken]').textContent = taken;
-      el.querySelector('.lim').textContent = ' / ' + p.limit;
-      el.querySelector('[data-bar]').style.width = Math.min(100, (taken / p.limit) * 100) + '%';
+      el.querySelector('.lim').textContent = ' / ' + limit;
+      el.querySelector('[data-bar]').style.width = Math.min(100, (taken / limit) * 100) + '%';
+
+      /* Pula moze byc zamknieta, choc licznik nie doszedl do limitu:
+         wtedy wszystkie wiersze zajmuja zapisani, ktorzy jeszcze nie
+         zaplacili. Mowimy to wprost, zeby "4 / 6" i brak miejsc nie
+         wygladaly na sprzecznosc.                                  */
+      const st = el.querySelector('[data-status]');
+      if (st) st.textContent = free > 0
+        ? 'Wolne miejsca: ' + free
+        : (taken >= limit ? 'Brak miejsc' : 'Lista pełna, czekamy na wpłaty');
     });
 
-    const taken = Math.min(w, e.limitWomen) + Math.min(m, e.limitMen);
-    const total = e.limitWomen + e.limitMen;
+    const wolne = wolneMiejsca(d, 'Kobieta') + wolneMiejsca(d, 'Mężczyzna');
     const summary = document.querySelector('[data-spots-summary]');
-    const wolne = Math.max(0, total - taken);
     if (summary) summary.textContent = wolne === 0
       ? 'Skład zamknięty, napisz do nas na listę rezerwową'
       : 'Wolnych miejsc ' + wolne;
   }
 
-  /* Liczby bierzemy wylacznie z arkusza. Jesli nie odpowie, pule
-     zostaja z kreska, a nad nimi widnieje tylko limit miejsc.
-     Lepiej nie pokazac nic, niz pokazac nieaktualna liczbe.       */
-  if (ep && MATCHPOINT.useSheetCounter) {
-    fetch(ep + '?tab=' + encodeURIComponent(e.sheetTab) + '&t=' + Date.now())
-      .then(r => r.json())
-      .then(d => { if (d && d.ok) renderPools(d.womenPaid, d.menPaid); })
-      .catch(() => {});
+  /* Pelnej puli nie da sie wybrac, a gdy pelne sa obie, formularz znika
+     i zostaje zaproszenie na liste rezerwowa. Do 17.09 nie bylo tu nic:
+     strona przyjmowala zgloszenie do pelnego skladu i wydawala
+     wejsciowke z numerem BLIK. Tak zapisala sie osoba na wypelnione
+     20.09, gdzie oplaconych bylo 6 z 6 i 6 z 6.                    */
+  function stosujBlokade(d){
+    if (!form) return;
+    const wolneK = wolneMiejsca(d, 'Kobieta');
+    const wolneM = wolneMiejsca(d, 'Mężczyzna');
+
+    [['Kobieta', wolneK], ['Mężczyzna', wolneM]].forEach(([plec, free]) => {
+      const input = form.querySelector('input[name="gender"][value="' + plec + '"]');
+      if (!input) return;
+      const pelna = free === 0;
+      input.disabled = pelna;
+      if (pelna && input.checked) input.checked = false;
+      const label = input.closest('label');
+      if (label) label.dataset.full = String(pelna);
+    });
+
+    const zamkniete = wolneK === 0 && wolneM === 0;
+    const box = document.getElementById('closed');
+    if (box) box.classList.toggle('show', zamkniete);
+
+    /* Przycisk w hero nie wola "Zapisz sie" do sekcji, w ktorej nie ma
+       juz formularza. */
+    document.querySelectorAll('[data-cta-zapisy]').forEach(a => {
+      a.innerHTML = (zamkniete ? 'Lista rezerwowa ' : 'Zapisz się ')
+        + '<span class="arw" aria-hidden="true">&#8594;</span>';
+    });
+
+    /* Wejsciowki nie zaslaniamy: kto zdazyl sie zapisac, ma dokonczyc
+       wplate, nawet jesli pula domknela sie za nim.                */
+    if (!wejsciowkaNaEkranie) form.style.display = zamkniete ? 'none' : '';
   }
 
+  function odswiezStan(){
+    return czytajStan().then(d => {
+      if (!d) return null;
+      stan = d;
+      if (MATCHPOINT.useSheetCounter) renderPools(d);
+      stosujBlokade(d);
+      return d;
+    });
+  }
+
+  /* Pule zamkniete recznie pokazujemy od razu, jeszcze przed odpowiedzia
+     arkusza — i takze wtedy, gdy arkusz nie odpowie wcale. Liczba
+     z arkusza i tak byla dla nich nieaktualna.                      */
+  function pokazReczneZamkniecie(){
+    [['women', 'Kobieta'], ['men', 'Mężczyzna']].forEach(([key, plec]) => {
+      if (wolneMiejsca(null, plec) !== 0) return;
+      const el = document.querySelector('[data-pool="' + key + '"]');
+      if (!el) return;
+      const limit = key === 'women' ? e.limitWomen : e.limitMen;
+      el.dataset.full = 'true';
+      el.querySelector('[data-taken]').textContent = limit;
+      el.querySelector('.lim').textContent = ' / ' + limit;
+      el.querySelector('[data-bar]').style.width = '100%';
+      const st = el.querySelector('[data-status]');
+      if (st) st.textContent = 'Brak miejsc';
+    });
+    stosujBlokade(null);
+  }
+  pokazReczneZamkniecie();
+
+  /* Liczby bierzemy wylacznie z arkusza. Gdy nie odpowie, pule zostaja
+     z kreska — lepiej nie pokazac nic, niz nieaktualny stan miejsc.
+     Blokada NIE zalezy od useSheetCounter: ta flaga chowa liczby,
+     a nie przestaje pilnowac miejsc.                               */
+  odswiezStan();
+
   document.querySelectorAll('[data-blik]').forEach(n => n.textContent = e.blik);
+
+  /* Widelki wieku w jednym miejscu: config. Z niego ida atrybuty pola,
+     napis pod nim i sprawdzanie przy wysylce. Wczesniej formularz
+     przyjmowal kazdego pelnoletniego, choc strona pisala o przedziale
+     — i zapisywali sie ludzie spoza niego.                          */
+  const wiekOpis = e.ageMin + '\u2013' + e.ageMax + ' lat';
+  document.querySelectorAll('[data-age]').forEach(i => {
+    i.min = e.ageMin; i.max = e.ageMax;
+  });
+  const wiekHint = document.querySelector('[data-age-hint]');
+  if (wiekHint) wiekHint.textContent = 'To wydarzenie jest dla os\u00f3b ' + wiekOpis + '.';
+  const wiekErr = document.querySelector('[data-err="age"]');
+  if (wiekErr) wiekErr.innerHTML = 'Podaj wiek z przedzia\u0142u ' + wiekOpis + '. '
+    + 'Jeste\u015b tu\u017c obok? <a href="mailto:match.point.date@gmail.com" '
+    + 'style="color:var(--accent)">Napisz do nas</a>.';
   document.querySelectorAll('[data-form-link]').forEach(a => {
     a.href = e.formUrl; a.target = '_blank'; a.rel = 'noopener';
   });
 
   /* ---------- formularz ---------- */
-  const form = document.getElementById('signup');
   if (!form) return;
 
   const errBox = document.getElementById('formErr');
@@ -577,6 +728,54 @@
       field.setAttribute('aria-invalid', on ? 'true' : 'false');
     }
   };
+
+  const przywrocPrzycisk = btn => {
+    btn.disabled = false;
+    btn.innerHTML = 'Zapisz się <span class="arw" aria-hidden="true">&#8594;</span>';
+  };
+
+  /* Brak miejsc mowimy bez numeru BLIK: nie prosimy o wplate za
+     miejsce, ktorego nie ma. Gdy formularz jest juz schowany (obie
+     pule pelne), komunikat siedzi w nim niewidoczny, wiec do oka
+     podajemy blok o zamknietych zapisach.                         */
+  function pokazBrakMiejsc(btn){
+    przywrocPrzycisk(btn);
+    const box = document.getElementById('closed');
+    if (form.style.display === 'none') {
+      if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    errBox.innerHTML = '<b>Te miejsca już się rozeszły.</b> '
+      + 'Ktoś opłacił je w trakcie wypełniania formularza, więc nie prosimy Cię o wpłatę. '
+      + 'Napisz na <a href="' + mailRezerwowa + '" style="color:var(--accent)">match.point.date@gmail.com</a>'
+      + ' — wpiszemy Cię na listę rezerwową i damy znać, gdy zwolni się miejsce.';
+    errBox.classList.add('show');
+    errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* Zapis do arkusza z PRZECZYTANIEM odpowiedzi. Wczesniej szedl
+     w trybie 'no-cors': request wychodzil, ale odpowiedz byla dla
+     strony niewidoczna, wiec odmowa "brak miejsc" wygladala dokladnie
+     jak udany zapis. Skrypt arkusza odpowiada JSON-em z naglowkiem
+     Access-Control-Allow-Origin, wiec po jego stronie nie trzeba nic
+     dodawac — wystarczy nie odcinac sobie odpowiedzi.
+     Zwraca odpowiedz albo null, gdy jej nie da sie przeczytac; null
+     nie znaczy "nie zapisano", bo request idzie niezaleznie od tego,
+     czy odpowiedz do nas wroci. Po 12 s przestajemy czekac.       */
+  function zapiszWArkuszu(body){
+    const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    const stoper = ctrl ? setTimeout(() => ctrl.abort(), 12000) : 0;
+    return fetch(ep, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+      signal: ctrl ? ctrl.signal : undefined
+    })
+      .then(r => r.json())
+      .then(d => (d && typeof d.ok === 'boolean') ? d : null)
+      .catch(() => null)
+      .then(d => { if (stoper) clearTimeout(stoper); return d; });
+  }
 
   const code = () => {
     const chars = 'ACDEFGHJKLMNPQRTUVWXY34679';
@@ -597,7 +796,7 @@
       gender:    !!v('gender'),
       firstName: v('firstName').length >= 2,
       lastName:  v('lastName').length >= 1,
-      age:       Number(v('age')) >= 18 && Number(v('age')) <= 99,
+      age:       Number(v('age')) >= e.ageMin && Number(v('age')) <= e.ageMax,
       phone:     v('phone').replace(/[^0-9]/g, '').length >= 9,
       email:     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email')),
       level:     !!v('level'),
@@ -613,8 +812,20 @@
 
     const btn = form.querySelector('button[type=submit]');
     btn.disabled = true;
-    btn.textContent = 'Zapisuję...';
+    btn.textContent = 'Sprawdzam miejsca...';
     errBox.classList.remove('show');
+
+    /* Karta mogla wisiec otwarta od godziny, a w tym czasie ktos mogl
+       domknac pule. Stan czytamy jeszcze raz, ZANIM cokolwiek
+       zapiszemy — zapis do pelnej puli konczylby sie wejsciowka
+       z numerem BLIK dla kogos, kto miejsca nie ma.               */
+    const swiezy = await odswiezStan();
+    if (wolneMiejsca(swiezy || stan, v('gender')) === 0) {
+      pokazBrakMiejsc(btn);
+      return;
+    }
+
+    btn.textContent = 'Zapisuję...';
 
     const ticketCode = code();
     const price = v('gender') === 'Kobieta' ? e.priceW : e.priceM;
@@ -633,6 +844,16 @@
       terms:     !!f.get('terms'),
       newsletter: !!f.get('newsletter'),
       tab:       e.sheetTab,
+      /* Do sprawdzenia po stronie arkusza: limity i reczne zamkniecie
+         pul. Arkusz ma odmowic tego samego, co odmawia strona.     */
+      limitWomen: e.limitWomen,
+      limitMen:   e.limitMen,
+      soldOutWomen: !!e.soldOutWomen,
+      soldOutMen:   !!e.soldOutMen,
+      /* Obie kwoty, bo mail z potwierdzeniem wychodzi pozniej, juz bez
+         udzialu strony, i sam dobiera kwote do plci wiersza.        */
+      priceW:    e.priceW,
+      priceM:    e.priceM,
       /* dane wydarzenia do maila z potwierdzeniem */
       eventName: e.name,
       date:      e.date,
@@ -681,23 +902,45 @@
       if (r.ok) zapisane = true;
     } catch (err) { /* brak sieci, obslugujemy nizej */ }
 
-    /* 2) arkusz Google, jesli endpoint jest wpisany w config.js */
+    /* 2) arkusz Google — jedyne miejsce, ktore wie, czy miejsce jest.
+          Sprawdzenie wyzej moze przegrac wyscig z kims, kto klika
+          w tej samej sekundzie, wiec ostatnie slowo ma arkusz.     */
     if (ep) {
-      try {
-        fetch(ep, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-        zapisane = true;
-      } catch (err) { /* jak wyzej */ }
+      const wynik = await zapiszWArkuszu(payload);
+
+      /* Arkusz odmowil: pula zapelnila sie w trakcie wysylania.
+         Zadnej wejsciowki i zadnego numeru BLIK.                   */
+      if (wynik && wynik.full) {
+        /* Najpierw nowy stan pul, potem komunikat: gdyby kolejnosc byla
+           odwrotna, blokada schowalaby formularz razem z komunikatem,
+           ktory wlasnie w nim postawilismy.                        */
+        await odswiezStan();
+        pokazBrakMiejsc(btn);
+        return;
+      }
+
+      /* Inny blad arkusza, np. brak zakladki wydarzenia. Zgloszenie
+         moze siedziec w Netlify, ale miejsca nie potwierdzamy, bo go
+         nie mamy — do 17.09 strona pokazywala tu wejsciowke.       */
+      if (wynik && wynik.ok === false) {
+        przywrocPrzycisk(btn);
+        errBox.innerHTML = 'Nie udało się potwierdzić miejsca. Napisz na '
+          + '<a href="mailto:match.point.date@gmail.com" style="color:var(--accent)">match.point.date@gmail.com</a>'
+          + ' — sprawdzimy zapisy i odpiszemy. Nie rób jeszcze przelewu.';
+        errBox.classList.add('show');
+        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      /* wynik === null: odpowiedzi nie dalo sie przeczytac (offline,
+         blokada w przegladarce). Request poszedl, wiec zostajemy przy
+         tym, co strona robila dotad — pokazujemy wejsciowke.       */
+      zapisane = true;
     }
 
     /* Zadne zrodlo nie przyjelo zgloszenia: nie udajemy, ze sie udalo. */
     if (!zapisane) {
-      btn.disabled = false;
-      btn.innerHTML = 'Zapisz się <span class="arw" aria-hidden="true">&#8594;</span>';
+      przywrocPrzycisk(btn);
       errBox.innerHTML = 'Nie udało się zapisać zgłoszenia. Wyślij nam te dane na '
         + '<a href="mailto:match.point.date@gmail.com?subject=Zapis%20na%20Padel%20Speed%20Dating%2003.10" style="color:var(--accent)">match.point.date@gmail.com</a>'
         + ', zapiszemy Cię ręcznie i potwierdzimy miejsce.';
@@ -711,7 +954,9 @@
     document.getElementById('tPrice').textContent = price + ' zł';
     document.getElementById('tBlik').textContent  = e.blik;
     document.getElementById('tTitle').textContent = title;
+    document.getElementById('tMail').textContent  = payload.email;
 
+    wejsciowkaNaEkranie = true;
     form.style.display = 'none';
     const t = document.getElementById('ticket');
     t.classList.add('show');
@@ -725,36 +970,16 @@
       paidBtn.disabled = true;
       paidBtn.textContent = 'Zgłaszam...';
 
-      const body = new URLSearchParams({
-        'form-name': 'wplaty',
-        ticket:    ticketCode,
-        event:     payload.event,
-        firstName: payload.firstName,
-        lastName:  payload.lastName,
-        gender:    payload.gender,
-        email:     payload.email,
-        phone:     payload.phone,
-        price:     String(price)
-      });
-
+      /* Zgloszenie wplaty idzie juz TYLKO do arkusza. Wczesniej leciala
+         tu jeszcze kopia do Netlify Forms i to ona robila z jednego
+         uczestnika trzy maile do organizatorki: zapis, kopia wplaty
+         i powiadomienie ze skryptu. Zostaja dwa, a wplata ma swoj slad
+         w arkuszu, w kolumnie "Zgloszona wplata".                   */
       let wyslane = false;
-      try {
-        const r = await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body.toString()
-        });
-        if (r.ok) wyslane = true;
-      } catch (err) { /* obslugujemy nizej */ }
-
       if (ep) {
-        fetch(ep, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(Object.assign({ action: 'paid' }, payload))
-        }).catch(() => {});
-        wyslane = true;
+        const odp = await zapiszWArkuszu(Object.assign({ action: 'paid' }, payload));
+        /* null = odpowiedzi nie dalo sie przeczytac, ale request poszedl */
+        wyslane = !odp || odp.ok !== false;
       }
 
       if (!wyslane) {
