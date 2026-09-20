@@ -330,16 +330,14 @@
     : 'Wolnych miejsc ' + wolne;
 
   /* Wolne miejsca liczymy tak samo jak strona wydarzenia: limit minus
-     OPLACONE, ale nie wiecej niz zostalo wolnych wierszy w zakladce.
-     Blok zapisany do konca nie przyjmie nikogo, choc oplaconych jest
-     mniej niz limit — karta nie moze wtedy zaprasza do zapisu.     */
+     OPLACONE, osobno dla kazdej puli. Reczne zamkniecie puli
+     (soldOutWomen/soldOutMen w config.js) zeruje ja niezaleznie od
+     tego, co mowi arkusz.                                          */
   function wolneMiejsca(ev, d){
-    const pula = (limit, oplaceni, zapisani, wiersze) => {
-      const zLimitu = limit - oplaceni;
-      return Math.max(0, Math.min(zLimitu, wiersze > 0 ? wiersze - zapisani : zLimitu));
-    };
-    return pula(ev.limitWomen, d.womenPaid, d.women, d.womenLimit)
-         + pula(ev.limitMen,   d.menPaid,   d.men,   d.menLimit);
+    const pula = (zamknieta, limit, oplaceni) =>
+      zamknieta ? 0 : Math.max(0, limit - oplaceni);
+    return pula(ev.soldOutWomen, ev.limitWomen, d.womenPaid)
+         + pula(ev.soldOutMen,   ev.limitMen,   d.menPaid);
   }
 
   function pokaz(ev, d){

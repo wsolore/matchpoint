@@ -636,8 +636,15 @@ section{ padding:clamp(84px,11vw,164px) 0; }
    Kontrola znaku liczyla to zreszta jako druga animacje w toku. */
 .card[data-full="true"] .card-go{ transition:none; }
 
-/* Nawierzchnia padla: ten sam uklad, inny kolor kortu.  */
-.card--padel{ --court:#1c46cf; --court-dark:#133397; --court-deep:#0b2168; }
+/* Nawierzchnia padla: ten sam uklad, inny kolor kortu. Karta niesie
+   cala palete padla, wiec przycisk "Zapisz sie" jest na niej limonkowy
+   jak na stronie wydarzenia. Wczesniej limonke dostawalo tylko
+   body.ev--padel, a landing tej klasy nie ma i karta zostawala rozowa. */
+.card--padel{
+  --court:#1c46cf; --court-dark:#133397; --court-deep:#0b2168;
+  --accent:#c9dd85; --accent-alt:#bacf6d;
+  --warm:#c9dd85; --warm-dark:#bacf6d; --lime:#c9dd85;
+}
 
 /* Archiwum pod kartami — lista, nie karta. Wydarzenie, ktore sie
    odbylo, nie konkuruje o klikniecie z tym, na ktore sa zapisy. */

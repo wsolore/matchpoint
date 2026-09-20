@@ -571,10 +571,14 @@
     if (k ? e.soldOutWomen : e.soldOutMen) return 0;
 
     if (!d) return null;
-    const zLimitu  = (k ? e.limitWomen : e.limitMen) - (k ? d.womenPaid : d.menPaid);
-    const wiersze  = k ? d.womenLimit : d.menLimit;
-    const zWierszy = wiersze > 0 ? wiersze - (k ? d.women : d.men) : zLimitu;
-    return Math.max(0, Math.min(zLimitu, zWierszy));
+
+    /* Miejsc na sprzedaz jest tyle, ile limit minus OPLACONE. Liczba
+       wierszy bloku w arkuszu juz sie nie liczy: zapis idzie na liste
+       rezerwowa, ktora skrypt sam wydluza, wiec nie ma jak sie nie
+       zmiescic. Dopoki liczyla, niezaplacony czlowiek siedzacy
+       w skladzie zjadal widoczne miejsce — przy czterech oplaconych
+       z szesciu strona pisala "wolne 1" zamiast "wolne 2".        */
+    return Math.max(0, (k ? e.limitWomen : e.limitMen) - (k ? d.womenPaid : d.menPaid));
   }
 
   function renderPools(d){
@@ -583,18 +587,8 @@
       if (!el) return;
       const kobiety = key === 'women';
       const reczne  = kobiety ? e.soldOutWomen : e.soldOutMen;
-      const wiersze = kobiety ? d.womenLimit : d.menLimit;
-
-      /* Prawdziwa pojemnosc puli to MNIEJSZA z dwoch liczb: limitu
-         z configu i liczby wierszy bloku w arkuszu. Gdy sie roznia,
-         wygrywa arkusz — bo to w nim miejsce jest albo go nie ma.
-         Inaczej blok skrocony do trzech wierszy pokazywalby "3 / 6"
-         i wygladal na wpol pusty, choc nikt sie juz nie zmiesci.   */
-      const limit = wiersze > 0
-        ? Math.min(kobiety ? e.limitWomen : e.limitMen, wiersze)
-        : (kobiety ? e.limitWomen : e.limitMen);
-
-      const free = wolneMiejsca(d, plec);
+      const limit   = kobiety ? e.limitWomen : e.limitMen;
+      const free    = wolneMiejsca(d, plec);
       /* Przy recznym zamknieciu arkusz podaje swoje liczby, a te sa
          nizsze niz prawda — licznik idzie wtedy na limit, bo "0 / 6"
          nad napisem "brak miejsc" wyglada na awarie strony.        */
@@ -612,9 +606,7 @@
          zaplacili. Mowimy to wprost, zeby "4 / 6" i brak miejsc nie
          wygladaly na sprzecznosc.                                  */
       const st = el.querySelector('[data-status]');
-      if (st) st.textContent = free > 0
-        ? 'Wolne miejsca: ' + free
-        : (taken >= limit ? 'Brak miejsc' : 'Lista pełna, czekamy na wpłaty');
+      if (st) st.textContent = free > 0 ? 'Wolne miejsca: ' + free : 'Brak miejsc';
     });
 
     const wolne = wolneMiejsca(d, 'Kobieta') + wolneMiejsca(d, 'Mężczyzna');
