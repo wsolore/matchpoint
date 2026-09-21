@@ -113,13 +113,26 @@
     <h2 class="h2" style="margin-top:14px">Wybierz, w co zagrasz</h2>
 
     <div class="cards">
+      <a class="card card--padel" href="padel-speed-dating-03-10-1500.html">
+        <span class="kicker">Padel · Warszawa</span>
+        <h3>Padel Speed&nbsp;Dating</h3>
+        <span class="when"><small>Sobota</small>03.10.2026</span>
+        <p class="where">
+          Warsaw Padel Club, Annopol&nbsp;3 · 15:00–16:30<br>
+          Rakiety, piłki i shake w pakiecie. Wiek 25–35, trzeba już grać.
+        </p>
+        <span class="spacer"></span>
+        <span class="free" data-free="PSD-0310-15">Zapisy otwarte</span>
+        <span class="card-go">Zapisz się →</span>
+      </a>
+
       <a class="card card--padel" href="padel-speed-dating-03-10.html">
         <span class="kicker">Padel · Warszawa</span>
         <h3>Padel Speed&nbsp;Dating</h3>
         <span class="when"><small>Sobota</small>03.10.2026</span>
         <p class="where">
           Warsaw Padel Club, Annopol&nbsp;3 · 17:00–18:30<br>
-          Rakiety, piłki i shake w pakiecie. Wiek 25–35, poziom początkujący+.
+          Rakiety, piłki i shake w pakiecie. Wiek 25–35, trzeba już grać.
         </p>
         <span class="spacer"></span>
         <span class="free" data-free="PSD-0310">Zapisy otwarte</span>
@@ -144,7 +157,7 @@
       </div>
       <div class="col">
         <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" loading="lazy"><span>Nie musisz dobrze grać</span></h3>
-        <p>Poziom zaznaczasz w&nbsp;formularzu, a&nbsp;pary dobieramy tak, żeby gra miała sens.</p>
+        <p>Nie dzielimy nikogo na poziomy. Wystarczy, że rakieta nie jest ci obca.</p>
       </div>
       <div class="col">
         <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" loading="lazy"><span>Bez profili i&nbsp;przesuwania</span></h3>
@@ -309,13 +322,20 @@
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
   const e  = MATCHPOINT.next;
 
-  /* "Wybierz, w co zagrasz" ma sens przy kilku terminach. Gdy zostaje
-     jeden, nie ma czego wybierac. W HTML zostaje wersja mnoga, bo tak
-     czyta te sekcje Google i ktos z wylaczonym skryptem, a zwykle
-     terminow jest wiecej niz jeden.                                */
-  if (MATCHPOINT.upcoming.length === 1) {
-    const naglowek = document.querySelector('#terminy .h2');
-    if (naglowek) naglowek.textContent = 'Najbliższy termin';
+  /* "Wybierz, w co zagrasz" ma sens, gdy w sprzedazy sa rozne
+     dyscypliny. Gdy zostaje jeden termin, nie ma czego wybierac,
+     a gdy wszystkie sa z tej samej dyscypliny (np. dwa sloty padla
+     tego samego dnia), wybiera sie godzine, nie sport.
+     W HTML zostaje wersja ogolna, bo tak czyta te sekcje Google
+     i ktos z wylaczonym skryptem.                                  */
+  const naglowekTerminow = document.querySelector('#terminy .h2');
+  if (naglowekTerminow) {
+    const sporty = MATCHPOINT.upcoming.map(x => x.sport);
+    if (MATCHPOINT.upcoming.length === 1) {
+      naglowekTerminow.textContent = 'Najbliższy termin';
+    } else if (sporty.every(x => x === sporty[0])) {
+      naglowekTerminow.textContent = 'Wybierz termin';
+    }
   }
 
   document.querySelectorAll('[data-next-link]').forEach(a => a.href = e.page);

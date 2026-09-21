@@ -35,6 +35,40 @@ const MATCHPOINT = {
   upcoming: [
 
     {
+      id:      'PSD-0310-15',
+      name:    'Padel Speed Dating',
+      sport:   'Padel',
+      date:    '03.10.2026',
+      weekday: 'Sobota',
+      time:    '15:00–16:30',
+      venue:   'Warsaw Padel Club',
+      address: 'Annopol 3, Warszawa',
+      age:     '25–35',
+      ageMin:  25,
+      ageMax:  35,
+      level:   'Początkujący+',
+      surface:   'sztuczna trawa',
+      shoes:     'obuwie sportowe na płaskiej podeszwie',
+      transport: '',
+      bring:      'Obuwie sportowe na płaskiej podeszwie i strój sportowy.',
+      bringExtra: 'Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.',
+      included:   'Kort, rakiety i piłki, voucher na shake proteinowy.',
+      priceW:  140,
+      priceM:  150,
+      page:    'padel-speed-dating-03-10-1500.html',
+      /* Dwa sloty tego samego dnia, wiec i dwie zakladki w arkuszu.
+         Nazwa musi zgadzac sie CO DO ZNAKU z ta w arkuszu.        */
+      sheetTab: '03.10 15:00',
+      formUrl: '',
+      blik:    '731 210 703',
+
+      limitWomen: 6,
+      limitMen:   6,
+      soldOutWomen: false,
+      soldOutMen:   false
+    },
+
+    {
       id:      'PSD-0310',
       name:    'Padel Speed Dating',
       sport:   'Padel',
