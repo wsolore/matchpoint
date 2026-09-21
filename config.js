@@ -57,11 +57,11 @@ const MATCHPOINT = {
       priceM:  150,
       page:    'padel-speed-dating-03-10-1500.html',
       /* Dwa sloty tego samego dnia, wiec i dwie zakladki w arkuszu.
-         Nazwa musi zgadzac sie CO DO ZNAKU z ta w arkuszu — ta jest
-         bez zera wiodacego, a sasiednia z zerem ("03.10 17:00").
-         Nie poprawiaj tego "dla porzadku" bez zmiany nazwy w arkuszu:
-         strona przestanie widziec licznik, a zapisy beda przepadac. */
-      sheetTab: '3.10 15:00',
+         Nazwa musi zgadzac sie z ta w arkuszu. Skrypt od wersji
+         2026-09-21.f dopasowuje ja tez mimo zer wiodacych i spacji
+         ("3.10 15:00" = "03.10 15:00"), ale trzymajmy tu dokladnie
+         to, co widac na zakladce.                                 */
+      sheetTab: '03.10 15:00',
       formUrl: '',
       blik:    '731 210 703',
 
