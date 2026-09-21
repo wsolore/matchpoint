@@ -85,7 +85,7 @@
 
   <div class="wrap hero-bottom">
     <ul class="meta meta--home">
-      <li><span class="k">Najbliższe</span><span class="v" data-next-date>20.09.2026</span></li>
+      <li><span class="k">Najbliższe</span><span class="v" data-next-date>03.10.2026, 15:00</span></li>
       <li><span class="k">Dyscypliny</span><span class="v">Tenis i&nbsp;padel</span></li>
       <li><span class="k">Miasto</span><span class="v">Warszawa</span></li>
     </ul>
@@ -116,9 +116,9 @@
       <a class="card card--padel" href="padel-speed-dating-03-10-1500.html">
         <span class="kicker">Padel · Warszawa</span>
         <h3>Padel Speed&nbsp;Dating</h3>
-        <span class="when"><small>Sobota</small>03.10.2026</span>
+        <span class="when"><small>Sobota · 15:00–16:30</small>03.10.2026</span>
         <p class="where">
-          Warsaw Padel Club, Annopol&nbsp;3 · 15:00–16:30<br>
+          Warsaw Padel Club, Annopol&nbsp;3<br>
           Rakiety, piłki i shake w pakiecie. Wiek 25–35, trzeba już grać.
         </p>
         <span class="spacer"></span>
@@ -129,9 +129,9 @@
       <a class="card card--padel" href="padel-speed-dating-03-10.html">
         <span class="kicker">Padel · Warszawa</span>
         <h3>Padel Speed&nbsp;Dating</h3>
-        <span class="when"><small>Sobota</small>03.10.2026</span>
+        <span class="when"><small>Sobota · 17:00–18:30</small>03.10.2026</span>
         <p class="where">
-          Warsaw Padel Club, Annopol&nbsp;3 · 17:00–18:30<br>
+          Warsaw Padel Club, Annopol&nbsp;3<br>
           Rakiety, piłki i shake w pakiecie. Wiek 25–35, trzeba już grać.
         </p>
         <span class="spacer"></span>
@@ -339,7 +339,12 @@
   }
 
   document.querySelectorAll('[data-next-link]').forEach(a => a.href = e.page);
-  document.querySelectorAll('[data-next-date]').forEach(n => n.textContent = e.date);
+  /* Data i od razu godzina: 3.10 sa dwa sloty i sama data ich nie
+     rozroznia. W hero bierzemy poczatek, bo tam licza sie znaki —
+     pelny przedzial jest na karcie nizej i na stronie wydarzenia. */
+  document.querySelectorAll('[data-next-date]').forEach(n => {
+    n.textContent = e.date + ', ' + e.time.split(/[–-]/)[0].trim();
+  });
 
   /* Liczby wylacznie z arkusza, osobno dla kazdego wydarzenia, bo
      kazde ma swoja zakladke. Gdy arkusz nie odpowie, na kartach
