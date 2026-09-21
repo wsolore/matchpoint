@@ -94,7 +94,9 @@ const MATCHPOINT = {
       priceW:  140,
       priceM:  150,
       page:    'padel-speed-dating-03-10.html',
-      sheetTab: '03.10',
+      /* Od 21.09 zakladka ma w nazwie godzine, bo tego dnia sa dwa
+         sloty. Nazwa musi zgadzac sie CO DO ZNAKU z ta w arkuszu. */
+      sheetTab: '03.10 17:00',
       formUrl: '',
       blik:    '731 210 703',
 
