@@ -9,9 +9,148 @@
       formularz na stronie pokazuje przycisk do Google Forms.
    3) Wydarzenia w sprzedazy siedza w upcoming[], od najblizszego.
       Kazda strona wydarzenia siega po swoje przez MATCHPOINT.byId(),
-      a strona glowna po cala liste. Dodanie kolejnej dyscypliny to
-      nowy wpis tutaj plus nowa zakladka w arkuszu.
+      a strona glowna po cala liste.
+   4) Od 29.09 listy wydarzen pisze aplikacja "MatchPoint Wydarzenia"
+      (katalog aplikacja/). Blok ponizej to czysty JSON, bo aplikacja
+      go czyta i przepisuje w calosci — komentarze w nim by przepadly.
+      Recznie tez mozna go edytowac, byle zostal poprawnym JSON-em
+      (cudzyslowy, bez przecinka po ostatnim elemencie).
    ============================================================ */
+
+/* >>> WYDARZENIA — blok pisany przez aplikacje, czysty JSON.
+   Pola, o ktorych trzeba pamietac:
+   - sheetTab: nazwa zakladki w arkuszu. Skrypt od 2026-09-22.a
+     dopasowuje ja mimo zer wiodacych ("3.10" = "03.10"), ale reszta
+     nazwy musi sie zgadzac, inaczej licznik milknie i zapisy padaja.
+   - limitWomen / limitMen: ile miejsc na sprzedaz, liczone po OPLACONYCH.
+   - soldOutWomen / soldOutMen: reczne zamkniecie puli, wygrywa z arkuszem.
+     Padel 3.10 17:00 ma zamknieta pule kobiet od 20.09 — komplet zebral
+     sie poza arkuszem.
+   - transport, bringExtra: puste pole KASUJE linie w mailu, a nie
+     wraca do domyslnej tresci.
+   - cardNote: dopisek na karcie na stronie glownej (wiek dochodzi sam).
+   - past[].note: dopisek w sekcji "Za nami".                        */
+const MATCHPOINT_WYDARZENIA = {
+  "upcoming": [
+    {
+      "id": "PSD-0310-15",
+      "name": "Padel Speed Dating",
+      "sport": "Padel",
+      "city": "Warszawa",
+      "date": "03.10.2026",
+      "weekday": "Sobota",
+      "time": "15:00–16:30",
+      "venue": "Warsaw Padel Club",
+      "address": "Annopol 3, Warszawa",
+      "age": "25–35",
+      "ageMin": 25,
+      "ageMax": 35,
+      "level": "Początkujący+",
+      "surface": "sztuczna trawa",
+      "shoes": "obuwie sportowe na płaskiej podeszwie",
+      "transport": "",
+      "bring": "Obuwie sportowe na płaskiej podeszwie i strój sportowy.",
+      "bringExtra": "Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.",
+      "included": "Kort, rakiety i piłki, voucher na shake proteinowy.",
+      "cardNote": "Rakiety, piłki i shake w pakiecie.",
+      "priceW": 140,
+      "priceM": 150,
+      "page": "padel-speed-dating-03-10-1500.html",
+      "sheetTab": "03.10 15:00",
+      "formUrl": "",
+      "blik": "731 210 703",
+      "limitWomen": 6,
+      "limitMen": 6,
+      "soldOutWomen": false,
+      "soldOutMen": false
+    },
+    {
+      "id": "PSD-0310",
+      "name": "Padel Speed Dating",
+      "sport": "Padel",
+      "city": "Warszawa",
+      "date": "03.10.2026",
+      "weekday": "Sobota",
+      "time": "17:00–18:30",
+      "venue": "Warsaw Padel Club",
+      "address": "Annopol 3, Warszawa",
+      "age": "25–35",
+      "ageMin": 25,
+      "ageMax": 35,
+      "level": "Początkujący+",
+      "surface": "sztuczna trawa",
+      "shoes": "obuwie sportowe na płaskiej podeszwie",
+      "transport": "",
+      "bring": "Obuwie sportowe na płaskiej podeszwie i strój sportowy.",
+      "bringExtra": "Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.",
+      "included": "Kort, rakiety i piłki, voucher na shake proteinowy.",
+      "cardNote": "Rakiety, piłki i shake w pakiecie.",
+      "priceW": 140,
+      "priceM": 150,
+      "page": "padel-speed-dating-03-10.html",
+      "sheetTab": "03.10 17:00",
+      "formUrl": "",
+      "blik": "731 210 703",
+      "limitWomen": 6,
+      "limitMen": 6,
+      "soldOutWomen": true,
+      "soldOutMen": false
+    },
+    {
+      "id": "TSD-1810",
+      "name": "Tennis Speed Dating",
+      "sport": "Tenis",
+      "city": "Warszawa",
+      "date": "18.10.2026",
+      "weekday": "Niedziela",
+      "time": "17:00–19:30",
+      "venue": "WTS Orzeł",
+      "address": "Podskarbińska 14, Warszawa",
+      "age": "25–35",
+      "ageMin": 25,
+      "ageMax": 35,
+      "level": "Początkujący+",
+      "surface": "mączka",
+      "shoes": "obuwie na mączkę",
+      "transport": "",
+      "bring": "Rakietę, obuwie na mączkę i strój sportowy.",
+      "bringExtra": "Nie masz rakiety? Daj nam znać — można ją wypożyczyć za dodatkową opłatą.",
+      "included": "Kort i piłki.",
+      "cardNote": "Kort ziemny, poziom początkujący+.",
+      "priceW": 130,
+      "priceM": 130,
+      "page": "tennis-speed-dating-18-10.html",
+      "sheetTab": "18.10",
+      "formUrl": "",
+      "blik": "731 210 703",
+      "limitWomen": 6,
+      "limitMen": 6,
+      "soldOutWomen": false,
+      "soldOutMen": false
+    }
+  ],
+  "past": [
+    {
+      "name": "Tennis Speed Dating",
+      "sport": "Tenis",
+      "date": "20.09.2026",
+      "weekday": "Niedziela",
+      "venue": "Korty Wolica SGGW, Warszawa",
+      "note": "Komplet: 6 par.",
+      "page": "tennis-speed-dating-20-09.html"
+    },
+    {
+      "name": "Tennis Speed Dating",
+      "sport": "Tenis",
+      "date": "12.09.2026",
+      "weekday": "Sobota",
+      "venue": "WTS Orzeł, Warszawa",
+      "note": "Pierwsza edycja.",
+      "page": "tennis-speed-dating-12-09.html"
+    }
+  ]
+};
+/* <<< WYDARZENIA */
 
 const MATCHPOINT = {
 
@@ -31,107 +170,9 @@ const MATCHPOINT = {
      tylko nie pokazuje liczb.                                      */
   useSheetCounter: true,
 
-  /* --- wydarzenia w sprzedazy, od najblizszego --- */
-  upcoming: [
-
-    {
-      id:      'PSD-0310-15',
-      name:    'Padel Speed Dating',
-      sport:   'Padel',
-      date:    '03.10.2026',
-      weekday: 'Sobota',
-      time:    '15:00–16:30',
-      venue:   'Warsaw Padel Club',
-      address: 'Annopol 3, Warszawa',
-      age:     '25–35',
-      ageMin:  25,
-      ageMax:  35,
-      level:   'Początkujący+',
-      surface:   'sztuczna trawa',
-      shoes:     'obuwie sportowe na płaskiej podeszwie',
-      transport: '',
-      bring:      'Obuwie sportowe na płaskiej podeszwie i strój sportowy.',
-      bringExtra: 'Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.',
-      included:   'Kort, rakiety i piłki, voucher na shake proteinowy.',
-      priceW:  140,
-      priceM:  150,
-      page:    'padel-speed-dating-03-10-1500.html',
-      /* Dwa sloty tego samego dnia, wiec i dwie zakladki w arkuszu.
-         Nazwa musi zgadzac sie z ta w arkuszu. Skrypt od wersji
-         2026-09-21.f dopasowuje ja tez mimo zer wiodacych i spacji
-         ("3.10 15:00" = "03.10 15:00"), ale trzymajmy tu dokladnie
-         to, co widac na zakladce.                                 */
-      sheetTab: '03.10 15:00',
-      formUrl: '',
-      blik:    '731 210 703',
-
-      limitWomen: 6,
-      limitMen:   6,
-      soldOutWomen: false,
-      soldOutMen:   false
-    },
-
-    {
-      id:      'PSD-0310',
-      name:    'Padel Speed Dating',
-      sport:   'Padel',
-      date:    '03.10.2026',
-      weekday: 'Sobota',
-      time:    '17:00–18:30',
-      venue:   'Warsaw Padel Club',
-      address: 'Annopol 3, Warszawa',
-      age:     '25–35',
-      ageMin:  25,
-      ageMax:  35,
-      level:   'Początkujący+',
-      surface:   'sztuczna trawa',
-      shoes:     'obuwie sportowe na płaskiej podeszwie',
-      /* Puste — w mailu z potwierdzeniem linia "Dojazd" wtedy nie
-         wychodzi. Wczesniej bylo tu "szczegoly wysylamy w mailu",
-         co w tym wlasnie mailu brzmialo absurdalnie. Adres i tak
-         jest wyzej. Wypelnij, gdy bedzie co napisac o dojezdzie. */
-      transport: '',
-      bring:      'Obuwie sportowe na płaskiej podeszwie i strój sportowy.',
-      bringExtra: 'Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.',
-      included:   'Kort, rakiety i piłki, voucher na shake proteinowy.',
-      priceW:  140,
-      priceM:  150,
-      page:    'padel-speed-dating-03-10.html',
-      /* Od 21.09 zakladka ma w nazwie godzine, bo tego dnia sa dwa
-         sloty. Nazwa musi zgadzac sie CO DO ZNAKU z ta w arkuszu. */
-      sheetTab: '03.10 17:00',
-      formUrl: '',
-      blik:    '731 210 703',
-
-      limitWomen: 6,
-      limitMen:   6,
-
-      /* Pula kobiet zamknięta 20.09: komplet zebrał się poza arkuszem,
-         więc same liczby z arkusza jeszcze o tym nie wiedzą.
-         Wpisz false, gdy zwolni się miejsce.                      */
-      soldOutWomen: true,
-      soldOutMen:   false
-    }
-
-  ],
-
-  /* --- archiwum --- */
-  past: [
-    {
-      name:  'Tennis Speed Dating',
-      sport: 'Tenis',
-      date:  '20.09.2026',
-      venue: 'Korty Wolica SGGW, Warszawa',
-      page:  'tennis-speed-dating-20-09.html'
-    },
-    {
-      name:  'Tennis Speed Dating',
-      sport: 'Tenis',
-      date:  '12.09.2026',
-      venue: 'WTS Orzeł, Warszawa',
-      page:  'tennis-speed-dating-12-09.html'
-    }
-  ]
+  /* wydarzenia w sprzedazy (od najblizszego) i archiwum — z bloku wyzej */
+  upcoming: MATCHPOINT_WYDARZENIA.upcoming,
+  past:     MATCHPOINT_WYDARZENIA.past
 
 };
 

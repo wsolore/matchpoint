@@ -525,6 +525,9 @@ section{ padding:clamp(84px,11vw,164px) 0; }
 }
 .board .v{ display:block; margin-top:8px; font-size:clamp(1.4rem,2.8vw,2rem); font-weight:300; letter-spacing:.01em; }
 .board .v small{ font-size:.9rem; font-weight:400; color:var(--ink-soft); letter-spacing:.02em; }
+/* Dlugie slowo ("Poczatkujacy+") w kratce 190 px wystawalo za ramke,
+   bo pojedynczego slowa przegladarka nie zlamie. Klase daje generator. */
+.board .v--dlugi{ font-size:clamp(1.2rem,2vw,1.5rem); }
 
 /* --- lista wydarzeń jako tabela ligowa --- */
 .fixtures{ margin:64px 0 0; display:grid; gap:1px; }

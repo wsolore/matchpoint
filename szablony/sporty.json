@@ -1,0 +1,100 @@
+{
+  "_opis": "Teksty podpowiadane przez aplikacje przy nowym wydarzeniu danej dyscypliny. To tylko punkt startu: kazde pole mozna zmienic w aplikacji, a na stronie laduje to, co w niej zostalo. Zmiana tutaj nie rusza stron, ktore juz sa.",
+
+  "Tenis": {
+    "name": "Tennis Speed Dating",
+    "plikPrefix": "tennis-speed-dating",
+    "idPrefix": "TSD",
+    "kolor": "#7d8f68",
+    "klasaBody": "ev",
+    "klasaKarty": "card",
+    "surface": "mączka",
+    "shoes": "obuwie na mączkę",
+    "level": "Początkujący+",
+    "bring": "Rakietę, obuwie na mączkę i strój sportowy.",
+    "bringExtra": "Nie masz rakiety? Daj nam znać — można ją wypożyczyć za dodatkową opłatą.",
+    "included": "Kort i piłki.",
+    "cardNote": "Kort ziemny, poziom początkujący+.",
+    "strona": {
+      "lead": "Krótkie gry w rotacji, zmiana partnera co kilka minut. Nie musisz wymyślać tematu na rozmowę.",
+      "opis": "Speed dating na korcie tenisowym. Krótkie gry w rotacji, zmiana partnera co kilka minut.",
+      "nawierzchniaOpis": "kort ziemny",
+      "poziomOpis": "po kilku razach na korcie",
+      "wCenie": ["Kort", "Piłki"],
+      "wezZeSoba": [
+        "Własną rakietę. **Rakiety na miejscu są dodatkowo płatne**, napisz dzień przed, jeśli potrzebujesz.",
+        "**Obuwie na mączkę.** Gramy na korcie ziemnym.",
+        "Strój sportowy"
+      ],
+      "kolumny": [
+        ["Zero niezręcznej ciszy", "Gra prowadzi rozmowę za ciebie."],
+        ["Nie musisz dobrze grać", "Poziom zaznaczasz w formularzu, a pary dobieramy tak, żeby gra miała sens dla obu stron."],
+        ["Mała grupa", "Sześć osób z każdej strony, więc realnie poznajesz każdego."]
+      ],
+      "formularzPoziom": "poziom gry",
+      "poziomPytanie": "Poziom tenisa (skala NTRP)",
+      "poziomOpcje": [
+        "Początkujący+ (2.5 do 3.5)",
+        "Średnio zaawansowany (4 do 4.5)",
+        "Zaawansowany (5 do 7)"
+      ],
+      "poziomPodpowiedz": "",
+      "dojazd": "Przyjdź kwadrans przed startem. Nie wiesz, jak dojechać? Napisz na match.point.date@gmail.com, podpowiemy.",
+      "transit": [
+        ["Kort", "ziemny, mączka"],
+        ["Rakiety", "własne albo wypożyczenie na miejscu"]
+      ],
+      "faq": [
+        ["Dawno nie miałem/miałam rakiety w ręku.", "To wydarzenie jest właśnie dla takich osób. Nie ma meczu, nie ma wyniku, nikt nie ocenia techniki."],
+        ["Nie mam rakiety.", "Rakietę można wypożyczyć na miejscu, za dodatkową opłatą. Napisz na match.point.date@gmail.com dzień przed wydarzeniem."]
+      ]
+    }
+  },
+
+  "Padel": {
+    "name": "Padel Speed Dating",
+    "plikPrefix": "padel-speed-dating",
+    "idPrefix": "PSD",
+    "kolor": "#1c46cf",
+    "klasaBody": "ev ev--padel",
+    "klasaKarty": "card card--padel",
+    "surface": "sztuczna trawa",
+    "shoes": "obuwie sportowe na płaskiej podeszwie",
+    "level": "Początkujący+",
+    "bring": "Obuwie sportowe na płaskiej podeszwie i strój sportowy.",
+    "bringExtra": "Rakiety nie potrzebujesz — jest w pakiecie i czeka na miejscu.",
+    "included": "Kort, rakiety i piłki.",
+    "cardNote": "Rakiety i piłki w pakiecie.",
+    "strona": {
+      "lead": "W padla gra się zawsze w parach, więc pasuje tu wręcz idealnie. Rakiety i piłki masz w pakiecie — ty skup się na partnerze.",
+      "opis": "Speed dating na korcie padlowym. Krótkie gry w rotacji, zawsze w parach. W pakiecie rakiety i piłki.",
+      "nawierzchniaOpis": "kort padlowy",
+      "poziomOpis": "po kilku razach na korcie",
+      "wCenie": ["Kort", "**Rakiety i piłki** — w pakiecie, masz je na miejscu"],
+      "wezZeSoba": [
+        "**Obuwie sportowe na płaskiej podeszwie.** Gramy na sztucznej trawie, kolce i gruby bieżnikowany but tu nie wejdą.",
+        "Strój sportowy",
+        "Rakietę tylko jeśli masz swoją i wolisz grać nią."
+      ],
+      "kolumny": [
+        ["Zero niezręcznej ciszy", "Gra prowadzi rozmowę za ciebie."],
+        ["Padel wybacza więcej", "Piłka odbija się od szyb i wraca do gry, a kort jest mały. Pierwsza wymiana wychodzi tu każdemu."],
+        ["Zawsze w parach", "W padla nie da się grać pojedynczo. Masz partnera od pierwszej do ostatniej minuty."]
+      ],
+      "formularzPoziom": "doświadczenie w padlu",
+      "poziomPytanie": "Doświadczenie w padlu",
+      "poziomOpcje": ["Grałem/am kilka razy", "Gram regularnie"],
+      "poziomPodpowiedz": "Nie musisz grać dobrze, ale trzeba mieć padla już za sobą — pierwszy raz na korcie to nie u nas.",
+      "dojazd": "Przyjdź kwadrans przed — rakiety wydajemy na miejscu. Nie wiesz, jak dojechać? Napisz na match.point.date@gmail.com, podpowiemy.",
+      "transit": [
+        ["Kort", "padlowy, sztuczna trawa"],
+        ["Pakiet", "rakiety, piłki"]
+      ],
+      "faq": [
+        ["Nigdy nie grałem/grałam w padla.", "To wydarzenie jeszcze nie dla ciebie i formularz nie przyjmie zapisu. Gramy w rotacji, zmiana partnera co kilka minut — nie ma w tym miejsca na naukę odbijania i skończyłoby się to niezręcznie dla wszystkich. Zagraj kilka razy na zwykłym korcie i wracaj, wtedy wystarczy."],
+        ["Nie mam rakiety.", "I nie potrzebujesz. Rakiety i piłki są w pakiecie, czekają na miejscu. Jeśli masz swoją i wolisz grać nią — bierz."],
+        ["Czym padel różni się od tenisa?", "Kort jest mniejszy i zamknięty szybami, od których piłka się odbija i wraca do gry. Rakieta jest krótsza, bez naciągu. Gra się wyłącznie w parach, więc przez cały czas kogoś poznajesz."]
+      ]
+    }
+  }
+}

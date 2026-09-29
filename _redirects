@@ -2,3 +2,7 @@
 # (np. przez przeciagniecie calego folderu do Netlify Drop),
 # nie bedzie dostepny publicznie.
 /docs/*    /    404
+# Szablony i zrodla aplikacji do wydarzen leza w repo, bo aplikacja
+# czyta je z GitHuba — ale na stronie nie maja czego szukac.
+/szablony/*    /    404
+/aplikacja/*   /    404
