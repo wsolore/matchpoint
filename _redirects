@@ -3,6 +3,7 @@
 # nie bedzie dostepny publicznie.
 /docs/*    /    404
 # Szablony i zrodla aplikacji do wydarzen leza w repo, bo aplikacja
-# czyta je z GitHuba — ale na stronie nie maja czego szukac.
-/szablony/*    /    404
-/aplikacja/*   /    404
+# czyta je z GitHuba — ale na stronie nie maja czego szukac. Wykrzyknik
+# jest konieczny: bez niego Netlify nie zaslania plikow, ktore istnieja.
+/szablony/*    /    404!
+/aplikacja/*   /    404!
