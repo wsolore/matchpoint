@@ -24,8 +24,9 @@
      nazwy musi sie zgadzac, inaczej licznik milknie i zapisy padaja.
    - limitWomen / limitMen: ile miejsc na sprzedaz, liczone po OPLACONYCH.
    - soldOutWomen / soldOutMen: reczne zamkniecie puli, wygrywa z arkuszem.
-     Padel 3.10 17:00 ma zamknieta pule kobiet od 20.09 — komplet zebral
-     sie poza arkuszem.
+     Flaga nie otwiera sie sama: gdy ktos zrezygnuje, trzeba ja zdjac
+     recznie (tak bylo z pula kobiet na 3.10 17:00 — 30.09 dwie osoby
+     sie wypisaly, a zapisy staly zamkniete, bo flaga wygrywala).
    - transport, bringExtra: puste pole KASUJE linie w mailu, a nie
      wraca do domyslnej tresci.
    - cardNote: dopisek na karcie na stronie glownej (wiek dochodzi sam).
@@ -93,7 +94,7 @@ const MATCHPOINT_WYDARZENIA = {
       "blik": "731 210 703",
       "limitWomen": 6,
       "limitMen": 6,
-      "soldOutWomen": true,
+      "soldOutWomen": false,
       "soldOutMen": false
     },
     {
