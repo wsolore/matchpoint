@@ -119,7 +119,7 @@ const MATCHPOINT_WYDARZENIA = {
       "included": "Kort i piłki.",
       "cardNote": "Kort ziemny, poziom początkujący+.",
       "priceW": 130,
-      "priceM": 140,
+      "priceM": 130,
       "page": "tennis-speed-dating-18-10.html",
       "sheetTab": "18.10",
       "formUrl": "",
