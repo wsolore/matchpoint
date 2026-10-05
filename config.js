@@ -73,8 +73,8 @@ const MATCHPOINT_WYDARZENIA = {
       "date": "03.10.2026",
       "weekday": "Sobota",
       "venue": "Warsaw Padel Club, Warszawa",
-      "note": "",
-      "page": "padel-speed-dating-03-10-1500.html"
+      "note": "Godz. 17:00.",
+      "page": "padel-speed-dating-03-10.html"
     },
     {
       "name": "Padel Speed Dating",
@@ -82,8 +82,8 @@ const MATCHPOINT_WYDARZENIA = {
       "date": "03.10.2026",
       "weekday": "Sobota",
       "venue": "Warsaw Padel Club, Warszawa",
-      "note": "",
-      "page": "padel-speed-dating-03-10.html"
+      "note": "Godz. 15:00.",
+      "page": "padel-speed-dating-03-10-1500.html"
     },
     {
       "name": "Tennis Speed Dating",
@@ -125,21 +125,42 @@ const MATCHPOINT = {
      tylko nie pokazuje liczb.                                      */
   useSheetCounter: true,
 
-  /* wydarzenia w sprzedazy (od najblizszego) i archiwum — z bloku wyzej */
+  /* wydarzenia w sprzedazy (od najblizszego) i archiwum — z bloku wyzej.
+     upcoming przesiewa jeszcze filtr minionych pod obiektem.             */
   upcoming: MATCHPOINT_WYDARZENIA.upcoming,
   past:     MATCHPOINT_WYDARZENIA.past
 
 };
 
+/* Od godziny startu wydarzenie nie jest juz w sprzedazy. Do "Za nami"
+   przenosi je automat co kwadrans (.github/workflows/archiwum.yml),
+   ale GitHub potrafi sie spoznic, wiec strona nie czeka: od startu
+   sama chowa karte i zamyka zapisy. Do 05.10 archiwum bylo tylko
+   reczne i padel z 03.10 wisial jako najblizszy termin dwa dni po
+   wydarzeniu. Ta sama regula siedzi w aplikacji (generator.minelo).
+   Czas jest czasem odwiedzajacego — godziny wydarzen sa warszawskie. */
+MATCHPOINT.minelo = function (e) {
+  const d = String(e.date || '').split('.');
+  const g = /(\d{1,2}):(\d{2})/.exec(e.time || '') || [0, 0, 0];
+  return new Date(+d[2], d[1] - 1, +d[0], +g[1], +g[2]) <= new Date();
+};
+MATCHPOINT.upcoming = MATCHPOINT_WYDARZENIA.upcoming
+  .filter(function (e) { return !MATCHPOINT.minelo(e); });
+
 /* Najblizsze wydarzenie to pierwsze z listy. Zostaje pod nazwa
    MATCHPOINT.next, bo tak siega po nie strona glowna i tak nazywa
-   je skrypt maila — zmiana nazwy zerwalaby oba miejsca naraz.   */
-MATCHPOINT.next = MATCHPOINT.upcoming[0];
+   je skrypt maila — zmiana nazwy zerwalaby oba miejsca naraz.
+   Gdy wszystko w sprzedazy juz minelo, zostaje ostatnie z nich,
+   zeby strona glowna miala dokad linkowac.                       */
+MATCHPOINT.next = MATCHPOINT.upcoming[0]
+  || MATCHPOINT_WYDARZENIA.upcoming[MATCHPOINT_WYDARZENIA.upcoming.length - 1];
 
-/* Strona wydarzenia podaje swoje id i dostaje swoj wpis. Gdy id
-   nie pasuje do niczego, wraca najblizsze wydarzenie — strona
-   pokaze wtedy zle dane, ale sie nie wysypie.                   */
+/* Strona wydarzenia podaje swoje id i dostaje swoj wpis. Szuka po
+   calym bloku, nie tylko po tych, co nie minely: strona minionego, jeszcze
+   niezarchiwizowanego wydarzenia ma dalej pokazywac swoje dane.
+   Gdy id nie pasuje do niczego, wraca najblizsze wydarzenie —
+   strona pokaze wtedy zle dane, ale sie nie wysypie.             */
 MATCHPOINT.byId = function (id) {
-  return MATCHPOINT.upcoming.filter(function (e) { return e.id === id; })[0]
+  return MATCHPOINT_WYDARZENIA.upcoming.filter(function (e) { return e.id === id; })[0]
       || MATCHPOINT.next;
 };

@@ -1,0 +1,46 @@
+# Wydarzenie, ktore sie zaczelo, schodzi ze sprzedazy samo: co kwadrans
+# automat przenosi je do "Za nami" (karta, sitemap, strona bez formularza)
+# i commituje zmiane, a Netlify wdraza strone jak po kazdym commicie.
+# Strona nie czeka na automat: od godziny startu config.js sam chowa
+# karte i zamyka zapisy, automat tylko dopisuje to na stale.
+#
+# GitHub potrafi spoznic harmonogram o kilkanascie minut — to dlatego
+# strona pilnuje godziny sama. Recznie: Actions -> Archiwum -> Run workflow.
+name: Archiwum
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archiwum
+
+jobs:
+  archiwum:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Przenies minione do archiwum
+        id: arch
+        run: |
+          python aplikacja/archiwizuj_minione.py | tee wynik.txt
+          echo "zmiany=$(test -s wynik.txt && echo tak || echo nie)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit
+        if: steps.arch.outputs.zmiany == 'tak'
+        run: |
+          git config user.name 'MatchPoint automat'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!wynik.txt'
+          git commit -q -m "Archiwum: $(paste -sd ';' wynik.txt) (automat)"
+          # Aplikacja mogla w tym czasie cos zapisac — dociagamy i probujemy jeszcze raz.
+          git push || (git pull --rebase -q && git push)

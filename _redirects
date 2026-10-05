@@ -7,3 +7,5 @@
 # jest konieczny: bez niego Netlify nie zaslania plikow, ktore istnieja.
 /szablony/*    /    404!
 /aplikacja/*   /    404!
+# Workflow automatu archiwum (GitHub Actions) tez nie jest dla odwiedzajacych.
+/.github/*     /    404!

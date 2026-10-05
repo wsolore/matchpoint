@@ -14,7 +14,7 @@ Pliki, ktore generator rusza:
 import html
 import json
 import re
-from datetime import date as _date
+from datetime import date as _date, datetime as _datetime
 from urllib.parse import quote, quote_plus
 
 SITE = 'https://matchpointdate.pl'
@@ -109,6 +109,34 @@ def parsuj_godziny(t):
     if do <= od:
         raise BladDanych('Koniec wydarzenia (%s) musi byc po poczatku (%s).' % (do, od))
     return od, do
+
+
+def teraz_w_warszawie():
+    """Automat archiwum chodzi na serwerze GitHuba w UTC, a godziny
+    wydarzen sa warszawskie. Bez bazy stref (Windows bez tzdata)
+    zostaje czas komputera — aplikacja i tak chodzi w Polsce."""
+    try:
+        from zoneinfo import ZoneInfo
+        return _datetime.now(ZoneInfo('Europe/Warsaw')).replace(tzinfo=None)
+    except Exception:
+        return _datetime.now()
+
+
+def poczatek(e):
+    """Data i godzina startu wydarzenia (godzina z pola time)."""
+    d = parsuj_date(e.get('date'))
+    m = re.match(r'\s*(\d{1,2}):(\d{2})', str(e.get('time') or ''))
+    return _datetime(d.year, d.month, d.day, *(map(int, m.groups()) if m else (0, 0)))
+
+
+def minelo(e, teraz=None):
+    """Ta sama regula co MATCHPOINT.minelo w config.js: od godziny
+    startu wydarzenie nie jest juz w sprzedazy, a automat archiwum
+    (archiwizuj_minione.py) przenosi je do "Za nami"."""
+    try:
+        return poczatek(e) <= (teraz or teraz_w_warszawie())
+    except BladDanych:
+        return False
 
 
 def klucz_czasu(e):
@@ -522,6 +550,15 @@ def pisz_index(tekst, dane, presety):
                       '\n'.join(_karta(e, presety) for e in upcoming), 'index.html')
     t = _podmien_blok(t, ZNACZNIK_ARCH_OD, ZNACZNIK_ARCH_DO,
                       ''.join(_fixture(p) for p in past), 'index.html')
+    # Hero w HTML czyta Google i ktos bez skryptu. Skrypt i tak go
+    # nadpisze, ale wpisany recznie stal na 03.10 i linkowal do 20.09.
+    w_sprzedazy = [e for e in upcoming if not minelo(e)] or upcoming
+    if w_sprzedazy:
+        e = w_sprzedazy[0]
+        t = re.sub(r'(data-next-date>)[^<]*', lambda m: m.group(1) + html.escape(
+            e['date'] + ', ' + re.split('[–-]', e['time'])[0].strip()), t)
+        t = re.sub(r'href="[^"]*"( data-next-link)', lambda m: 'href="%s"%s' % (
+            html.escape(e['page']), m.group(1)), t)
     return t
 
 
@@ -587,6 +624,12 @@ def przenies_do_archiwum(dane, id_):
     dane = {'upcoming': [x for x in dane['upcoming'] if x['id'] != id_],
             'past': list(dane['past'])}
     venue = e['venue'] if e['venue'].endswith(miasto(e)) else e['venue'] + ', ' + miasto(e)
-    dane['past'].append({'name': e['name'], 'sport': e['sport'], 'date': e['date'],
-                         'weekday': e['weekday'], 'venue': venue, 'note': '', 'page': e['page']})
+    # Dwa sloty jednego dnia wygladalyby w "Za nami" identycznie
+    # (archiwum nie ma godzin), wiec godzina idzie do dopisku.
+    inne_tego_dnia = any(x['date'] == e['date'] for x in dane['upcoming'] + dane['past'])
+    note = 'Godz. %s.' % e['time'][:5] if inne_tego_dnia else ''
+    # Na poczatek listy: archiwum sortuje sie tylko po dacie, wiec
+    # przy rownej dacie pozniejszy slot ma stac wyzej.
+    dane['past'].insert(0, {'name': e['name'], 'sport': e['sport'], 'date': e['date'],
+                            'weekday': e['weekday'], 'venue': venue, 'note': note, 'page': e['page']})
     return dane, e

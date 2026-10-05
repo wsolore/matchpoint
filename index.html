@@ -85,12 +85,12 @@
 
   <div class="wrap hero-bottom">
     <ul class="meta meta--home">
-      <li><span class="k">Najbliższe</span><span class="v" data-next-date>03.10.2026, 15:00</span></li>
+      <li><span class="k">Najbliższe</span><span class="v" data-next-date>18.10.2026, 17:00</span></li>
       <li><span class="k">Dyscypliny</span><span class="v">Tenis i&nbsp;padel</span></li>
       <li><span class="k">Miasto</span><span class="v">Warszawa</span></li>
     </ul>
     <div>
-      <a class="cta" href="tennis-speed-dating-20-09.html" data-next-link>
+      <a class="cta" href="tennis-speed-dating-18-10.html" data-next-link>
         Najbliższe wydarzenie <span class="arw" aria-hidden="true">→</span>
       </a>
       <p class="cta-note" data-spots-summary>6 kobiet i 6 mężczyzn</p>
@@ -200,22 +200,22 @@
 
     <div class="fixtures">
       <!-- >>> ARCHIWUM: pisze je aplikacja z config.js (past) -->
-      <a class="fixture fixture--past" href="padel-speed-dating-03-10-1500.html">
+      <a class="fixture fixture--past" href="padel-speed-dating-03-10.html">
         <span class="when"><small>Sobota</small>03.10.2026</span>
         <span class="what">
           Padel Speed Dating
-          <span class="where">Warsaw Padel Club, Warszawa</span>
+          <span class="where">Warsaw Padel Club, Warszawa. Godz. 17:00.</span>
         </span>
         <span class="go">
           <span class="free">Zakończone</span>
           <span class="arw" aria-hidden="true">→</span>
         </span>
       </a>
-      <a class="fixture fixture--past" href="padel-speed-dating-03-10.html">
+      <a class="fixture fixture--past" href="padel-speed-dating-03-10-1500.html">
         <span class="when"><small>Sobota</small>03.10.2026</span>
         <span class="what">
           Padel Speed Dating
-          <span class="where">Warsaw Padel Club, Warszawa</span>
+          <span class="where">Warsaw Padel Club, Warszawa. Godz. 15:00.</span>
         </span>
         <span class="go">
           <span class="free">Zakończone</span>
@@ -335,6 +335,16 @@
   const ep = (MATCHPOINT.sheetEndpoint || '').trim();
   const e  = MATCHPOINT.next;
 
+  /* Karty sa wpisane w HTML przy publikacji, wiec karta minionego,
+     niezarchiwizowanego wydarzenia stalaby tu dalej z "Zapisz sie".
+     Chowamy ja, gdy config uznal termin za miniony. */
+  MATCHPOINT_WYDARZENIA.upcoming.filter(MATCHPOINT.minelo).forEach(ev => {
+    document.querySelectorAll('[data-free="' + ev.id + '"]').forEach(n => {
+      const karta = n.closest('.card');
+      if (karta) karta.remove();
+    });
+  });
+
   /* "Wybierz, w co zagrasz" ma sens, gdy w sprzedazy sa rozne
      dyscypliny. Gdy zostaje jeden termin, nie ma czego wybierac,
      a gdy wszystkie sa z tej samej dyscypliny (np. dwa sloty padla
@@ -342,13 +352,26 @@
      W HTML zostaje wersja ogolna, bo tak czyta te sekcje Google
      i ktos z wylaczonym skryptem.                                  */
   const naglowekTerminow = document.querySelector('#terminy .h2');
+  const brakTerminow = MATCHPOINT.upcoming.length === 0;
   if (naglowekTerminow) {
     const sporty = MATCHPOINT.upcoming.map(x => x.sport);
-    if (MATCHPOINT.upcoming.length === 1) {
+    if (brakTerminow) {
+      naglowekTerminow.textContent = 'Nowe terminy wkrótce';
+    } else if (MATCHPOINT.upcoming.length === 1) {
       naglowekTerminow.textContent = 'Najbliższy termin';
     } else if (sporty.every(x => x === sporty[0])) {
       naglowekTerminow.textContent = 'Wybierz termin';
     }
+  }
+
+  /* Wszystko w sprzedazy juz minelo, a nowego nikt nie dodal: hero
+     nie moze wtedy podawac minionej daty jako najblizszej. */
+  if (brakTerminow) {
+    document.querySelectorAll('[data-next-date]').forEach(n => n.textContent = 'Wkrótce');
+    document.querySelectorAll('[data-next-link]').forEach(a => a.href = '#terminy');
+    const podpis = document.querySelector('[data-spots-summary]');
+    if (podpis) podpis.textContent = '';
+    return;
   }
 
   document.querySelectorAll('[data-next-link]').forEach(a => a.href = e.page);

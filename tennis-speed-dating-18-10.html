@@ -739,6 +739,27 @@
     });
     stosujBlokade(null);
   }
+
+  /* Od godziny startu zapisy sa zamkniete. Formularz na stale zdejmie
+     automat archiwum (do kwadransa, czasem dluzej), wiec do tego czasu
+     strona chowa go sama — inaczej ktos zaplacilby za trwajacy mecz. */
+  if (MATCHPOINT.minelo(e)) {
+    const box = document.getElementById('closed');
+    if (box) {
+      box.innerHTML = '<b>Zapisy zamknięte — to wydarzenie już się zaczęło.</b> '
+        + '<a href="index.html#terminy">Zobacz najbliższy termin</a>.';
+      box.classList.add('show');
+    }
+    if (form) form.style.display = 'none';
+    document.querySelectorAll('[data-cta-zapisy]').forEach(a => {
+      a.href = 'index.html#terminy';
+      a.innerHTML = 'Najbliższe wydarzenie <span class="arw" aria-hidden="true">&#8594;</span>';
+    });
+    const summary = document.querySelector('[data-spots-summary]');
+    if (summary) summary.textContent = '';
+    return;
+  }
+
   pokazReczneZamkniecie();
 
   /* Liczby bierzemy wylacznie z arkusza. Gdy nie odpowie, pule zostaja

@@ -23,6 +23,8 @@ sys.path.insert(0, TU)
 import generator as g   # noqa: E402
 import operacje as op   # noqa: E402
 import zrodla as zr     # noqa: E402
+from archiwizuj_minione import archiwizuj_minione  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 bledy = []
 
@@ -43,11 +45,27 @@ def kopia_repo():
     return kat
 
 
+def z_reczna_strona(kat):
+    """Testy 3 i 5 potrzebuja recznej strony w sprzedazy. Od 05.10 padel
+    03.10 siedzi w archiwum, wiec bierzemy go z gita sprzed archiwizacji."""
+    def git(plik):
+        return subprocess.run(['git', 'show', '83fcde7:' + plik], cwd=REPO, capture_output=True,
+                              encoding='utf-8', check=True).stdout
+    padel = next(x for x in g.czytaj_config(git('config.js'))['upcoming'] if x['id'] == 'PSD-0310')
+    sciezka = os.path.join(kat, 'config.js')
+    tekst = io.open(sciezka, encoding='utf-8').read()
+    dane = g.czytaj_config(tekst)
+    dane['upcoming'].append(padel)
+    dane['past'] = [x for x in dane['past'] if x['page'] != padel['page']]
+    io.open(sciezka, 'w', encoding='utf-8').write(g.pisz_config(tekst, dane))
+    io.open(os.path.join(kat, padel['page']), 'w', encoding='utf-8').write(git(padel['page']))
+
+
 def config_w_node(kat):
     """Config musi dalej dzialac w przegladarce — sprawdzamy go w node."""
     kod = ("const fs=require('fs');const M=new Function(fs.readFileSync(process.argv[1],'utf8')"
            "+';return MATCHPOINT;')();console.log(JSON.stringify({u:M.upcoming.map(e=>e.id),"
-           "p:M.past.map(e=>e.date),n:M.next.id,b:M.byId('TSD-2510')&&M.byId('TSD-2510').id}))")
+           "p:M.past.map(e=>e.date),n:M.next&&M.next.id,b:M.byId('TSD-2510')&&M.byId('TSD-2510').id}))")
     out = subprocess.run(['node', '-e', kod, os.path.join(kat, 'config.js')],
                          capture_output=True, text=True, encoding='utf-8')
     return json.loads(out.stdout) if out.returncode == 0 else {'blad': out.stderr}
@@ -55,6 +73,7 @@ def config_w_node(kat):
 
 print('1. Nowe wydarzenie na kopii repo')
 kat = kopia_repo()
+z_reczna_strona(kat)
 lok = zr.LokalneZrodlo(kat)
 cz = lok.migawka()
 pres = op.presety(cz)
@@ -81,9 +100,16 @@ ok(g.dane_ze_strony(strona) == s or g.dane_ze_strony(strona)['lead'] == s['lead'
 idx = io.open(os.path.join(kat, 'index.html'), encoding='utf-8').read()
 ok('data-free="TSD-2510"' in idx, 'karta na stronie glownej')
 ok(idx.count('<!-- >>> KARTY') == 1 and idx.count('<!-- <<< KARTY -->') == 1, 'znaczniki kart nietkniete')
+pierwszy = next(x for x in po['upcoming'] if not g.minelo(x))
+ok('data-next-date>%s, ' % pierwszy['date'] in idx and 'href="%s" data-next-link' % pierwszy['page'] in idx,
+   'hero w HTML wskazuje najblizszy termin, ktory jeszcze nie minal')
 ok('tennis-speed-dating-25-10.html' in io.open(os.path.join(kat, 'sitemap.xml'), encoding='utf-8').read(), 'sitemap')
 w = config_w_node(kat)
-ok(w.get('b') == 'TSD-2510' and w.get('n') == po['upcoming'][0]['id'], 'config dziala w JS: byId i next')
+ok(w.get('b') == 'TSD-2510' and w.get('n') == next(x for x in po['upcoming'] if not g.minelo(x))['id'],
+   'config dziala w JS: byId i next')
+padel_17 = {'date': '03.10.2026', 'time': '17:00–18:30'}
+ok(g.minelo(padel_17, datetime(2026, 10, 3, 17, 0)) and not g.minelo(padel_17, datetime(2026, 10, 3, 16, 59)),
+   'minelo: od godziny startu')
 
 print('2. Zmiana ceny i zamkniecie puli')
 e2 = dict(nowy, priceW=130, priceM=130, soldOutMen=True)
@@ -135,6 +161,27 @@ ok('data-free="PSD-0310"' not in idx and 'href="padel-speed-dating-03-10.html">'
    'karta przeszla do "Za nami"')
 w = config_w_node(kat)
 ok('blad' not in w and 'PSD-0310' not in w['u'], 'config po archiwizacji dziala w JS')
+shutil.rmtree(kat)
+
+print('5a. Automat archiwum: od godziny startu, dwa sloty jednego dnia')
+kat = kopia_repo()
+lok = zr.LokalneZrodlo(kat)
+for godz, zakladka in (('16:00-18:00', '25.10 16:00'), ('19:00-20:00', '25.10 19:00')):
+    zr.wykonaj(lok, lambda c, x=dict(e, date='25.10.2026', time=godz, sheetTab=zakladka): op.dodaj(c, x, s), 'test')
+ok(archiwizuj_minione(lok, datetime(2026, 10, 18, 16, 59)) == [], 'przed startem nic nie rusza')
+pierwsze = archiwizuj_minione(lok, datetime(2026, 10, 25, 16, 0))
+ok([x['id'] for x in pierwsze] == ['TSD-1810', 'TSD-2510'], 'o 16:00 schodzi 18.10 i slot 16:00, slot 19:00 zostaje')
+archiwizuj_minione(lok, datetime(2026, 10, 25, 19, 0))
+po5 = op.stan(lok.migawka())
+ok(po5['upcoming'] == [], 'o 19:00 schodzi ostatni')
+ok([(x['page'], x['note']) for x in po5['past'][:3]] ==
+   [('tennis-speed-dating-25-10-1900.html', 'Godz. 19:00.'), ('tennis-speed-dating-25-10.html', 'Godz. 16:00.'),
+    ('tennis-speed-dating-18-10.html', '')], 'w "Za nami" pozniejszy slot wyzej, oba z godzina')
+strona = io.open(os.path.join(kat, 'tennis-speed-dating-18-10.html'), encoding='utf-8').read()
+ok('To wydarzenie już się odbyło' in strona and 'id="signup"' not in strona, 'strona 18.10 bez formularza')
+ok(archiwizuj_minione(lok, datetime(2026, 10, 26)) == [], 'drugie przejscie nic nie zmienia')
+w = config_w_node(kat)
+ok('blad' not in w and w['u'] == [], 'config po automacie dziala w JS')
 shutil.rmtree(kat)
 
 

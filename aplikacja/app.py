@@ -311,15 +311,25 @@ class Aplikacja(tk.Tk):
         def gotowe(w):
             self.dane, self.presety = w
             self.lista.delete(*self.lista.get_children())
+            # Strona chowa minione terminy sama, ale formularz na stronie
+            # wydarzenia zdejmuje dopiero archiwum — stad przypomnienie.
+            self.lista.tag_configure('minelo', foreground='#b00')
+            minione = []
             for e in sorted(self.dane['upcoming'], key=g.klucz_czasu):
                 pule = ', '.join(x for x, z in (('K', e.get('soldOutWomen')), ('M', e.get('soldOutMen'))) if z) or '—'
-                self.lista.insert('', 'end', iid=e['id'], values=(
+                m = g.minelo(e)
+                if m:
+                    minione.append('%s %s' % (e['date'][:5], e['time'][:5]))
+                self.lista.insert('', 'end', iid=e['id'], tags=('minelo',) if m else (), values=(
                     e['date'], e['time'], e['name'], e['venue'], '%s / %s' % (e['priceW'], e['priceM']),
                     e['sheetTab'], pule))
             self.archiwum.delete(0, 'end')
             for p in sorted(self.dane['past'], key=g.klucz_czasu, reverse=True):
                 self.archiwum.insert('end', '%s   %s   %s' % (p['date'], p['name'], p['venue']))
-            self.status.set('Wczytano: ' + zrodlo.opis())
+            if minione:
+                self.status.set('Już się odbyło, przenieś do archiwum: ' + ', '.join(minione))
+            else:
+                self.status.set('Wczytano: ' + zrodlo.opis())
         self.w_tle('Wczytuję wydarzenia', praca, gotowe)
 
     def zaznaczone(self):
