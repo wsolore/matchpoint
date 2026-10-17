@@ -32,41 +32,17 @@
    - cardNote: dopisek na karcie na stronie glownej (wiek dochodzi sam).
    - past[].note: dopisek w sekcji "Za nami".                        */
 const MATCHPOINT_WYDARZENIA = {
-  "upcoming": [
+  "upcoming": [],
+  "past": [
     {
-      "id": "TSD-1810",
       "name": "Tennis Speed Dating",
       "sport": "Tenis",
-      "city": "Warszawa",
       "date": "18.10.2026",
       "weekday": "Niedziela",
-      "time": "17:00–19:30",
-      "venue": "WTS Orzeł",
-      "address": "Podskarbińska 14, Warszawa",
-      "age": "30–45",
-      "ageMin": 30,
-      "ageMax": 45,
-      "level": "Początkujący+",
-      "surface": "mączka",
-      "shoes": "obuwie na mączkę",
-      "transport": "",
-      "bring": "Rakietę, obuwie na mączkę i strój sportowy.",
-      "bringExtra": "Nie masz rakiety? Daj nam znać - można ją wypożyczyć za dodatkową opłatą.",
-      "included": "Kort i piłki.",
-      "cardNote": "Kort ziemny, poziom początkujący+.",
-      "priceW": 130,
-      "priceM": 130,
-      "page": "tennis-speed-dating-18-10.html",
-      "sheetTab": "18.10",
-      "formUrl": "",
-      "blik": "731 210 703",
-      "limitWomen": 6,
-      "limitMen": 6,
-      "soldOutWomen": false,
-      "soldOutMen": false
-    }
-  ],
-  "past": [
+      "venue": "WTS Orzeł, Warszawa",
+      "note": "",
+      "page": "tennis-speed-dating-18-10.html"
+    },
     {
       "name": "Padel Speed Dating",
       "sport": "Padel",
