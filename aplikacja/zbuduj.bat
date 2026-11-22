@@ -16,7 +16,7 @@ if errorlevel 1 (
   echo Budowanie nie wyszlo - komunikat bledu jest wyzej.
   exit /b 1
 )
-copy /y INSTRUKCJA.md dist\ >nul
+copy /y INSTRUKCJA.html dist\ >nul
 copy /y szablon-zakladki.csv dist\ >nul
 echo.
 echo Gotowe: %~dp0dist\MatchPointWydarzenia.exe

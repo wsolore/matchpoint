@@ -807,6 +807,10 @@ body.ev--padel .fixture:hover{ background:rgba(28,70,207,.09); }
   font-size:1.02rem; font-weight:600; letter-spacing:.04em;
 }
 .transit span{ font-weight:300; color:var(--ink-soft); font-size:.95rem; }
+/* Wiersz bez etykiety (aplikacja: pusta lewa kolumna) zajmuje cala
+   szerokosc, zamiast wisiec za pusta kratka. Selektor jest mocniejszy
+   niz .transit div w media query, wiec dziala na kazdej szerokosci. */
+.transit div.cala{ grid-template-columns:1fr; }
 
 /* --- lista "w cenie" / "co zabrac" --- */
 .ticks{ list-style:none; margin:24px 0 0; padding:0; display:grid; gap:12px; }

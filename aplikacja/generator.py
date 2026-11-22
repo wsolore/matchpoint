@@ -26,6 +26,13 @@ ZNACZNIK_KARTY_OD = '<!-- >>> KARTY'
 ZNACZNIK_KARTY_DO = '<!-- <<< KARTY -->'
 ZNACZNIK_ARCH_OD = '<!-- >>> ARCHIWUM'
 ZNACZNIK_ARCH_DO = '<!-- <<< ARCHIWUM -->'
+# Blok "Jak to dziala" w szablonie strony. Miedzy znacznikami stoi
+# tekst domyslny, a generator podmienia go na tekst wydarzenia.
+# Znaczniki zamiast {{{...}}}: starsza aplikacja (exe u organizatorki)
+# czyta ten sam szablon z GitHuba i na nieznanym {{{...}}} wywalilaby
+# sie przy publikacji. Komentarz HTML zostawia w spokoju.
+ZNACZNIK_JAK_OD = '<!-- >>> JAK TO DZIALA'
+ZNACZNIK_JAK_DO = '<!-- <<< JAK TO DZIALA -->'
 
 DNI = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
@@ -33,7 +40,7 @@ DNI = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Ni
 # zapisie z aplikacji pokazywal tylko to, co sie naprawde zmienilo.
 POLA = ['id', 'name', 'sport', 'city', 'date', 'weekday', 'time', 'venue',
         'address', 'age', 'ageMin', 'ageMax', 'level', 'surface', 'shoes',
-        'transport', 'bring', 'bringExtra', 'included', 'cardNote',
+        'transport', 'bring', 'bringExtra', 'included', 'howItWorks', 'cardNote',
         'priceW', 'priceM', 'page', 'sheetTab', 'formUrl', 'blik',
         'limitWomen', 'limitMen', 'soldOutWomen', 'soldOutMen']
 POLA_ARCH = ['name', 'sport', 'date', 'weekday', 'venue', 'note', 'page']
@@ -233,6 +240,42 @@ def tekst_inline(t):
     return t
 
 
+def tekst_linie(t):
+    """Jak tekst_inline, ale z nowymi liniami: Enter w polu aplikacji to
+    nowa linia na stronie, pusta linia to odstep jak miedzy akapitami.
+    Wszystko zostaje w jednym <p>, bo szablon ma wokol pola wlasny <p>."""
+    linie = [x.strip() for x in str(t or '').replace('\r\n', '\n').strip().split('\n')]
+    wynik, pusta = '', False
+    for x in linie:
+        if not x:
+            pusta = bool(wynik)
+            continue
+        if wynik:
+            wynik += '<br><br>\n' if pusta else '<br>\n'
+        wynik += tekst_inline(x)
+        pusta = False
+    return wynik
+
+
+def bez_kresek(t):
+    """Kreska | byla kiedys separatorem w polach aplikacji. Kreska
+    zablakana na brzegu tekstu (tak trafila na strone 28.11) to smiec,
+    a nie tresc."""
+    return str(t or '').strip().strip('|').strip()
+
+
+def pary(lista):
+    """Pary [lewa, prawa] z tekstow strony, bez kresek na brzegach i bez
+    calkiem pustych wierszy."""
+    wynik = []
+    for x in lista or []:
+        x = list(x) + ['', '']
+        a, b = bez_kresek(x[0]), bez_kresek(x[1])
+        if a or b:
+            wynik.append((a, b))
+    return wynik
+
+
 # ------------------------------------------------------------ walidacja
 
 def sprawdz(e):
@@ -319,7 +362,7 @@ def _tablica(e, s):
 
 def _kolumny(s):
     wynik = ''
-    for tytul, tekst in s.get('kolumny') or []:
+    for tytul, tekst in pary(s.get('kolumny')):
         wynik += ('      <div class="col">\n'
                   '        <h3><img class="ico" src="icon-ball-arrow.svg" alt="" width="22" height="22" '
                   'loading="lazy"><span>%s</span></h3>\n'
@@ -329,14 +372,38 @@ def _kolumny(s):
 
 
 def _transit(e, s):
-    wiersze = [('Adres', e['address'])] + [tuple(x) for x in (s.get('transit') or [])]
-    return ''.join('      <div><b>%s</b><span>%s</span></div>\n'
-                   % (html.escape(k), tekst_inline(v)) for k, v in wiersze)
+    # Wiersz bez etykiety idzie na cala szerokosc. Wczesniej zostawala
+    # pusta kolumna etykiet, a tekst wisial w prawej — tak wygladala
+    # tabelka 28.11, wpisana linijka po linijce jako zwykly tekst.
+    wynik = '      <div><b>Adres</b><span>%s</span></div>\n' % tekst_inline(e['address'])
+    for k, v in pary(s.get('transit')):
+        if k:
+            wynik += '      <div><b>%s</b><span>%s</span></div>\n' % (html.escape(k), tekst_linie(v))
+        else:
+            wynik += '      <div class="cala"><span>%s</span></div>\n' % tekst_linie(v)
+    return wynik
 
 
 def _faq(s):
     return ''.join('      <details>\n        <summary>%s</summary>\n        <p>%s</p>\n      </details>\n'
-                   % (tekst_inline(p), tekst_inline(o)) for p, o in (s.get('faq') or []))
+                   % (tekst_inline(p), tekst_linie(o)) for p, o in pary(s.get('faq')) if p)
+
+
+def jak_to_dziala(e):
+    """Tekst sekcji "Jak to dziala" — siedzi w configu, a nie w tekstach
+    strony, bo ten sam idzie do maila z potwierdzeniem. Puste pole =
+    zostaje tekst domyslny, wpisany w szablon."""
+    return str(e.get('howItWorks') or '').strip()
+
+
+def _wstaw_jak_to_dziala(t, e):
+    tekst = jak_to_dziala(e)
+    a, b = t.find(ZNACZNIK_JAK_OD), t.find(ZNACZNIK_JAK_DO)
+    if not tekst or a < 0 or b < a:
+        return t
+    a_konec = t.index('-->', a) + 3
+    akapit = '    <p class="sub">%s</p>\n' % tekst_linie(tekst).replace('\n', '\n    ')
+    return t[:a_konec] + '\n' + akapit + '    ' + t[b:]
 
 
 def _opcje(s):
@@ -433,14 +500,14 @@ def zloz_strone(szablon, e, s, archiwum=False):
         'mapa': html.escape(quote_plus('%s %s' % (e['venue'], e['address']))),
     }
     surowe = {
-        'lead': tekst_inline(s.get('lead')),
+        'lead': tekst_linie(s.get('lead')),
         'jsonld': _jsonld(e, s),
         'daneStrony': json.dumps(s, ensure_ascii=False, indent=2).replace('</', '<\\/'),
         'tablica': _tablica(e, s),
         'wCenie': ''.join(LI % tekst_inline(x) for x in (s.get('wCenie') or [])),
         'wezZeSoba': ''.join(LI % tekst_inline(x) for x in (s.get('wezZeSoba') or [])),
         'kolumny': _kolumny(s),
-        'dojazd': tekst_inline(s.get('dojazd')),
+        'dojazd': tekst_linie(s.get('dojazd')),
         'transit': _transit(e, s),
         'faq': _faq(s),
         'poziomOpcje': _opcje(s),
@@ -454,6 +521,9 @@ def zloz_strone(szablon, e, s, archiwum=False):
     })
     t = re.sub(r'\{\{\{(\w+)\}\}\}', lambda m: surowe[m.group(1)], t)
     t = re.sub(r'\{\{(\w+)\}\}', lambda m: html.escape(str(wartosci[m.group(1)])), t)
+    # Po podstawieniach, zeby "{{" wpisane w aplikacji nie bylo brane
+    # za znacznik szablonu.
+    t = _wstaw_jak_to_dziala(t, e)
     # znaczniki sekcji w osobnych liniach zostawiaja po sobie puste wiersze
     return re.sub(r'\n[ \t]*\n(?:[ \t]*\n)+', '\n\n', t)
 
@@ -587,7 +657,8 @@ def nowe_wydarzenie(presety, sport):
         'age': '', 'ageMin': 25, 'ageMax': 35, 'level': p.get('level', ''),
         'surface': p.get('surface', ''), 'shoes': p.get('shoes', ''), 'transport': '',
         'bring': p.get('bring', ''), 'bringExtra': p.get('bringExtra', ''),
-        'included': p.get('included', ''), 'cardNote': p.get('cardNote', ''),
+        'included': p.get('included', ''), 'howItWorks': p.get('howItWorks', ''),
+        'cardNote': p.get('cardNote', ''),
         'priceW': 0, 'priceM': 0, 'page': '', 'sheetTab': '', 'formUrl': '',
         'blik': '731 210 703', 'limitWomen': 6, 'limitMen': 6,
         'soldOutWomen': False, 'soldOutMen': False,

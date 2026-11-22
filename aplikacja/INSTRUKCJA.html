@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MatchPoint Wydarzenia — instrukcja</title>
+<style>
+  :root { --ziel: #55634a; --roz: #f2a7ba; --tlo: #f7f5ef; --tekst: #1f2419; --szary: #6b6f66; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--tlo); color: var(--tekst);
+         font: 16px/1.55 "Segoe UI", Arial, sans-serif; }
+  header { background: var(--ziel); color: #fff; padding: 36px 24px 30px; }
+  header h1 { max-width: 712px; margin: 0 auto; font-size: 28px; font-weight: 600; }
+  header p { max-width: 712px; margin: 6px auto 0; opacity: .85; }
+  main { max-width: 760px; margin: 0 auto; padding: 8px 24px 48px; }
+  h2 { font-size: 20px; margin: 36px 0 10px; display: flex; align-items: center; gap: 10px; }
+  h2 span { background: var(--roz); color: var(--tekst); border-radius: 50%; width: 30px; height: 30px;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 15px; flex: none; }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  li { margin: 5px 0; }
+  b.btn { background: #fff; border: 1px solid #c9c6bd; border-radius: 4px; padding: 1px 7px;
+          font-weight: 600; white-space: nowrap; }
+  code { background: #ebe8df; padding: 1px 6px; border-radius: 4px; font-size: 15px; }
+  .uwaga { background: #fff; border-left: 4px solid var(--roz); padding: 12px 16px; margin: 14px 0;
+           border-radius: 0 6px 6px 0; }
+  .dla-admina { background: #fff; border: 1px dashed var(--ziel); border-radius: 8px;
+                padding: 14px 18px; margin: 14px 0; font-size: 15px; }
+  .dla-admina h3 { margin: 0 0 6px; font-size: 15px; color: var(--ziel); }
+  table { border-collapse: collapse; width: 100%; background: #fff; font-size: 15px; margin: 10px 0; }
+  td { border-top: 1px solid #e3e0d6; padding: 9px 12px; vertical-align: top; }
+  td:first-child { width: 42%; color: var(--szary); }
+  footer { color: var(--szary); font-size: 14px; text-align: center; padding: 0 24px 32px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MatchPoint Wydarzenia</h1>
+  <p>Dodawanie wydarzeń na matchpointdate.pl — w 5 minut, bez programowania.</p>
+</header>
+
+<main>
+
+<div class="uwaga">
+  <b>Opublikuj</b> od razu zmienia prawdziwą stronę (po ok. minucie).
+  Zawsze najpierw kliknij <b class="btn">Podgląd w przeglądarce</b>.
+</div>
+
+<h2><span>1</span>Na start (tylko raz)</h2>
+<ol>
+  <li>Uruchom <code>MatchPointWydarzenia.exe</code>.
+    Jeśli Windows pokaże „System Windows ochronił ten komputer”:
+    <b>Więcej informacji → Uruchom mimo to</b>.</li>
+  <li>W oknie <b>Ustawienia</b> wklej <b>token</b> (dostaniesz go od osoby, która prowadzi stronę)
+    i kliknij <b class="btn">Zapisz</b>.</li>
+  <li>Na liście pojawią się wydarzenia ze strony. Gotowe — token zostaje zapamiętany.</li>
+</ol>
+
+<div class="dla-admina">
+  <h3>Dla osoby, która prowadzi stronę: jak zrobić token</h3>
+  Na koncie <code>wsolore</code> wejdź na
+  <a href="https://github.com/settings/personal-access-tokens/new">github.com/settings/personal-access-tokens/new</a>.
+  Repository access: <b>Only select → wsolore/matchpoint</b>. Permissions → Contents: <b>Read and write</b>.
+  Ważność: rok. Skopiuj token (<code>github_pat_…</code>) i przekaż prywatnie.
+  Żeby komuś odebrać dostęp, usuń jego token na tej samej stronie.
+</div>
+
+<h2><span>2</span>Przed każdym wydarzeniem: zakładka w arkuszu</h2>
+<ol>
+  <li>W arkuszu zapisów: <b>Plik → Importuj → Prześlij</b> → plik <code>szablon-zakladki.csv</code>
+    (leży obok aplikacji) → <b>Wstaw nowe arkusze</b>.</li>
+  <li>Zmień nazwę nowej zakładki na datę, np. <code>25.10</code>.
+    Dwa terminy jednego dnia? Dodaj godzinę: <code>25.10 15:00</code>.</li>
+</ol>
+<p>Bez zakładki formularz na stronie nie przyjmie zapisu. Nie zmieniaj w niej nagłówków ani nazw kolumn.</p>
+
+<h2><span>3</span>Nowe wydarzenie</h2>
+<ol>
+  <li><b class="btn">+ Nowe wydarzenie</b> → wybierz <b>Tenis</b> albo <b>Padel</b>.
+    Teksty wpiszą się same — popraw tylko to, co się różni.</li>
+  <li>Uzupełnij datę (<code>25.10.2026</code>), godziny (<code>17:00-19:30</code>), miejsce, adres,
+    ceny i liczbę miejsc. W polu <b>Zakładka w arkuszu</b> wpisz nazwę z kroku 2.</li>
+  <li>Kliknij <b class="btn">Podgląd w przeglądarce</b> i obejrzyj stronę.</li>
+  <li>Kliknij <b class="btn">Opublikuj</b> i potwierdź. Po minucie wydarzenie jest na stronie.</li>
+  <li>Zrób próbny zapis na stronie i sprawdź, czy trafił do zakładki. Potem usuń ten wiersz.</li>
+</ol>
+<ul>
+  <li>Pola w zakładce <b>3. Teksty na stronie</b> idą w tej samej kolejności co sekcje na stronie.</li>
+  <li><b>W cenie</b>, <b>Weź ze sobą</b>, <b>Odpowiedzi do wyboru</b>: jedna pozycja = jedna linia.</li>
+  <li><b>Tabelka dojazdu</b>, <b>Pytania (FAQ)</b>, <b>Dlaczego warto</b>: każdy wiersz ma dwa pola.
+    Nowy wiersz dodasz przyciskiem <b class="btn">+ Dodaj wiersz</b>, kolejność zmienisz strzałkami
+    <b class="btn">↑</b> <b class="btn">↓</b>, a <b class="btn">✕</b> usuwa wiersz. Wiersz tabelki bez etykiety
+    pokaże się na stronie jako zwykły tekst na całą szerokość.</li>
+  <li><b>Jak to działa</b> (zakładka 3): ten sam tekst trafia na stronę i do maila z potwierdzeniem.
+    W mailu serduszka są wycinane.</li>
+  <li><code>**tak**</code> daje pogrubienie, Enter w dłuższym polu to nowa linia na stronie.
+    Puste pole w zakładce „Mail” po prostu nie pojawi się w mailu.</li>
+</ul>
+<div class="uwaga"><b>Szukanie:</b> <b class="btn">Ctrl+F</b> w oknie wydarzenia szuka we wszystkich polach
+  i zakładkach naraz (nie trzeba wpisywać polskich znaków). <b class="btn">Enter</b> skacze do następnego
+  trafienia, <b class="btn">Esc</b> wstawia kursor w znalezione pole. W oknie głównym <b class="btn">Ctrl+F</b>
+  filtruje listę wydarzeń, <b class="btn">Ctrl+N</b> otwiera nowe wydarzenie, a <b class="btn">Ctrl+Z</b>
+  cofa zmiany w dłuższych polach.</div>
+
+<h2><span>4</span>Zmiana wydarzenia</h2>
+<p>Kliknij wydarzenie dwa razy, popraw i <b class="btn">Opublikuj</b>.</p>
+<table>
+  <tr><td>Komplet zebrał się poza stroną</td><td>zaznacz <b>Zamknij pulę kobiet / mężczyzn</b></td></tr>
+  <tr><td>Ktoś zrezygnował</td><td>odznacz to samo pole</td></tr>
+  <tr><td>Więcej miejsc, inna cena</td><td><b>Miejsca</b> / <b>Cena</b></td></tr>
+</table>
+<p>Przy padlu 3.10 (strona sprzed aplikacji) teksty strony są zablokowane — przy zmianie ceny daj znać
+  osobie, która prowadzi stronę.</p>
+
+<h2><span>5</span>Po wydarzeniu</h2>
+<p>Zaznacz je i kliknij <b class="btn">Przenieś do archiwum</b>. Trafi do „Za nami”, a formularz zniknie.
+  Tylko po wydarzeniu — z aplikacji tego nie cofniesz. Zakładki w arkuszu nie usuwaj.</p>
+
+<h2><span>6</span>Gdy coś nie działa</h2>
+<table>
+  <tr><td>„GitHub nie przyjął tokenu”</td><td>Token wygasł. Poproś o nowy i wklej w <b>Ustawieniach</b>.</td></tr>
+  <tr><td>„Arkusz nie widzi zakładki”</td><td>Nazwa zakładki różni się od tej w aplikacji albo zakładki nie ma.
+    Sprawdzisz to przyciskiem <b class="btn">Sprawdź zakładkę w arkuszu</b>.</td></tr>
+  <tr><td>„Ktoś w tym samym czasie zmieniał stronę”</td><td><b class="btn">Odśwież</b> i spróbuj jeszcze raz.</td></tr>
+  <tr><td>„Popraw, proszę: …”</td><td>Popraw wymienione pola — nic nie zostało wysłane.</td></tr>
+  <tr><td>Coś innego</td><td>Nic nie zapisuj i napisz do osoby, która prowadzi stronę.</td></tr>
+</table>
+<p>Aplikacja nie zakłada zakładek i nie wpisuje <code>TAK</code> przy wpłatach — to nadal robisz jak dotąd.
+  Zamknięcie okna bez publikacji zapyta, czy porzucić zmiany.</p>
+
+</main>
+<footer>Match Point · match.point.date@gmail.com</footer>
+</body>
+</html>

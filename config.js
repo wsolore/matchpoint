@@ -29,6 +29,9 @@
      sie wypisaly, a zapisy staly zamkniete, bo flaga wygrywala).
    - transport, bringExtra: puste pole KASUJE linie w mailu, a nie
      wraca do domyslnej tresci.
+   - howItWorks: tekst "Jak to dziala" — na stronie wydarzenia i w mailu
+     z potwierdzeniem (w mailu skrypt wycina serduszka). Puste = na
+     stronie tekst domyslny z szablonu, w mailu domyslny ze skryptu.
    - cardNote: dopisek na karcie na stronie glownej (wiek dochodzi sam).
    - past[].note: dopisek w sekcji "Za nami".                        */
 const MATCHPOINT_WYDARZENIA = {
@@ -42,7 +45,7 @@ const MATCHPOINT_WYDARZENIA = {
       "weekday": "Sobota",
       "time": "09:00–11:30",
       "venue": "Rakiety PGE Narodowy",
-      "address": "Błonia stadiony PGE Narodowy, al. Księcia Józefa Poniatowskiego 1",
+      "address": "Błonia stadionu PGE Narodowy, al. Księcia Józefa Poniatowskiego 1",
       "age": "30–45",
       "ageMin": 30,
       "ageMax": 45,
@@ -53,6 +56,7 @@ const MATCHPOINT_WYDARZENIA = {
       "bring": "Obuwie sportowe na płaskiej podeszwie i strój sportowy.",
       "bringExtra": "Jeśli nie masz rakiety to możesz wypożyczyć",
       "included": "Kort ocieplany",
+      "howItWorks": "Gramy w półgodzinnych rotacjach - co 30 minut masz okazję poznać kolejną osobę na korcie! Po wydarzeniu samodzielnie decydujesz, z kim chcesz utrzymać kontakt. Jeśli złapiecie wspólny vibe, śmiało poproś o numer telefonu i kontynuujcie znajomość poza kortem! 🎾❤️",
       "cardNote": "",
       "priceW": 150,
       "priceM": 150,

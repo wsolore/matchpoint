@@ -191,6 +191,11 @@
   <div class="wrap">
     <span class="eyebrow">Krok po kroku</span>
     <h2 class="h2" style="margin-top:14px">Jak to działa</h2>
+    <!-- >>> JAK TO DZIALA: aplikacja wstawia tu pole "Jak to działa"
+         (howItWorks w config.js); ten sam tekst idzie do maila.
+         Ponizej tekst domyslny dla wydarzen bez tego pola. -->
+    <p class="sub">Gramy w półgodzinnych rotacjach - co 30 minut masz okazję poznać kolejną osobę na korcie! Po wydarzeniu samodzielnie decydujesz, z kim chcesz utrzymać kontakt. Jeśli złapiecie wspólny vibe, śmiało poproś o numer telefonu i kontynuujcie znajomość poza kortem! 🎾❤️</p>
+    <!-- <<< JAK TO DZIALA -->
 
     <ol class="steps">
       <li>
@@ -211,12 +216,10 @@
           <p>Wysyłamy je po zaksięgowaniu wpłaty, razem ze szczegółami dojazdu. Do tego momentu miejsce jest dostępne dla innych.</p>
         </div>
       </li>
-      <li>
-        <div>
-          <h3>Grasz, a potem zaznaczasz, z kim chcesz kontakt</h3>
-          <p>Numer przekazujemy tylko przy wzajemnym wyborze. Jeśli nie był obustronny, druga osoba się o nim nie dowie.</p>
-        </div>
-      </li>
+      <!-- Czwarty krok ("zaznaczasz, z kim chcesz kontakt, numer
+           przekazujemy przy wzajemnym wyborze") zniknal 22.11.2026:
+           kontakty wymieniaja teraz sami uczestnicy, a to, co dzieje
+           sie na korcie i po nim, opisuje tekst nad krokami. -->
     </ol>
   </div>
 </section>
@@ -415,10 +418,6 @@
       <details>
         <summary>Co, jeśli nie będę mógł/mogła przyjść?</summary>
         <p>Zgłoś to najpóźniej 48 godzin przed wydarzeniem, wtedy zwracamy wpłatę w ciągu 10 dni. Później zwrot nie przysługuje. Szczegóły w <a href="regulamin.html">regulaminie</a>.</p>
-      </details>
-      <details>
-        <summary>Jak dostanę czyjś kontakt?</summary>
-        <p>Po grach zaznaczasz osoby, z którymi chcesz się kontaktować. Imię i numer przekazujemy tylko przy wzajemnym wyborze.</p>
       </details>
       <details>
         <summary>Co z moimi danymi?</summary>
@@ -820,6 +819,8 @@
       bring:      e.bring,
       bringExtra: e.bringExtra,
       included:   e.included,
+      /* sekcja "Jak to dziala" w mailu; skrypt sam wycina z niej serduszka */
+      howItWorks: e.howItWorks,
       blik:       e.blik
     };
 

@@ -168,12 +168,17 @@ kat = kopia_repo()
 lok = zr.LokalneZrodlo(kat)
 for godz, zakladka in (('16:00-18:00', '25.10 16:00'), ('19:00-20:00', '25.10 19:00')):
     zr.wykonaj(lok, lambda c, x=dict(e, date='25.10.2026', time=godz, sheetTab=zakladka): op.dodaj(c, x, s), 'test')
-ok(archiwizuj_minione(lok, datetime(2026, 10, 18, 16, 59)) == [], 'przed startem nic nie rusza')
+# Prawdziwe wydarzenia w repo sie zmieniaja (18.10 juz w archiwum, 28.11
+# w sprzedazy), wiec patrzymy tylko na dwa testowe sloty 25.10.
+testowe = lambda lista: [x['id'] for x in lista if x['id'].startswith('TSD-2510')]  # noqa: E731
+ok(testowe(archiwizuj_minione(lok, datetime(2026, 10, 18, 16, 59))) == [], 'przed startem nic nie rusza')
 pierwsze = archiwizuj_minione(lok, datetime(2026, 10, 25, 16, 0))
-ok([x['id'] for x in pierwsze] == ['TSD-1810', 'TSD-2510'], 'o 16:00 schodzi 18.10 i slot 16:00, slot 19:00 zostaje')
+ok(testowe(pierwsze) == ['TSD-2510'], 'o 16:00 schodzi slot 16:00, slot 19:00 zostaje')
+ok(testowe(op.stan(lok.migawka())['upcoming']) == ['TSD-2510-19'], 'slot 19:00 dalej w sprzedazy')
 archiwizuj_minione(lok, datetime(2026, 10, 25, 19, 0))
 po5 = op.stan(lok.migawka())
-ok(po5['upcoming'] == [], 'o 19:00 schodzi ostatni')
+ok(testowe(po5['upcoming']) == [], 'o 19:00 schodzi ostatni')
+ok(all(not g.minelo(x, datetime(2026, 10, 25, 19, 0)) for x in po5['upcoming']), 'w sprzedazy nic minionego')
 ok([(x['page'], x['note']) for x in po5['past'][:3]] ==
    [('tennis-speed-dating-25-10-1900.html', 'Godz. 19:00.'), ('tennis-speed-dating-25-10.html', 'Godz. 16:00.'),
     ('tennis-speed-dating-18-10.html', '')], 'w "Za nami" pozniejszy slot wyzej, oba z godzina')
@@ -181,7 +186,54 @@ strona = io.open(os.path.join(kat, 'tennis-speed-dating-18-10.html'), encoding='
 ok('To wydarzenie już się odbyło' in strona and 'id="signup"' not in strona, 'strona 18.10 bez formularza')
 ok(archiwizuj_minione(lok, datetime(2026, 10, 26)) == [], 'drugie przejscie nic nie zmienia')
 w = config_w_node(kat)
-ok('blad' not in w and w['u'] == [], 'config po automacie dziala w JS')
+ok('blad' not in w and not [x for x in w['u'] if x.startswith('TSD-2510')], 'config po automacie dziala w JS')
+shutil.rmtree(kat)
+
+
+print('5b. Jak to dziala, tabelka dojazdu, teksty w kilku liniach')
+kat = kopia_repo()
+lok = zr.LokalneZrodlo(kat)
+e3, s3 = g.nowe_wydarzenie(op.presety(lok.migawka()), 'Padel')
+ok(e3['howItWorks'].startswith('Gramy w półgodzinnych rotacjach'), 'nowe wydarzenie dostaje "Jak to dziala" z presetu')
+e3.update(date='14.12.2026', time='10:00-12:00', venue='Korty X', address='Prosta 1, Warszawa',
+          priceW=150, priceM=150, sheetTab='', howItWorks='Linia **pierwsza**\nLinia druga\n\nPo przerwie <b>x</b>')
+s3 = dict(s3, transit=[['Metro', 'M2 | '], ['', 'Bez etykiety, na cala szerokosc.'], ['', ' | ']],
+          faq=[['Pytanie?', 'Odpowiedz\nw dwoch liniach'], ['', 'sama odpowiedz bez pytania znika']],
+          dojazd='Akapit 1\n\nAkapit 2')
+zr.wykonaj(lok, lambda c: op.dodaj(c, e3, s3), 'test')
+strona = io.open(os.path.join(kat, 'padel-speed-dating-14-12.html'), encoding='utf-8').read()
+jak = strona.split(g.ZNACZNIK_JAK_OD)[1].split(g.ZNACZNIK_JAK_DO)[0]
+ok('<p class="sub">Linia <b>pierwsza</b><br>\n    Linia druga<br><br>\n    Po przerwie &lt;b&gt;x&lt;/b&gt;</p>' in jak,
+   '"Jak to dziala": nowe linie, pogrubienie, HTML wpisany w aplikacji jest escapowany')
+ok(jak.count('<p class="sub">') == 1, 'tekst domyslny z szablonu podmieniony, nie zdublowany')
+ok('Grasz, a potem zaznaczasz' not in strona and 'Jak dostanę czyjś kontakt' not in strona,
+   'bez kroku i pytania o przekazywanie numerow przy wzajemnym wyborze')
+ok('<div><b>Metro</b><span>M2</span></div>' in strona, 'kreska na brzegu tresci znika')
+ok('<div class="cala"><span>Bez etykiety, na cala szerokosc.</span></div>' in strona, 'wiersz bez etykiety na cala szerokosc')
+ok('<div><b></b>' not in strona and '<span>|</span>' not in strona, 'zadnych pustych etykiet ani samotnych kresek')
+ok('<p>Odpowiedz<br>\nw dwoch liniach</p>' in strona and '<p>sama odpowiedz' not in strona,
+   'FAQ: kilka linii; bez pytania nie ma wpisu')
+ok('<p class="sub">Akapit 1<br><br>\nAkapit 2</p>' in strona, 'dojazd w akapitach')
+ok('howItWorks: e.howItWorks' in strona, 'strona wysyla "Jak to dziala" do maila')
+cfg = next(x for x in op.stan(lok.migawka())['upcoming'] if x['page'] == 'padel-speed-dating-14-12.html')
+ok(cfg['howItWorks'] == e3['howItWorks'], 'howItWorks zapisane w configu (stamtad czyta je mail)')
+bez = g.zloz_strone(lok.migawka()(op.SZABLON), dict(cfg, howItWorks=''), s3)
+ok('półgodzinnych rotacjach' in bez.split(g.ZNACZNIK_JAK_OD)[1].split(g.ZNACZNIK_JAK_DO)[0],
+   'puste "Jak to dziala" = tekst domyslny z szablonu')
+ok(g.tekst_linie('a\n\n\n b \nc') == 'a<br><br>\nb<br>\nc', 'tekst_linie: wiele pustych linii = jeden odstep')
+# Organizatorka ma exe z wczesniejszym generatorem, a szablon aplikacja
+# czyta z GitHuba. Nowy szablon nie moze wywracac starego exe.
+for wersja in ('755e9fb', '088680b'):
+    kod = subprocess.run(['git', 'show', wersja + ':aplikacja/generator.py'], cwd=REPO, capture_output=True,
+                         encoding='utf-8', check=True).stdout
+    stary = type(sys)('stary_generator_' + wersja)
+    exec(compile(kod, 'generator@' + wersja, 'exec'), stary.__dict__)
+    try:
+        html_ = stary.zloz_strone(lok.migawka()(op.SZABLON), cfg, s3)
+        ok('półgodzinnych rotacjach' in html_ and '{{' not in html_,
+           'generator z %s sklada nowy szablon (z tekstem domyslnym)' % wersja)
+    except Exception as err:  # noqa: BLE001
+        ok(False, 'generator z %s wywraca sie na nowym szablonie: %r' % (wersja, err))
 shutil.rmtree(kat)
 
 
