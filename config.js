@@ -43,7 +43,7 @@ const MATCHPOINT_WYDARZENIA = {
       "city": "Warszawa",
       "date": "28.11.2026",
       "weekday": "Sobota",
-      "time": "09:00–11:30",
+      "time": "09:30–11:00",
       "venue": "Rakiety PGE Narodowy",
       "address": "Błonia stadionu PGE Narodowy, al. Księcia Józefa Poniatowskiego 1",
       "age": "30–45",
