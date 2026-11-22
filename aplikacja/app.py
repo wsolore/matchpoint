@@ -35,10 +35,20 @@ ENDPOINT = ('https://script.google.com/macros/s/AKfycbxHiSMEiB8geAq8-VjcQl7IBm7b
 # pliki, bez ktorych podglad strony nie wyglada jak strona
 ZASOBY = ['styles.css', 'znak.js', 'analytics.js', 'favicon.svg', 'icon-ball-arrow.svg']
 
-SZARY = '#6b6f66'
-ZIELEN = '#55634a'
-ZOLTY = '#fff1a6'        # wszystkie trafienia wyszukiwania
-POMARANCZ = '#ffbf69'    # trafienie, na ktorym stoimy
+# Motyw "cyberpunk": granatowa noc, neonowy cyjan i magenta.
+TLO = '#0b0b16'          # tlo okien
+PANEL = '#14142e'        # przyciski, naglowki tabel, nieaktywne zakladki
+POLE = '#191940'         # tlo pol do wpisywania
+RAMKA = '#2e2e66'        # obramowania w spoczynku
+TEKST = '#e6e8ff'
+SZARY = '#8b91bd'        # podpowiedzi pod polami
+CYJAN = '#00e5ff'
+ROZ = '#ff2bd6'          # magenta
+CZERWONY = '#ff4d6d'
+ZIELEN = CYJAN           # naglowki grup (nazwa zostala z jasnego motywu)
+ZOLTY = '#4b2275'        # wszystkie trafienia wyszukiwania (fiolet pod jasnym tekstem)
+POMARANCZ = ROZ          # trafienie, na ktorym stoimy
+NAGL = 'Segoe UI'        # czcionka naglowkow; Aplikacja wybiera Bahnschrift, jesli jest
 
 # Ile pikseli ekranu na "piksel projektu". Ustawia Aplikacja po starcie.
 SKALA = 1.0
@@ -46,6 +56,51 @@ SKALA = 1.0
 
 def px(n):
     return int(round(n * SKALA))
+
+
+def _rgb(k):
+    return int(k[1:3], 16), int(k[3:5], 16), int(k[5:7], 16)
+
+
+def neon(rodzic, wys=2, od=ROZ, do=CYJAN, tlo=TLO):
+    """Pozioma linia z gradientem magenta -> cyjan. Tk nie ma poswiaty
+    ani gradientow, wiec rysujemy je paskami na plotnie."""
+    p = tk.Canvas(rodzic, height=max(1, px(wys)), highlightthickness=0, bd=0, background=tlo)
+    a, b = _rgb(od), _rgb(do)
+
+    def rysuj(e):
+        p.delete('all')
+        kroki = max(2, e.width // 6)
+        for i in range(kroki):
+            t = i / (kroki - 1)
+            kolor = '#%02x%02x%02x' % tuple(int(a[j] + (b[j] - a[j]) * t) for j in range(3))
+            x0 = e.width * i // kroki
+            p.create_rectangle(x0, 0, e.width * (i + 1) // kroki + 1, e.height + 1, fill=kolor, width=0)
+    p.bind('<Configure>', rysuj)
+    return p
+
+
+def ciemna_belka(okno):
+    """Windows 11: ciemny pasek tytulu w kolorze tla i neonowa ramka okna.
+    Na starszym Windowsie atrybuty sa nieznane i nic sie nie dzieje."""
+    try:
+        import ctypes
+        okno.update_idletasks()
+        hwnd = int(okno.wm_frame(), 16)
+
+        def ustaw(atrybut, wartosc):
+            v = ctypes.c_int(wartosc)
+            ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, atrybut, ctypes.byref(v), ctypes.sizeof(v))
+
+        def colorref(k):
+            r, g_, b = _rgb(k)
+            return r | (g_ << 8) | (b << 16)
+        ustaw(20, 1)                  # tryb ciemny paska
+        ustaw(35, colorref(TLO))      # kolor paska
+        ustaw(36, colorref(CYJAN))    # kolor tytulu
+        ustaw(34, colorref(ROZ))      # ramka okna
+    except Exception:  # noqa: BLE001 - kosmetyka, nie moze wywrocic aplikacji
+        pass
 
 
 def ostry_ekran():
@@ -181,10 +236,12 @@ class PoleTekstowe(tk.Text):
     def __init__(self, rodzic, min_linii=2, width=70):
         super().__init__(rodzic, height=min_linii, width=width, wrap='word', undo=True, maxundo=-1,
                          font='TkTextFont', relief='flat', borderwidth=0, highlightthickness=1,
-                         highlightcolor='#7d8f68', highlightbackground='#b9b6ad', padx=6, pady=4)
+                         highlightcolor=CYJAN, highlightbackground=RAMKA, padx=6, pady=4,
+                         background=POLE, foreground=TEKST, insertbackground=CYJAN, insertwidth=2,
+                         selectbackground=ROZ, selectforeground=TLO, inactiveselectbackground=RAMKA)
         self.min_linii = min_linii
         self.tag_configure('trafienie', background=ZOLTY)
-        self.tag_configure('biezace', background=POMARANCZ)
+        self.tag_configure('biezace', background=POMARANCZ, foreground=TLO)
         self.tag_raise('biezace')
         self.bind('<<Modified>>', self._zmiana)
         self.bind('<Configure>', lambda e: self.after_idle(self.dopasuj))
@@ -269,7 +326,7 @@ class EdytorPar(ttk.Frame):
         przyc = ttk.Frame(self.ramka)
         w = {'lewa': lewa, 'prawa': prawa, 'przyc': przyc}
         for znak, ruch, opis in (('↑', -1, 'wyżej'), ('↓', 1, 'niżej'), ('✕', 0, 'usuń')):
-            b_ = ttk.Button(przyc, text=znak, width=3, takefocus=False,
+            b_ = ttk.Button(przyc, text=znak, width=3, takefocus=False, style='Maly.TButton',
                             command=lambda ruch=ruch: self.usun(w) if ruch == 0 else self.przesun(w, ruch))
             b_.pack(side='left', padx=(0 if znak == '↑' else 2, 0))
         lewa.grid(row=r, column=0, sticky='new', pady=(4, 0))
@@ -342,14 +399,15 @@ class Formularz(ttk.Frame):
                 grupa = et
                 ramka = ttk.Frame(self)
                 ramka.grid(row=r, column=0, columnspan=2, sticky='we', pady=(px(18) if r else px(6), px(2)))
-                ttk.Label(ramka, text=et, style='Grupa.TLabel').pack(anchor='w')
+                ttk.Label(ramka, text='// ' + et.upper(), style='Grupa.TLabel').pack(anchor='w')
                 if podp:
                     ttk.Label(ramka, text=podp, foreground=SZARY, wraplength=px(760),
                               justify='left').pack(anchor='w', pady=(px(2), 0))
-                ttk.Separator(ramka).pack(fill='x', pady=(px(5), 0))
+                neon(ramka, 1.6).pack(fill='x', pady=(px(6), 0))
                 r += 1
                 continue
-            lab = tk.Label(self, text=et, anchor='w', justify='left', padx=px(3))
+            lab = tk.Label(self, text=et, anchor='w', justify='left', padx=px(3),
+                           background=TLO, foreground=TEKST)
             lab.tlo = lab.cget('background')
             lab.grid(row=r, column=0, sticky='nw', padx=(0, px(12)), pady=(px(9), 0))
             if rodzaj == 'sport':
@@ -447,7 +505,7 @@ def przewijane(rodzic):
     """Ramka z paskiem przewijania — formularze nie mieszcza sie na
     malym ekranie laptopa. Kolkiem myszy przewija Aplikacja._kolko."""
     zew = ttk.Frame(rodzic)
-    plotno = tk.Canvas(zew, highlightthickness=0, yscrollincrement=px(24))
+    plotno = tk.Canvas(zew, highlightthickness=0, yscrollincrement=px(24), background=TLO)
     plotno.przewijane = True
     pasek = ttk.Scrollbar(zew, orient='vertical', command=plotno.yview)
     wew = ttk.Frame(plotno)
@@ -491,22 +549,82 @@ class Aplikacja(tk.Tk):
             self.after(200, self.odswiez)
 
     def _styl(self):
-        styl = ttk.Style(self)
-        try:
-            styl.theme_use('vista')
-        except tk.TclError:
-            pass
+        """Motyw cyberpunk. Systemowego motywu "vista" nie da sie
+        przekolorowac, wiec bazujemy na "clam", ktory przyjmuje kolory
+        kazdego elementu. Okienka komunikatow (messagebox) rysuje Windows
+        i zostaja systemowe."""
+        global NAGL
+        rodziny = set(tkfont.families(self))
+        NAGL = next((f for f in ('Bahnschrift', 'Segoe UI Semibold', 'Segoe UI') if f in rodziny), 'TkDefaultFont')
         for nazwa in ('TkDefaultFont', 'TkTextFont', 'TkMenuFont', 'TkHeadingFont'):
             try:
                 tkfont.nametofont(nazwa).configure(family='Segoe UI', size=10)
             except tk.TclError:
                 pass
-        styl.configure('Treeview', rowheight=px(26))
-        styl.configure('Treeview.Heading', font=('Segoe UI', 10, 'bold'))
-        styl.configure('Grupa.TLabel', font=('Segoe UI', 12, 'bold'), foreground=ZIELEN)
-        styl.configure('Tytul.TLabel', font=('Segoe UI', 15, 'bold'), foreground=ZIELEN)
-        styl.configure('Sekcja.TLabel', font=('Segoe UI', 11, 'bold'))
-        styl.configure('Wazny.TButton', font=('Segoe UI', 10, 'bold'))
+        self.configure(background=TLO)
+        styl = ttk.Style(self)
+        styl.theme_use('clam')
+        styl.configure('.', background=TLO, foreground=TEKST, fieldbackground=POLE, bordercolor=RAMKA,
+                       lightcolor=RAMKA, darkcolor=RAMKA, troughcolor=TLO, selectbackground=ROZ,
+                       selectforeground=TLO, insertcolor=CYJAN, focuscolor=CYJAN, arrowcolor=CYJAN)
+        styl.configure('TFrame', background=TLO)
+        styl.configure('TLabel', background=TLO, foreground=TEKST)
+        styl.configure('Grupa.TLabel', font=(NAGL, 12, 'bold'), foreground=CYJAN)
+        styl.configure('Tytul.TLabel', font=(NAGL, 17, 'bold'), foreground=ROZ)
+        styl.configure('Sekcja.TLabel', font=(NAGL, 11, 'bold'), foreground=CYJAN)
+
+        styl.configure('TButton', background=PANEL, foreground=CYJAN, bordercolor=CYJAN, lightcolor=PANEL,
+                       darkcolor=PANEL, focuscolor=CYJAN, padding=(px(10), px(4)), font=(NAGL, 10))
+        styl.map('TButton', background=[('pressed', ROZ), ('active', CYJAN)],
+                 foreground=[('disabled', SZARY), ('pressed', TLO), ('active', TLO)],
+                 bordercolor=[('disabled', RAMKA)])
+        styl.configure('Wazny.TButton', foreground=ROZ, bordercolor=ROZ, font=(NAGL, 10, 'bold'))
+        styl.map('Wazny.TButton', background=[('pressed', CYJAN), ('active', ROZ)],
+                 foreground=[('pressed', TLO), ('active', TLO)])
+        styl.configure('Maly.TButton', padding=(px(3), px(2)))
+        styl.configure('Ryzyko.TButton', foreground=CZERWONY, bordercolor=CZERWONY)
+        styl.map('Ryzyko.TButton', background=[('pressed', ROZ), ('active', CZERWONY)],
+                 foreground=[('pressed', TLO), ('active', TLO)])
+
+        styl.configure('TEntry', fieldbackground=POLE, foreground=TEKST, insertcolor=CYJAN, bordercolor=RAMKA,
+                       lightcolor=POLE, darkcolor=POLE, padding=px(3))
+        styl.map('TEntry', bordercolor=[('focus', CYJAN)], lightcolor=[('focus', CYJAN)])
+        styl.configure('TCombobox', fieldbackground=POLE, background=PANEL, foreground=TEKST,
+                       arrowcolor=CYJAN, bordercolor=RAMKA, lightcolor=POLE, darkcolor=POLE, padding=px(3))
+        styl.map('TCombobox', fieldbackground=[('disabled', TLO), ('readonly', POLE)],
+                 foreground=[('disabled', SZARY), ('readonly', TEKST)],
+                 selectbackground=[('readonly', POLE)], selectforeground=[('readonly', TEKST)],
+                 bordercolor=[('focus', CYJAN)], arrowcolor=[('disabled', SZARY)],
+                 background=[('disabled', PANEL), ('active', RAMKA)])
+        self.option_add('*TCombobox*Listbox.background', POLE)
+        self.option_add('*TCombobox*Listbox.foreground', TEKST)
+        self.option_add('*TCombobox*Listbox.selectBackground', ROZ)
+        self.option_add('*TCombobox*Listbox.selectForeground', TLO)
+        styl.configure('TCheckbutton', background=TLO, foreground=TEKST, indicatorbackground=POLE,
+                       indicatorforeground=ROZ, upperbordercolor=CYJAN, lowerbordercolor=CYJAN, focuscolor=CYJAN)
+        styl.map('TCheckbutton', background=[('active', TLO)], indicatorbackground=[('pressed', RAMKA)])
+
+        styl.configure('TNotebook', background=TLO, bordercolor=RAMKA, lightcolor=TLO, darkcolor=TLO)
+        styl.configure('TNotebook.Tab', background=PANEL, foreground=SZARY, bordercolor=RAMKA, lightcolor=PANEL,
+                       darkcolor=PANEL, padding=(px(16), px(6)), font=(NAGL, 10))
+        # clam daje wybranej zakladce inny padding, przez co "opadala"
+        # nizej od reszty — wyrownujemy go do pozostalych.
+        styl.map('TNotebook.Tab', padding=[('selected', (px(16), px(6)))],
+                 background=[('selected', TLO), ('active', RAMKA)],
+                 foreground=[('selected', CYJAN), ('active', TEKST)],
+                 lightcolor=[('selected', ROZ)], bordercolor=[('selected', ROZ)])
+
+        styl.configure('Treeview', background=POLE, fieldbackground=POLE, foreground=TEKST, bordercolor=RAMKA,
+                       lightcolor=POLE, darkcolor=POLE, rowheight=px(28))
+        styl.map('Treeview', background=[('selected', ROZ)], foreground=[('selected', TLO)])
+        styl.configure('Treeview.Heading', background=PANEL, foreground=CYJAN, bordercolor=RAMKA,
+                       lightcolor=PANEL, darkcolor=PANEL, relief='flat', font=(NAGL, 10, 'bold'))
+        styl.map('Treeview.Heading', background=[('active', RAMKA)])
+        styl.configure('Vertical.TScrollbar', background=RAMKA, troughcolor=TLO, bordercolor=TLO,
+                       lightcolor=RAMKA, darkcolor=RAMKA, arrowcolor=CYJAN, gripcount=0)
+        styl.map('Vertical.TScrollbar', background=[('active', CYJAN), ('pressed', ROZ)],
+                 arrowcolor=[('active', TLO)])
+        styl.configure('TSeparator', background=RAMKA)
 
     def _kolko(self, e):
         try:
@@ -557,16 +675,18 @@ class Aplikacja(tk.Tk):
 
     # ---- widok glowny
     def _zbuduj(self):
-        gora = ttk.Frame(self, padding=(px(14), px(12), px(14), px(6)))
+        gora = ttk.Frame(self, padding=(px(14), px(12), px(14), px(8)))
         gora.pack(fill='x')
-        ttk.Label(gora, text=NAZWA, style='Tytul.TLabel').pack(side='left')
+        ttk.Label(gora, text='MATCHPOINT // WYDARZENIA', style='Tytul.TLabel').pack(side='left')
         ttk.Button(gora, text='Ustawienia', command=self.okno_ustawien).pack(side='right')
         ttk.Button(gora, text='Odśwież (F5)', command=self.odswiez).pack(side='right', padx=px(6))
         ttk.Button(gora, text='Otwórz stronę', command=lambda: webbrowser.open(g.SITE)).pack(side='right')
+        neon(self, 2).pack(fill='x', padx=px(14), pady=(0, px(10)))
 
         self.status = tk.StringVar()
         ttk.Label(self, textvariable=self.status, padding=(px(14), px(5)), foreground=SZARY).pack(
             fill='x', side='bottom')
+        self.after(50, lambda: ciemna_belka(self))
 
         srodek = ttk.Frame(self, padding=(px(14), 0, px(14), px(4)))
         srodek.pack(fill='both', expand=True)
@@ -593,7 +713,7 @@ class Aplikacja(tk.Tk):
                         ('zakladka', 'Zakładka', 90), ('pule', 'Zamknięte pule', 115)):
             self.lista.heading(k, text=t)
             self.lista.column(k, width=px(s), anchor='w')
-        self.lista.tag_configure('minelo', foreground='#b00')
+        self.lista.tag_configure('minelo', foreground=CZERWONY)
         pasek = ttk.Scrollbar(ramka_listy, orient='vertical', command=self.lista.yview)
         self.lista.configure(yscrollcommand=pasek.set)
         self.lista.pack(side='left', fill='both', expand=True)
@@ -610,13 +730,15 @@ class Aplikacja(tk.Tk):
         ttk.Button(przyciski, text='Sprawdź zakładkę w arkuszu',
                    command=self.sprawdz_zakladke).pack(side='left', padx=px(6))
         # Na prawym brzegu, z dala od reszty: tego nie da sie cofnac.
-        ttk.Button(przyciski, text='Przenieś do archiwum', command=self.archiwizuj).pack(side='right')
+        ttk.Button(przyciski, text='Przenieś do archiwum', style='Ryzyko.TButton',
+                   command=self.archiwizuj).pack(side='right')
 
         ttk.Label(srodek, text='Archiwum  ·  dwuklik otwiera stronę', style='Sekcja.TLabel').pack(
             anchor='w', pady=(px(18), 0))
-        self.archiwum = tk.Listbox(srodek, height=6, relief='flat', activestyle='none',
-                                   highlightthickness=1, highlightbackground='#d9d6cc',
-                                   selectbackground='#dfe6d6', selectforeground='black')
+        self.archiwum = tk.Listbox(srodek, height=6, relief='flat', activestyle='none', borderwidth=0,
+                                   highlightthickness=1, highlightbackground=RAMKA, highlightcolor=CYJAN,
+                                   background=POLE, foreground=SZARY, selectbackground=ROZ,
+                                   selectforeground=TLO, font='TkDefaultFont')
         self.archiwum.pack(fill='x', pady=(px(4), px(8)))
         self.archiwum.bind('<Double-1>', lambda e: self.otworz_archiwalne())
         self.archiwum.bind('<Return>', lambda e: self.otworz_archiwalne())
@@ -779,6 +901,8 @@ class OknoUstawien(tk.Toplevel):
         self.title('Ustawienia')
         self.resizable(False, False)
         self.transient(app)
+        self.configure(background=TLO)
+        self.after(50, lambda: ciemna_belka(self))
         f = ttk.Frame(self, padding=px(16))
         f.pack()
         u = app.ustawienia
@@ -814,12 +938,15 @@ class OknoWydarzenia(tk.Toplevel):
         szer = min(px(1000), self.winfo_screenwidth() - px(40))
         wys = min(px(780), self.winfo_screenheight() - px(80))
         self.geometry('%dx%d' % (szer, wys))
+        self.configure(background=TLO)
+        self.after(50, lambda: ciemna_belka(self))
         self.trafienia, self.ktore = [], -1
         self._podswietlone = set()
 
         # Kolejnosc pack: dol i pasek szukania przed zakladkami, zeby przy
         # malym oknie to zakladki sie kurczyly, a nie przyciski.
         self._pasek_szukania().pack(fill='x', side='top')
+        neon(self, 2).pack(fill='x', side='top', padx=px(12), pady=(px(10), 0))
         dol = ttk.Frame(self, padding=(px(10), px(4), px(10), px(10)))
         dol.pack(fill='x', side='bottom')
         ttk.Button(dol, text='Anuluj', command=self.zamknij).pack(side='right')
@@ -880,8 +1007,8 @@ class OknoWydarzenia(tk.Toplevel):
         self.q = tk.StringVar()
         self.q_pole = ttk.Entry(pasek, textvariable=self.q, width=34)
         self.q_pole.pack(side='left', padx=px(6))
-        ttk.Button(pasek, text='▲', width=3, takefocus=False, command=lambda: self.nastepne(-1)).pack(side='left')
-        ttk.Button(pasek, text='▼', width=3, takefocus=False, command=lambda: self.nastepne(1)).pack(
+        ttk.Button(pasek, text='▲', width=3, takefocus=False, style='Maly.TButton', command=lambda: self.nastepne(-1)).pack(side='left')
+        ttk.Button(pasek, text='▼', width=3, takefocus=False, style='Maly.TButton', command=lambda: self.nastepne(1)).pack(
             side='left', padx=(px(2), 0))
         self.q_wynik = ttk.Label(pasek, foreground=SZARY, width=16)
         self.q_wynik.pack(side='left', padx=px(8))
@@ -945,7 +1072,7 @@ class OknoWydarzenia(tk.Toplevel):
                 el.etykieta.configure(background=ZOLTY)
                 self._podswietlone.add(el.etykieta)
         if not self.trafienia:
-            self.q_wynik.configure(text='nie ma', foreground='#b00')
+            self.q_wynik.configure(text='nie ma', foreground=CZERWONY)
             return
         self.ktore = min(max(stare, 0), len(self.trafienia) - 1) if zostan else 0
         self.pokaz()
