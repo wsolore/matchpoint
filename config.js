@@ -35,42 +35,17 @@
    - cardNote: dopisek na karcie na stronie glownej (wiek dochodzi sam).
    - past[].note: dopisek w sekcji "Za nami".                        */
 const MATCHPOINT_WYDARZENIA = {
-  "upcoming": [
+  "upcoming": [],
+  "past": [
     {
-      "id": "PSD-2811",
       "name": "Padel Speed Dating",
       "sport": "Padel",
-      "city": "Warszawa",
       "date": "28.11.2026",
       "weekday": "Sobota",
-      "time": "09:30–11:00",
-      "venue": "Rakiety PGE Narodowy",
-      "address": "Błonia stadionu PGE Narodowy, al. Księcia Józefa Poniatowskiego 1",
-      "age": "30–45",
-      "ageMin": 30,
-      "ageMax": 45,
-      "level": "Początkujący+",
-      "surface": "sztuczna trawa",
-      "shoes": "obuwie sportowe na płaskiej podeszwie",
-      "transport": "",
-      "bring": "Obuwie sportowe na płaskiej podeszwie i strój sportowy.",
-      "bringExtra": "Jeśli nie masz rakiety to możesz wypożyczyć",
-      "included": "Kort ocieplany",
-      "howItWorks": "Gramy w półgodzinnych rotacjach - co 30 minut masz okazję poznać kolejną osobę na korcie! Po wydarzeniu samodzielnie decydujesz, z kim chcesz utrzymać kontakt. Jeśli złapiecie wspólny vibe, śmiało poproś o numer telefonu i kontynuujcie znajomość poza kortem! 🎾❤️",
-      "cardNote": "",
-      "priceW": 150,
-      "priceM": 150,
-      "page": "padel-speed-dating-28-11.html",
-      "sheetTab": "28.11",
-      "formUrl": "",
-      "blik": "731 210 703",
-      "limitWomen": 6,
-      "limitMen": 6,
-      "soldOutWomen": false,
-      "soldOutMen": false
-    }
-  ],
-  "past": [
+      "venue": "Rakiety PGE Narodowy, Warszawa",
+      "note": "",
+      "page": "padel-speed-dating-28-11.html"
+    },
     {
       "name": "Tennis Speed Dating",
       "sport": "Tenis",
